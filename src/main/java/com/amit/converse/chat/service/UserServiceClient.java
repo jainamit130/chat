@@ -10,7 +10,7 @@ public class UserServiceClient {
     private final ChatServiceGrpc.ChatServiceBlockingStub stub;
 
     public UserServiceClient(){
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost",9090)
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost",9091)
                 .usePlaintext()
                 .build();
         stub = ChatServiceGrpc.newBlockingStub(channel);

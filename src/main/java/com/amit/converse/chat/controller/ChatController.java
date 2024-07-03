@@ -3,6 +3,7 @@ package com.amit.converse.chat.controller;
 //import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.service.UserServiceClient;
 import com.amit.converse.common.ChatMessage;
+import com.amit.converse.common.GetMessagesResponse;
 import com.amit.converse.common.SendMessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -10,6 +11,9 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
+
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -47,5 +51,14 @@ public class ChatController {
     public ChatMessage addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSenderId());
         return chatMessage;
+    }
+
+    @MessageMapping("/chat.getMessages")
+    @SendTo("/topic/public")
+    public List<ChatMessage> getMessages(@Payload Map<String, String> payload) {
+        String userId = payload.get("userId");
+        String chatWithUserId = payload.get("chatWithUserId");
+        GetMessagesResponse response = userServiceClient.getMessages(userId, chatWithUserId);
+        return response.getMessagesList();
     }
 }
