@@ -1,0 +1,27 @@
+type ChatRoom {
+    id: ID!
+    name: String!
+    userIds: [String!]!
+    createdBy: String!
+    createdAt: Long!
+    latestMessage: ChatMessage
+}
+
+type ChatMessage {
+    id: ID!
+    senderId: String!
+    chatRoomId: String!
+    timestamp: String!
+    content: String!
+    isEncrypted: Boolean!
+    user: User!
+}
+
+type User {
+    id: ID!
+    username: String!
+}
+
+type Query {
+    getChatRoomsOfUser(userId: String!): [ChatRoom!]!
+}

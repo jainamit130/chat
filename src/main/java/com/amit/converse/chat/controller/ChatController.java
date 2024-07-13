@@ -1,49 +1,31 @@
 package com.amit.converse.chat.controller;
 
-//import com.amit.converse.chat.model.ChatMessage;
-import com.amit.converse.chat.service.UserServiceClient;
-import com.amit.converse.common.ChatMessage;
-import com.amit.converse.common.GetMessagesResponse;
-import com.amit.converse.common.SendMessageResponse;
+import com.amit.converse.chat.model.ChatMessage;
+import com.amit.converse.chat.service.TestService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final UserServiceClient userServiceClient;
+    private TestService testService;
 
-    @MessageMapping("/chat.sendMessage")
+    @MessageMapping("/chat.sendMessage/{chatRoomId}")
     @SendTo("/topic/public")
-    public ChatMessage sendMessage(@Payload ChatMessage chatMessage) {
-//        ChatMessage grpcMessage = ChatMessage.builder()
-//                .id(chatMessage.getId())
-//                .sender(chatMessage.getSender())
-//                .receiver(chatMessage.getReceiver())
-//                .content(chatMessage.getContent())
-//                .timeStamp(chatMessage.getTimeStamp())
-//                .build();
-        ChatMessage grpcMessage = ChatMessage.newBuilder()
-                .setId(chatMessage.getId())
-                .setSenderId(chatMessage.getSenderId())
-                .setReceiverId(chatMessage.getReceiverId())
-                .setContent(chatMessage.getContent())
-                .setTimestamp(chatMessage.getTimestamp())
-                .build();
-        SendMessageResponse response = userServiceClient.sendMessage(grpcMessage);
-        if (response.getSuccess()) {
-            return chatMessage;
-        } else {
-            throw new RuntimeException("Failed to send message: " + response.getError());
-        }
+    public ChatMessage sendMessage(@DestinationVariable String chatRoomId, @Payload ChatMessage chatMessage) {
+        return chatMessage;
     }
 
     @MessageMapping("/chat.addUser")
@@ -53,12 +35,40 @@ public class ChatController {
         return chatMessage;
     }
 
-    @MessageMapping("/chat.getMessages")
-    @SendTo("/topic/public")
-    public List<ChatMessage> getMessages(@Payload Map<String, String> payload) {
-        String userId = payload.get("userId");
-        String chatWithUserId = payload.get("chatWithUserId");
-        GetMessagesResponse response = userServiceClient.getMessages(userId, chatWithUserId);
-        return response.getMessagesList();
+    @GetMapping("/chat/messages/{chatRoomId}")
+    public List<ChatMessage> getMessages(@PathVariable String chatRoomId) {
+        return testService.getMessages(chatRoomId);
     }
+
+    @PostMapping("/chat/sendMessage/{chatRoomId}")
+    public ChatMessage postMessage(@PathVariable String chatRoomId, @RequestBody ChatMessage chatMessage) {
+        testService.addMessage(chatRoomId, chatMessage);
+        return chatMessage;
+    }
+
+//    @PostMapping("/test/grpc-call")
+//    public ResponseEntity<String> testGrpcCall(@RequestBody Map<String, String> payload) {
+//        String userId = payload.get("userId");
+//        String chatWithUserId = payload.get("chatWithUserId");
+//
+//        // Call the gRPC method on userServiceClient
+//        GetMessagesResponse response = userServiceClient.getMessages(userId, chatWithUserId);
+//
+//        // Handle response or return as needed
+//        if (response != null && !response.getMessagesList().isEmpty()) {
+//            StringBuilder sb = new StringBuilder();
+//            sb.append("gRPC call executed successfully! Messages:\n");
+//            for (com.amit.converse.common.ChatMessage message : response.getMessagesList()) {
+//                sb.append("Message ID: ").append(message.getId()).append("\n");
+//                sb.append("Sender ID: ").append(message.getSenderId()).append("\n");
+//                sb.append("Receiver ID: ").append(message.getReceiverId()).append("\n");
+//                sb.append("Content: ").append(message.getContent()).append("\n");
+//                sb.append("Timestamp: ").append(message.getTimestamp()).append("\n");
+//                sb.append("\n");
+//            }
+//            return ResponseEntity.ok(sb.toString());
+//        } else {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch messages from gRPC call");
+//        }
+//    }
 }

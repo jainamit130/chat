@@ -3,16 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Service Test</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>WebSocket Chat</title>
+    <link rel="stylesheet" href="main.css">
 </head>
 <body>
-<div class="chat-container">
-    <div class="chat-window" id="chat-window"></div>
-    <input type="text" id="message-input" placeholder="Type your message here...">
-    <button onclick="sendMessage()">Send</button>
+<div class="container">
+    <h1>WebSocket Chat</h1>
+    <div id="chatBox"></div>
+    <form id="messageForm">
+        <input type="text" id="messageInput" placeholder="Type your message...">
+        <button type="submit">Send</button>
+    </form>
 </div>
-
-<script src="script.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+<script src="main.js"></script>
 </body>
 </html>
