@@ -6,11 +6,13 @@ import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import com.amit.converse.chat.repository.UserRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,12 +41,21 @@ public class TestService {
         chatMessageRepository.save(message);
     }
 
+    public static String getCurrentDateTimeAsString() {
+        long currentTimeMillis = System.currentTimeMillis();
+        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(currentTimeMillis), ZoneOffset.UTC);
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return dateTime.format(formatter);
+    }
+
     public ChatRoom createGroup(String groupName, String createdByUserId) {
+
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(groupName)
                 .userIds(new ArrayList<>())
                 .createdBy(createdByUserId)
-                .createdAt(System.currentTimeMillis())
+                .createdAt(getCurrentDateTimeAsString())
                 .build();
 
         return chatRoomRepository.save(chatRoom);

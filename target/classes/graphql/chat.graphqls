@@ -1,14 +1,14 @@
 type ChatRoom {
-    id: ID!
+    id: String!
     name: String!
     userIds: [String!]!
     createdBy: String!
-    createdAt: Long!
+    createdAt: String!
     latestMessage: ChatMessage
 }
 
 type ChatMessage {
-    id: ID!
+    id: String!
     senderId: String!
     chatRoomId: String!
     timestamp: String!
@@ -18,10 +18,11 @@ type ChatMessage {
 }
 
 type User {
-    id: ID!
+    id: String!
     username: String!
 }
 
 type Query {
     getChatRoomsOfUser(userId: String!): [ChatRoom!]!
+    getMessagesOfChatRoom(chatRoomId: String!): [ChatMessage!]!
 }

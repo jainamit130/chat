@@ -58,17 +58,9 @@
         </dependency>
         <!-- https://mvnrepository.com/artifact/com.graphql-java/graphql-spring-boot-starter -->
         <dependency>
-            <groupId>com.graphql-java</groupId>
-            <artifactId>graphql-spring-boot-starter</artifactId>
-            <version>5.0.2</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-graphql</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.graphql-java/graphql-java-tools -->
-        <dependency>
-            <groupId>com.graphql-java</groupId>
-            <artifactId>graphql-java-tools</artifactId>
-            <version>5.2.4</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/net.devh/grpc-server-spring-boot-starter -->
         <dependency>
             <groupId>net.devh</groupId>
             <artifactId>grpc-server-spring-boot-starter</artifactId>

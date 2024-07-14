@@ -1,9 +1,8 @@
 package com.amit.converse.chat.config;
 
-import com.coxautodev.graphql.tools.SchemaParser;
-import graphql.GraphQL;
-import graphql.schema.GraphQLSchema;
 import lombok.RequiredArgsConstructor;
+import net.devh.boot.grpc.server.security.authentication.BasicGrpcAuthenticationReader;
+import net.devh.boot.grpc.server.security.authentication.GrpcAuthenticationReader;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -18,6 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
+
+    @Bean
+    public GrpcAuthenticationReader grpcAuthenticationReader() {
+        return new BasicGrpcAuthenticationReader(); // Replace with your actual implementation
+    }
 
     @Bean
     public UserDetailsService userDetailsService(){

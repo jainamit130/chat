@@ -17,5 +17,5 @@ public class ChatRoom {
     private String name;
     private List<String> userIds;
     private String createdBy;
-    private long createdAt;
+    private String createdAt;
 }
