@@ -5,7 +5,6 @@ import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -20,7 +19,15 @@ public class ChatService {
 
     public List<ChatRoom> getChatRoomsOfUser(String userId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdsContains(userId);
+        for (ChatRoom chatRoom : chatRooms) {
+            ChatMessage latestMessage = chatMessageRepository.findTopByChatRoomIdOrderByTimestampDesc(chatRoom.getId());
+            chatRoom.setLatestMessage(latestMessage);
+        }
         return chatRooms != null ? chatRooms : Collections.emptyList(); // or throw exception if needed
+    }
+
+    public ChatMessage getLatestMessage(String chatRoomId) {
+        return chatMessageRepository.findTopByChatRoomIdOrderByTimestampDesc(chatRoomId);
     }
 
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId){

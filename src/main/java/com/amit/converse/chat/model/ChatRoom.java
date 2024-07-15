@@ -18,4 +18,5 @@ public class ChatRoom {
     private List<String> userIds;
     private String createdBy;
     private String createdAt;
+    private transient ChatMessage latestMessage;
 }
