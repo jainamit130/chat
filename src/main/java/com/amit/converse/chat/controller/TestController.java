@@ -19,13 +19,6 @@ public class TestController {
     private final TestService testService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    // Endpoint to get messages by chat room ID
-    @GetMapping("/messages")
-    public ResponseEntity<List<ChatMessage>> getMessages(@RequestParam String chatRoomId) {
-        List<ChatMessage> messages = testService.getMessages(chatRoomId);
-        return ResponseEntity.ok(messages);
-    }
-
     // Endpoint to add a new message to a chat room
     @PostMapping("/messages")
     public ResponseEntity<String> addMessage(@RequestBody ChatMessage message) {

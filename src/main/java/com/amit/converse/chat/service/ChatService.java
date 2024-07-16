@@ -26,10 +26,6 @@ public class ChatService {
         return chatRooms != null ? chatRooms : Collections.emptyList(); // or throw exception if needed
     }
 
-    public ChatMessage getLatestMessage(String chatRoomId) {
-        return chatMessageRepository.findTopByChatRoomIdOrderByTimestampDesc(chatRoomId);
-    }
-
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId){
         List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomId);
         return chatMessages != null ? chatMessages : Collections.emptyList();

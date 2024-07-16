@@ -24,17 +24,13 @@ public class TestService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
 
-    public List<ChatMessage> getMessages(String chatRoomId) {
-        return chatMessageRepository.findAllByChatRoomId(chatRoomId);
-    }
-
     public void addMessage(String chatRoomId, ChatMessage message) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
 
         User user = userRepository.findById(message.getSenderId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
+        message.setTimestamp(Instant.now());
         message.setChatRoomId(chatRoom.getId());
         message.setUser(user);
 

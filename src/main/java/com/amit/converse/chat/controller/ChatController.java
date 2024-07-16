@@ -3,11 +3,14 @@ package com.amit.converse.chat.controller;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.service.TestService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,11 +23,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatController {
 
-    private TestService testService;
+    private final TestService testService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping("/chat.sendMessage/{chatRoomId}")
+    @MessageMapping("/chat.leftUser")
     @SendTo("/topic/public")
-    public ChatMessage sendMessage(@DestinationVariable String chatRoomId, @Payload ChatMessage chatMessage) {
+    public ChatMessage leftUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
+        headerAccessor.getSessionAttributes().put("username", chatMessage.getSenderId());
         return chatMessage;
     }
 
@@ -32,17 +37,6 @@ public class ChatController {
     @SendTo("/topic/public")
     public ChatMessage addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
         headerAccessor.getSessionAttributes().put("username", chatMessage.getSenderId());
-        return chatMessage;
-    }
-
-    @GetMapping("/chat/messages/{chatRoomId}")
-    public List<ChatMessage> getMessages(@PathVariable String chatRoomId) {
-        return testService.getMessages(chatRoomId);
-    }
-
-    @PostMapping("/chat/sendMessage/{chatRoomId}")
-    public ChatMessage postMessage(@PathVariable String chatRoomId, @RequestBody ChatMessage chatMessage) {
-        testService.addMessage(chatRoomId, chatMessage);
         return chatMessage;
     }
 
