@@ -1,19 +1,20 @@
 package com.amit.converse.chat.controller;
 
+import com.amit.converse.chat.dto.AddMembersRequest;
+import com.amit.converse.chat.dto.CreateGroupRequest;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.repository.ChatRoomRepository;
-import com.amit.converse.chat.service.TestService;
-import lombok.AllArgsConstructor;
+import com.amit.converse.chat.service.ChatService;
+import com.amit.converse.chat.service.GroupService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,8 +23,7 @@ import java.util.List;
 @RequestMapping("/chat")
 public class ChatRoomController {
 
-    private final TestService testService;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final GroupService groupService;
     private final ChatRoomRepository chatRoomRepository;
 
     @GetMapping("/user/{userId}/rooms")
@@ -31,13 +31,38 @@ public class ChatRoomController {
         return chatRoomRepository.findByUserIdsContains(userId);
     }
 
-    @MessageMapping("/chat/sendMessage/{chatRoomId}")
-    public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
+    // Endpoint to create a new chat room (group)
+    @PostMapping("/groups/create")
+    public ResponseEntity<ChatRoom> createGroup(@RequestBody CreateGroupRequest request) {
         try {
-            testService.addMessage(chatRoomId, chatMessage);
-            messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, chatMessage);
+            ChatRoom chatRoom = groupService.createGroup(request.getGroupName(), request.getCreatedByUserId());
+            return ResponseEntity.ok(chatRoom);
         } catch (IllegalArgumentException e) {
-            // Handle the exception as needed
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+    // Endpoint to add members to an existing chat room
+    @PostMapping("/groups/add/{chatRoomId}")
+    public ResponseEntity<ChatRoom> addMembersToGroup(@PathVariable String chatRoomId,
+                                                      @RequestBody AddMembersRequest request) {
+        try {
+            ChatRoom chatRoom = groupService.addMembers(chatRoomId, request.getMemberIds());
+            return ResponseEntity.ok(chatRoom);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @PostMapping("/groups/remove/{chatRoomId}")
+    public ResponseEntity<ChatRoom> removeMembersFromGroup(@PathVariable String chatRoomId,
+                                                           @RequestBody AddMembersRequest request) {
+        try {
+            ChatRoom chatRoom = groupService.removeMembers(chatRoomId, request.getMemberIds());
+            return ResponseEntity.ok(chatRoom);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
 }

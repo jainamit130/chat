@@ -2,13 +2,14 @@ package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;
+import com.amit.converse.chat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
+import java.time.Instant;
 
 @Service
 @RequiredArgsConstructor
@@ -16,18 +17,18 @@ public class ChatService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
+    private final UserRepository userRepository;
 
-    public List<ChatRoom> getChatRoomsOfUser(String userId) {
-        List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdsContains(userId);
-        for (ChatRoom chatRoom : chatRooms) {
-            ChatMessage latestMessage = chatMessageRepository.findTopByChatRoomIdOrderByTimestampDesc(chatRoom.getId());
-            chatRoom.setLatestMessage(latestMessage);
-        }
-        return chatRooms != null ? chatRooms : Collections.emptyList(); // or throw exception if needed
-    }
+    public void addMessage(String chatRoomId, ChatMessage message) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
 
-    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId){
-        List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomId);
-        return chatMessages != null ? chatMessages : Collections.emptyList();
+        User user = userRepository.findById(message.getSenderId())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        message.setTimestamp(Instant.now());
+        message.setChatRoomId(chatRoom.getId());
+        message.setUser(user);
+
+        chatMessageRepository.save(message);
     }
 }

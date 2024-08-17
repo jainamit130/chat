@@ -1,7 +1,6 @@
 package com.amit.converse.chat.config;
 
 import com.amit.converse.chat.model.ChatMessage;
-import com.amit.converse.chat.model.MessageType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;

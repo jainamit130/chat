@@ -1,8 +1,14 @@
 package com.amit.converse.chat.controller;
 
+import com.amit.converse.chat.dto.AddMembersRequest;
+import com.amit.converse.chat.dto.CreateGroupRequest;
 import com.amit.converse.chat.model.ChatMessage;
-import com.amit.converse.chat.service.TestService;
+import com.amit.converse.chat.model.ChatRoom;
+import com.amit.converse.chat.service.ChatService;
+import com.amit.converse.chat.service.GroupService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -12,7 +18,6 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,21 +28,29 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final TestService testService;
+    private final ChatService chatService;
+    private final GroupService groupService;
     private final SimpMessagingTemplate messagingTemplate;
 
-    @MessageMapping("/chat.leftUser")
-    @SendTo("/topic/public")
-    public ChatMessage leftUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        headerAccessor.getSessionAttributes().put("username", chatMessage.getSenderId());
-        return chatMessage;
+    @MessageMapping("/chat/sendMessage/{chatRoomId}")
+    public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
+        try {
+            chatService.addMessage(chatRoomId, chatMessage);
+            messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, chatMessage);
+        } catch (IllegalArgumentException e) {
+        }
     }
 
-    @MessageMapping("/chat.addUser")
-    @SendTo("/topic/public")
-    public ChatMessage addUser(@Payload ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        headerAccessor.getSessionAttributes().put("username", chatMessage.getSenderId());
-        return chatMessage;
+    @QueryMapping
+    public List<ChatRoom> getChatRoomsOfUser(@Argument String userId) {
+        List<ChatRoom> chatRooms=groupService.getChatRoomsOfUser(userId);
+        return chatRooms;
+    }
+
+    @QueryMapping
+    public List<ChatMessage> getMessagesOfChatRoom(@Argument String chatRoomId){
+        List<ChatMessage> chatMessages=groupService.getMessagesOfChatRoom(chatRoomId);
+        return chatMessages;
     }
 
 //    @PostMapping("/test/grpc-call")
