@@ -3,10 +3,12 @@ package com.amit.converse.chat.service;
 import com.amit.converse.chat.dto.UserResponseDto;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
+import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,31 +20,26 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    // Method to create a new user
-    public User createUser(String username) {
-        // Check if a user with the same username or email already exists
-        if (userRepository.existsByUsername(username)) {
-            throw new IllegalArgumentException("Username already exists: " + username);
+    @KafkaListener(topics = "user-events", groupId = "group_id")
+    public User consume(String userEvent) {
+
+        User user = new Gson().fromJson(userEvent, User.class);
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Username already exists: " + user.getUsername());
         }
 
-        // Create a new User entity
-        User newUser = User.builder()
-                .username(username)
-                .build();
-
-        // Save the new user to the database
-        return userRepository.save(newUser);
+        return userRepository.save(user);
     }
 
     public List<UserResponseDto> getAllUsers(){
         return userRepository.findAll().stream().map(user -> {
-            return UserResponseDto.builder().username(user.getUsername()).id(user.getId()).build();
+            return UserResponseDto.builder().username(user.getUsername()).id(user.getUserId()).build();
         }).collect(Collectors.toList());
     }
 
     public List<UserResponseDto> searchUser(String searchPrefix){
         return userRepository.findAllByUsernameStartsWithIgnoreCase(searchPrefix).stream().map(user -> {
-            return UserResponseDto.builder().username(user.getUsername()).id(user.getId()).build();
+            return UserResponseDto.builder().username(user.getUsername()).id(user.getUserId()).build();
         }).collect(Collectors.toList());
     }
 }

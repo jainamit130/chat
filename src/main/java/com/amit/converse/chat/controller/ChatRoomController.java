@@ -35,7 +35,7 @@ public class ChatRoomController {
     @PostMapping("/groups/create")
     public ResponseEntity<ChatRoom> createGroup(@RequestBody CreateGroupRequest request) {
         try {
-            ChatRoom chatRoom = groupService.createGroup(request.getGroupName(), request.getCreatedByUserId());
+            ChatRoom chatRoom = groupService.createGroup(request.getGroupName(), request.getCreatedByUserId(), request.getMembers());
             return ResponseEntity.ok(chatRoom);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

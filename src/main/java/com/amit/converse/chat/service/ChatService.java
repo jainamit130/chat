@@ -23,7 +23,7 @@ public class ChatService {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
 
-        User user = userRepository.findById(message.getSenderId())
+        User user = userRepository.findByUserId(message.getSenderId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         message.setTimestamp(Instant.now());
         message.setChatRoomId(chatRoom.getId());

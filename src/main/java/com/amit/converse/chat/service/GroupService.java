@@ -6,6 +6,7 @@ import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import com.amit.converse.chat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -22,6 +23,7 @@ public class GroupService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     public List<ChatRoom> getChatRoomsOfUser(String userId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdsContains(userId);
@@ -37,16 +39,22 @@ public class GroupService {
         return chatMessages != null ? chatMessages : Collections.emptyList();
     }
 
-    public ChatRoom createGroup(String groupName, String createdByUserId) {
+    public ChatRoom createGroup(String groupName, String createdByUserId, List<String> memberIds) {
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(groupName)
-                .userIds(new ArrayList<>())
+                .userIds(memberIds)
                 .createdBy(createdByUserId)
                 .createdAt(getCurrentDateTimeAsString())
                 .build();
 
-        return chatRoomRepository.save(chatRoom);
+        ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
+
+        for (String userId : memberIds) {
+            messagingTemplate.convertAndSend("/topic/user/" + userId, savedChatRoom);
+        }
+
+        return savedChatRoom;
     }
 
     public ChatRoom addMembers(String chatRoomId, List<String> memberIds) {
