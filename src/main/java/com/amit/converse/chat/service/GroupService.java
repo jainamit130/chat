@@ -13,9 +13,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -41,9 +39,14 @@ public class GroupService {
 
     public ChatRoom createGroup(String groupName, String createdByUserId, List<String> memberIds) {
 
+        Map<String, Integer> unreadMessageCounts = new HashMap<>();
+        for (String userId : memberIds) {
+            unreadMessageCounts.put(userId, 0);
+        }
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(groupName)
                 .userIds(memberIds)
+                .unreadMessageCounts(unreadMessageCounts)
                 .createdBy(createdByUserId)
                 .createdAt(getCurrentDateTimeAsString())
                 .build();

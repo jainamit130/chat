@@ -2,6 +2,7 @@ package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.AddMembersRequest;
 import com.amit.converse.chat.dto.CreateGroupRequest;
+import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.repository.ChatRoomRepository;
@@ -28,7 +29,8 @@ public class ChatRoomController {
 
     @GetMapping("/user/{userId}/rooms")
     public List<ChatRoom> getChatRoomsForUser(@PathVariable String userId) {
-        return chatRoomRepository.findByUserIdsContains(userId);
+        List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdsContains(userId);
+        return chatRooms;
     }
 
     // Endpoint to create a new chat room (group)
@@ -52,6 +54,15 @@ public class ChatRoomController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
+    }
+
+    @PostMapping("/groups/messages/markUnread/{chatRoomId}/{userId}")
+    public void incrementUnreadMessageCount(@PathVariable String chatRoomId,@PathVariable String userId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(()-> new ConverseChatRoomNotFoundException());
+        chatRoom.incrementUnreadMessageCount(userId);
+        chatRoomRepository.save(chatRoom);
+        return;
     }
 
     @PostMapping("/groups/remove/{chatRoomId}")

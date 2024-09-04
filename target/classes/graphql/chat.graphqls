@@ -4,6 +4,7 @@ type ChatRoom {
     userIds: [String!]!
     createdBy: String!
     createdAt: String!
+    unreadMessageCount(userId: String!): Int!
     latestMessage: ChatMessage
 }
 
