@@ -56,15 +56,6 @@ public class ChatRoomController {
         }
     }
 
-    @PostMapping("/groups/messages/markUnread/{chatRoomId}/{userId}")
-    public void incrementUnreadMessageCount(@PathVariable String chatRoomId,@PathVariable String userId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(()-> new ConverseChatRoomNotFoundException());
-        chatRoom.incrementUnreadMessageCount(userId);
-        chatRoomRepository.save(chatRoom);
-        return;
-    }
-
     @PostMapping("/groups/remove/{chatRoomId}")
     public ResponseEntity<ChatRoom> removeMembersFromGroup(@PathVariable String chatRoomId,
                                                            @RequestBody AddMembersRequest request) {

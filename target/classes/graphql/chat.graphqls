@@ -4,7 +4,7 @@ type ChatRoom {
     userIds: [String!]!
     createdBy: String!
     createdAt: String!
-    unreadMessageCount(userId: String!): Int!
+    unreadMessageCount: Int!
     latestMessage: ChatMessage
 }
 
@@ -26,4 +26,8 @@ type User {
 type Query {
     getChatRoomsOfUser(userId: String!): [ChatRoom!]!
     getMessagesOfChatRoom(chatRoomId: String!): [ChatMessage!]!
+}
+
+type Mutation {
+    markAllMessagesRead(chatRoomId: String!, userId: String!): Boolean
 }

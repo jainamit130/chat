@@ -21,17 +21,24 @@ public class ChatRoom {
     private String createdBy;
     private String createdAt;
     private transient ChatMessage latestMessage;
-    private Map<String, Integer> unreadMessageCounts = new HashMap<>();
+    private transient Integer unreadMessageCount;
+    private Integer totalMessagesCount;
+    private Map<String, Integer> readMessageCounts = new HashMap<>();
 
-    public void incrementUnreadMessageCount(String userId) {
-        unreadMessageCounts.put(userId, unreadMessageCounts.getOrDefault(userId, 0) + 1);
+    public void incrementTotalMessagesCount() {
+        if(totalMessagesCount==null){
+            totalMessagesCount=0;
+        }
+        totalMessagesCount++;
     }
 
-    public void resetUnreadMessageCount(String userId) {
-        unreadMessageCounts.put(userId, 0);
+    public void allMessagesMarkedRead(String userId) {
+        readMessageCounts.put(userId, totalMessagesCount);
     }
 
     public int getUnreadMessageCount(String userId) {
-        return unreadMessageCounts.getOrDefault(userId, 0);
+        return totalMessagesCount-readMessageCounts.getOrDefault(userId, 0);
     }
+
+
 }

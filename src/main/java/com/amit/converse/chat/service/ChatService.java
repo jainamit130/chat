@@ -28,7 +28,16 @@ public class ChatService {
         message.setTimestamp(Instant.now());
         message.setChatRoomId(chatRoom.getId());
         message.setUser(user);
-
+        chatRoom.incrementTotalMessagesCount();
+        chatRoomRepository.save(chatRoom);
         chatMessageRepository.save(message);
+    }
+
+    public void markAllMessagesRead(String chatRoomId,String userId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+        chatRoom.allMessagesMarkedRead(userId);
+        chatRoomRepository.save(chatRoom);
+        return;
     }
 }

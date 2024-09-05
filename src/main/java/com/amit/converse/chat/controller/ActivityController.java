@@ -28,4 +28,5 @@ public class ActivityController {
         typingUsers.remove(username);
         messagingTemplate.convertAndSend("/topic/typing/" + chatRoomId, typingUsers);
     }
+
 }

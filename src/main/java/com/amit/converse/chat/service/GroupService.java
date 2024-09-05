@@ -27,6 +27,7 @@ public class GroupService {
         List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdsContains(userId);
         for (ChatRoom chatRoom : chatRooms) {
             ChatMessage latestMessage = chatMessageRepository.findTopByChatRoomIdOrderByTimestampDesc(chatRoom.getId());
+            chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(userId));
             chatRoom.setLatestMessage(latestMessage);
         }
         return chatRooms != null ? chatRooms : Collections.emptyList(); // or throw exception if needed
@@ -39,15 +40,16 @@ public class GroupService {
 
     public ChatRoom createGroup(String groupName, String createdByUserId, List<String> memberIds) {
 
-        Map<String, Integer> unreadMessageCounts = new HashMap<>();
+        Map<String, Integer> readMessageCounts = new HashMap<>();
         for (String userId : memberIds) {
-            unreadMessageCounts.put(userId, 0);
+            readMessageCounts.put(userId, 0);
         }
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(groupName)
                 .userIds(memberIds)
-                .unreadMessageCounts(unreadMessageCounts)
+                .readMessageCounts(readMessageCounts)
                 .createdBy(createdByUserId)
+                .totalMessagesCount(0)
                 .createdAt(getCurrentDateTimeAsString())
                 .build();
 

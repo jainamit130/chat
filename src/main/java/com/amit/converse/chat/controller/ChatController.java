@@ -6,6 +6,7 @@ import com.amit.converse.chat.service.ChatService;
 import com.amit.converse.chat.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -30,6 +31,12 @@ public class ChatController {
             messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, chatMessage);
         } catch (IllegalArgumentException e) {
         }
+    }
+
+    @MutationMapping
+    public Boolean markAllMessagesRead(@Argument String chatRoomId, @Argument String userId) {
+        chatService.markAllMessagesRead(chatRoomId, userId);
+        return true;
     }
 
     @QueryMapping
