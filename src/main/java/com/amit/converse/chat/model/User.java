@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,4 +21,5 @@ public class User {
     private String userId;
     private String username;
     private String password;
+    private Instant lastSeenTimestamp;
 }

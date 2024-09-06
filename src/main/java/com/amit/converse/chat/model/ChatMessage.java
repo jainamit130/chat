@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
@@ -24,4 +25,13 @@ public class ChatMessage {
     private String content;
     private boolean isEncrypted;
     private User user;
+    private Map<Instant, Set<String>> deliveryReceiptsByTime = new TreeMap<>();
+    private Map<Instant, Set<String>> readReceiptsByTime = new TreeMap<>();
+
+    public void setDeliveryReceiptsByTime(List<String> onlineUserIds) {
+        Instant now = Instant.now();
+        for (String userId : onlineUserIds) {
+            deliveryReceiptsByTime.put(userId, now); // Set delivery timestamp for online users
+        }
+    }
 }

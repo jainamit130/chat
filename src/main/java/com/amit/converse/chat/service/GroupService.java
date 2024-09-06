@@ -4,7 +4,6 @@ import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;
-import com.amit.converse.chat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;

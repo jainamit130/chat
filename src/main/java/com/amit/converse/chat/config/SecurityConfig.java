@@ -31,8 +31,8 @@ public class SecurityConfig {
                         .disable()
                 )
                 .authorizeHttpRequests(authorization -> authorization
-                        .requestMatchers("/ws/**").permitAll()
-                        .anyRequest().authenticated()
+//                        .requestMatchers("/ws/**").permitAll()
+                        .anyRequest().permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,16 +19,18 @@ public class ChatService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserRepository userRepository;
+    private final RedisService redisService;
 
     public void addMessage(String chatRoomId, ChatMessage message) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
 
-        User user = userRepository.findByUserId(message.getSenderId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        User user = userRepository.findByUserId(message.getSenderId());
         message.setTimestamp(Instant.now());
         message.setChatRoomId(chatRoom.getId());
         message.setUser(user);
+        List<String> onlineUserIds = redisService.filterOnlineUsers(chatRoom.getUserIds());
+        message.setDeliveryReceiptsByTime(onlineUserIds);
         chatRoom.incrementTotalMessagesCount();
         chatRoomRepository.save(chatRoom);
         chatMessageRepository.save(message);
