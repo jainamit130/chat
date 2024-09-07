@@ -28,10 +28,27 @@ public class ChatMessage {
     private Map<Instant, Set<String>> deliveryReceiptsByTime = new TreeMap<>();
     private Map<Instant, Set<String>> readReceiptsByTime = new TreeMap<>();
 
-    public void setDeliveryReceiptsByTime(List<String> onlineUserIds) {
+    public void setDeliveryReceiptsByTime(Set<String> onlineUserIds) {
         Instant now = Instant.now();
-        for (String userId : onlineUserIds) {
-            deliveryReceiptsByTime.put(userId, now); // Set delivery timestamp for online users
-        }
+        deliveryReceiptsByTime.put(now, onlineUserIds);
+    }
+
+    public void setReadReceiptsByTime(Set<String> onlineAndActiveUserIds) {
+        Instant now = Instant.now();
+        deliveryReceiptsByTime.put(now, onlineAndActiveUserIds);
+    }
+
+    public void addUserToReadReceipt(Instant timestamp,String userId){
+        Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
+        userIds.add(userId);
+        readReceiptsByTime.put(timestamp,userIds);
+        return;
+    }
+
+    public void addUserToDeliveredReceipt(Instant timestamp,String userId){
+        Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
+        userIds.add(userId);
+        deliveryReceiptsByTime.put(timestamp,userIds);
+        return;
     }
 }

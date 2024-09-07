@@ -39,6 +39,12 @@ public class ChatController {
         return true;
     }
 
+    @MutationMapping
+    public Boolean markAllMessagesDelivered(@Argument String userId) {
+        chatService.markAllMessagesDelivered(userId);
+        return true;
+    }
+
     @QueryMapping
     public List<ChatRoom> getChatRoomsOfUser(@Argument String userId) {
         List<ChatRoom> chatRooms=groupService.getChatRoomsOfUser(userId);

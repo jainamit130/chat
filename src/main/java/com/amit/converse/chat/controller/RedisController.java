@@ -3,7 +3,6 @@ package com.amit.converse.chat.controller;
 import com.amit.converse.chat.service.RedisService;
 import com.amit.converse.chat.service.UserService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -16,21 +15,39 @@ public class RedisController {
     private final RedisService redisService;
     private final UserService userService;
 
-    @PostMapping("/save/{key}")
-    public String saveData(@PathVariable String key, @RequestParam String value) {
-        redisService.saveData(key, value);
+    @PostMapping("/save/lastSeen/{userId}")
+    public void saveLastSeen(@PathVariable String userId, @RequestParam String timestamp) {
+        redisService.saveUserTimestamp(userId, timestamp);
+        return;
+    }
+
+    @GetMapping("/get/lastSeen/{userId}")
+    public Instant getUserLastSeen(@PathVariable String userId) {
+        return redisService.getUserTimestamp(userId);
+    }
+
+    @PostMapping("/update/lastSeen/{userId}")
+    public String updateLastSeen(@PathVariable String userId) {
+        userService.updateUserLastSeen(userId,redisService.getUserTimestamp(userId));
+        redisService.removeTimestamp(userId);
+        return "User marked as offline";
+    }
+
+    @PostMapping("/save/activeChatRoom/{chatRoomId}/{userId}")
+    public String updateActiveChatRoom(@PathVariable String userId, @PathVariable String chatRoomId) {
+        redisService.addUserIdToChatRoom(userId, chatRoomId);
         return "Data saved";
     }
 
-    @GetMapping("/get/{key}")
-    public Instant getData(@PathVariable String key) {
-        return redisService.getData(key);
+    @GetMapping("/get/activeChatRoom/{chatRoomId}")
+    public Boolean isChatRoomActive(@PathVariable String userId, @PathVariable String chatRoomId) {
+        return redisService.isUserInChatRoom(userId,chatRoomId);
     }
 
-    @PostMapping("/remove/{key}")
-    public String removeData(@PathVariable String key) {
-        userService.updateUserLastSeen(key,redisService.getData(key));
-        redisService.removeData(key);
+    @PostMapping("/update/activeChatRoom/{userId}")
+    public String removeUserFromChatRoom(@PathVariable String userId) {
+        userService.updateUserLastSeen(userId,redisService.getUserTimestamp(userId));
+        redisService.removeTimestamp(userId);
         return "User marked as offline";
     }
 }
