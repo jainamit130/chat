@@ -30,4 +30,5 @@ type Query {
 
 type Mutation {
     markAllMessagesRead(chatRoomId: String!, userId: String!): Boolean
+    markAllMessagesDelivered(userId: String!): Boolean
 }

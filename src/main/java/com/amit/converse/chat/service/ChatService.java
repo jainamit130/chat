@@ -49,11 +49,20 @@ public class ChatService {
 
     public void markAllMessagesDelivered(String userId){
         User user = userRepository.findByUserId(userId);
-        List<String> chatRoomIds = user.getChatRoomIds();
-        for(String chatRoomId: chatRoomIds){
-            markAllMessagesReadOrDelivered(chatRoomId,userId,true);
+        if (user != null) {
+            List<String> chatRoomIds = user.getChatRoomIds();
+            if (chatRoomIds != null && !chatRoomIds.isEmpty()) {
+                for(String chatRoomId: chatRoomIds){
+                    markAllMessagesReadOrDelivered(chatRoomId, userId, true);
+                }
+            } else {
+                System.out.println("No chat rooms found for user: " + userId);
+            }
+        } else {
+            System.out.println("User not found: " + userId);
         }
     }
+
 
     public void markAllMessagesRead(String chatRoomId,String userId){
         markAllMessagesReadOrDelivered(chatRoomId,userId,false);
