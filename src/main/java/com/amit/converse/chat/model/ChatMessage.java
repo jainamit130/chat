@@ -25,27 +25,33 @@ public class ChatMessage {
     private String content;
     private boolean isEncrypted;
     private User user;
-    private Map<Instant, Set<String>> deliveryReceiptsByTime = new TreeMap<>();
-    private Map<Instant, Set<String>> readReceiptsByTime = new TreeMap<>();
+    private Map<String, Set<String>> deliveryReceiptsByTime = new TreeMap<>();
+    private Map<String, Set<String>> readReceiptsByTime = new TreeMap<>();
 
     public void setDeliveryReceiptsByTime(Set<String> onlineUserIds) {
-        Instant now = Instant.now();
+        if(onlineUserIds.size()==0){
+            return;
+        }
+        String now = Instant.now().toString();
         deliveryReceiptsByTime.put(now, onlineUserIds);
     }
 
     public void setReadReceiptsByTime(Set<String> onlineAndActiveUserIds) {
-        Instant now = Instant.now();
-        deliveryReceiptsByTime.put(now, onlineAndActiveUserIds);
+        if(onlineAndActiveUserIds.size()==0){
+            return;
+        }
+        String now = Instant.now().toString();
+        readReceiptsByTime.put(now, onlineAndActiveUserIds);
     }
 
-    public void addUserToReadReceipt(Instant timestamp,String userId){
+    public void addUserToReadReceipt(String timestamp,String userId){
         Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
         userIds.add(userId);
         readReceiptsByTime.put(timestamp,userIds);
         return;
     }
 
-    public void addUserToDeliveredReceipt(Instant timestamp,String userId){
+    public void addUserToDeliveredReceipt(String timestamp,String userId){
         Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
         userIds.add(userId);
         deliveryReceiptsByTime.put(timestamp,userIds);

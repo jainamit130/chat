@@ -22,14 +22,20 @@ public class RedisService {
     }
 
     public Instant getUserTimestamp(String userId) {
-        String timestampString =(String) redisTemplate.opsForValue().get("user:" + userId + ":timestamp");
-        Instant timestamp = Instant.parse(timestampString);
-        return timestamp;
+        String timestampString = (String) redisTemplate.opsForValue().get("user:" + userId + ":timestamp");
+
+        if (timestampString == null) {
+            return null;
+        }
+
+        return Instant.parse(timestampString);
     }
 
     public void removeTimestamp(String userId) {
-        redisTemplate.opsForList().remove("user:" + userId + ":timestamp", 1, userId);
+        String key = "user:" + userId + ":timestamp";
+        redisTemplate.delete(key);
     }
+
 
     public boolean isUserInChatRoom(String chatRoomId, String userId) {
         return redisTemplate.opsForSet().isMember("chatRoom:" + chatRoomId + ":userIds", userId);
@@ -41,26 +47,21 @@ public class RedisService {
 
 
     public Set<String> filterOnlineUsers(List<String> userIds) {
-        // Generate Redis keys for the user IDs
         Set<String> redisKeys = userIds.stream()
-                .map(userId -> "user:" + userId + ":status")
+                .map(userId -> "user:" + userId + ":timestamp")
                 .collect(Collectors.toSet());
 
-        List<Object> statuses = redisTemplate.opsForValue().multiGet(redisKeys);
+        Set<String> onlineUsers = new HashSet<>();
 
-        Map<String, Object> userIdToStatusMap = userIds.stream()
-                .collect(Collectors.toMap(
-                        userId -> userId,
-                        userId -> statuses.stream()
-                                .filter(status -> status != null && status.equals("online"))
-                                .findFirst()
-                                .orElse(null)
-                ));
+        for (String userId : userIds) {
+            String redisKey = "user:" + userId + ":timestamp";
 
-        Set<String> onlineUsers = userIdToStatusMap.entrySet().stream()
-                .filter(entry -> "online".equals(entry.getValue()))
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
+            Boolean exists = redisTemplate.hasKey(redisKey);
+
+            if (Boolean.TRUE.equals(exists)) {
+                onlineUsers.add(userId);
+            }
+        }
 
         return onlineUsers;
     }

@@ -44,10 +44,9 @@ public class RedisController {
         return redisService.isUserInChatRoom(userId,chatRoomId);
     }
 
-    @PostMapping("/update/activeChatRoom/{userId}")
-    public String removeUserFromChatRoom(@PathVariable String userId) {
-        userService.updateUserLastSeen(userId,redisService.getUserTimestamp(userId));
-        redisService.removeTimestamp(userId);
-        return "User marked as offline";
+    @PostMapping("/update/activeChatRoom/{chatRoomId}/{userId}")
+    public void removeUserFromChatRoom(@PathVariable String userId, @PathVariable String chatRoomId) {
+        redisService.removeUserFromChatRoom(chatRoomId,userId);
+        return;
     }
 }

@@ -37,6 +37,7 @@ public class UserService {
     public void updateUserLastSeen(String userId, Instant timestamp) {
         User user = userRepository.findByUserId(userId);
         user.setLastSeenTimestamp(timestamp);
+        userRepository.save(user);
         return;
     }
 

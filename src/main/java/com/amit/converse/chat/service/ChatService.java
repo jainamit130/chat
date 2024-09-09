@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -43,8 +44,21 @@ public class ChatService {
         }
         message.setReadReceiptsByTime(onlineAndActiveUserIds);
         chatRoom.incrementTotalMessagesCount();
+
+        printMapKeyValueTypes(message.getDeliveryReceiptsByTime());
         chatRoomRepository.save(chatRoom);
         chatMessageRepository.save(message);
+    }
+
+    public static void printMapKeyValueTypes(Map<?, ?> map) {
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            Object key = entry.getKey();
+            Object value = entry.getValue();
+
+            // Print the key and value types
+            System.out.println("Key: " + key + " | Key Type: " + key.getClass().getName());
+            System.out.println("Value: " + value + " | Value Type: " + value.getClass().getName());
+        }
     }
 
     public void markAllMessagesDelivered(String userId){
@@ -75,12 +89,12 @@ public class ChatService {
         Integer unreadMessagesCount = chatRoom.getReadMessageCounts().get(userId);
         PageRequest pageRequest = PageRequest.of(0, unreadMessagesCount, Sort.by(Sort.Direction.DESC, "createdAt"));
         List<ChatMessage> unreadMessages = chatRoomRepository.findUnreadMessagesByChatRoomId(chatRoomId,pageRequest);
-        Instant timestamp = Instant.now();
+        String timestampStr = Instant.now().toString();
         for (ChatMessage unreadMessage: unreadMessages){
             if(isDelivered){
-                unreadMessage.addUserToDeliveredReceipt(timestamp,userId);
+                unreadMessage.addUserToDeliveredReceipt(timestampStr,userId);
             } else {
-                unreadMessage.addUserToReadReceipt(timestamp,userId);
+                unreadMessage.addUserToReadReceipt(timestampStr,userId);
             }
             chatMessageRepository.save(unreadMessage);
         }
