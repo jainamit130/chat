@@ -12,10 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -36,29 +33,17 @@ public class ChatService {
         message.setUser(user);
         Set<String> onlineUserIds = redisService.filterOnlineUsers(chatRoom.getUserIds());
         message.setDeliveryReceiptsByTime(onlineUserIds);
-        Set<String> onlineAndActiveUserIds = new HashSet<>();
+        Set<String> onlineAndActiveUserIds = new HashSet<>(Collections.singleton(message.getSenderId()));
         for (String userId : onlineUserIds) {
-            if (redisService.isUserInChatRoom(chatRoomId,userId)) {
+            if (userId!=message.getSenderId() && redisService.isUserInChatRoom(chatRoomId,userId)) {
                 onlineAndActiveUserIds.add(userId);
             }
         }
         message.setReadReceiptsByTime(onlineAndActiveUserIds);
         chatRoom.incrementTotalMessagesCount();
-
-        printMapKeyValueTypes(message.getDeliveryReceiptsByTime());
+        chatRoom.allMessagesMarkedRead(user.getUserId());
         chatRoomRepository.save(chatRoom);
         chatMessageRepository.save(message);
-    }
-
-    public static void printMapKeyValueTypes(Map<?, ?> map) {
-        for (Map.Entry<?, ?> entry : map.entrySet()) {
-            Object key = entry.getKey();
-            Object value = entry.getValue();
-
-            // Print the key and value types
-            System.out.println("Key: " + key + " | Key Type: " + key.getClass().getName());
-            System.out.println("Value: " + value + " | Value Type: " + value.getClass().getName());
-        }
     }
 
     public void markAllMessagesDelivered(String userId){
@@ -85,10 +70,9 @@ public class ChatService {
     public void markAllMessagesReadOrDelivered(String chatRoomId,String userId, Boolean isDelivered) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-        chatRoom.allMessagesMarkedRead(userId);
-        Integer unreadMessagesCount = chatRoom.getReadMessageCounts().get(userId);
-        PageRequest pageRequest = PageRequest.of(0, unreadMessagesCount, Sort.by(Sort.Direction.DESC, "createdAt"));
-        List<ChatMessage> unreadMessages = chatRoomRepository.findUnreadMessagesByChatRoomId(chatRoomId,pageRequest);
+        Integer unreadMessagesCount = chatRoom.getTotalMessagesCount()-chatRoom.getReadMessageCounts().get(userId);
+        PageRequest pageRequest = PageRequest.of(0, unreadMessagesCount, Sort.by(Sort.Direction.DESC, "timestamp"));
+        List<ChatMessage> unreadMessages = chatMessageRepository.findMessagesByChatRoomId(chatRoomId,pageRequest);
         String timestampStr = Instant.now().toString();
         for (ChatMessage unreadMessage: unreadMessages){
             if(isDelivered){
@@ -98,6 +82,7 @@ public class ChatService {
             }
             chatMessageRepository.save(unreadMessage);
         }
+        chatRoom.allMessagesMarkedRead(userId);
         chatRoomRepository.save(chatRoom);
         return;
     }

@@ -13,6 +13,4 @@ import java.util.List;
 public interface ChatRoomRepository extends MongoRepository<ChatRoom, String> {
     List<ChatRoom> findByUserIdsContains(String userId);
 
-    @Query("{ '_id': ?0, 'messages.read': false }")
-    List<ChatMessage> findUnreadMessagesByChatRoomId(String chatRoomId, Pageable pageable);
 }
