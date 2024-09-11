@@ -20,6 +20,7 @@ public class GroupService {
 
     private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final UserService userService;
     private final SimpMessagingTemplate messagingTemplate;
 
     public List<ChatRoom> getChatRoomsOfUser(String userId) {
@@ -55,6 +56,7 @@ public class GroupService {
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
         for (String userId : memberIds) {
+            userService.groupJoinedOrLeft(userId,chatRoom.getId(),true);
             messagingTemplate.convertAndSend("/topic/user/" + userId, savedChatRoom);
         }
 
@@ -65,7 +67,9 @@ public class GroupService {
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-
+        for(String userId : memberIds){
+            userService.groupJoinedOrLeft(userId,chatRoom.getId(),true);
+        }
         chatRoom.getUserIds().addAll(memberIds);
         return chatRoomRepository.save(chatRoom);
     }
@@ -74,7 +78,9 @@ public class GroupService {
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-
+        for(String userId : memberIds){
+            userService.groupJoinedOrLeft(userId,chatRoom.getId(),false);
+        }
         chatRoom.getUserIds().removeAll(memberIds);
         return chatRoomRepository.save(chatRoom);
     }

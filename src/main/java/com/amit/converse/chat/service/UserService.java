@@ -41,6 +41,16 @@ public class UserService {
         return;
     }
 
+    public void groupJoinedOrLeft(String userId,String chatRoomId,Boolean isJoined){
+        User user = userRepository.findByUserId(userId);
+        if(isJoined){
+            user.addChatRoom(chatRoomId);
+        } else {
+            user.removeChatRoom(chatRoomId);
+        }
+        userRepository.save(user);
+    }
+
     public List<UserResponseDto> getAllUsers(){
         return userRepository.findAll().stream().map(user -> {
             return UserResponseDto.builder().username(user.getUsername()).id(user.getUserId()).build();

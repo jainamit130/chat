@@ -31,17 +31,19 @@ public class ChatService {
         message.setTimestamp(Instant.now());
         message.setChatRoomId(chatRoom.getId());
         message.setUser(user);
+        chatRoom.incrementTotalMessagesCount();
         Set<String> onlineUserIds = redisService.filterOnlineUsers(chatRoom.getUserIds());
         message.setDeliveryReceiptsByTime(onlineUserIds);
         Set<String> onlineAndActiveUserIds = new HashSet<>(Collections.singleton(message.getSenderId()));
         for (String userId : onlineUserIds) {
-            if (userId!=message.getSenderId() && redisService.isUserInChatRoom(chatRoomId,userId)) {
-                onlineAndActiveUserIds.add(userId);
+            if (redisService.isUserInChatRoom(chatRoomId,userId)) {
+                if(userId!=message.getSenderId()) {
+                    onlineAndActiveUserIds.add(userId);
+                }
+                chatRoom.allMessagesMarkedRead(userId);
             }
         }
         message.setReadReceiptsByTime(onlineAndActiveUserIds);
-        chatRoom.incrementTotalMessagesCount();
-        chatRoom.allMessagesMarkedRead(user.getUserId());
         chatRoomRepository.save(chatRoom);
         chatMessageRepository.save(message);
     }
@@ -49,7 +51,7 @@ public class ChatService {
     public void markAllMessagesDelivered(String userId){
         User user = userRepository.findByUserId(userId);
         if (user != null) {
-            List<String> chatRoomIds = user.getChatRoomIds();
+            Set<String> chatRoomIds = user.getChatRoomIds();
             if (chatRoomIds != null && !chatRoomIds.isEmpty()) {
                 for(String chatRoomId: chatRoomIds){
                     markAllMessagesReadOrDelivered(chatRoomId, userId, true);
@@ -82,8 +84,10 @@ public class ChatService {
             }
             chatMessageRepository.save(unreadMessage);
         }
-        chatRoom.allMessagesMarkedRead(userId);
-        chatRoomRepository.save(chatRoom);
+        if(!isDelivered) {
+            chatRoom.allMessagesMarkedRead(userId);
+            chatRoomRepository.save(chatRoom);
+        }
         return;
     }
 }

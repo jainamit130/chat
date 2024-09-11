@@ -47,10 +47,6 @@ public class RedisService {
 
 
     public Set<String> filterOnlineUsers(List<String> userIds) {
-        Set<String> redisKeys = userIds.stream()
-                .map(userId -> "user:" + userId + ":timestamp")
-                .collect(Collectors.toSet());
-
         Set<String> onlineUsers = new HashSet<>();
 
         for (String userId : userIds) {
@@ -70,9 +66,9 @@ public class RedisService {
     public void removeUserFromChatRoom(String chatRoomId, String userId) {
         String chatRoomKey = "chatRoom:" + chatRoomId + ":userIds";
 
-        redisTemplate.opsForList().remove(chatRoomKey, 1, userId);
+        redisTemplate.opsForSet().remove(chatRoomKey,userId);
 
-        Long size = redisTemplate.opsForList().size(chatRoomKey);
+        Long size = redisTemplate.opsForSet().size(chatRoomKey);
 
         if (size != null && size == 0) {
             redisTemplate.delete(chatRoomKey);

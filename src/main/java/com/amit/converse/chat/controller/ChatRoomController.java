@@ -33,7 +33,6 @@ public class ChatRoomController {
         return chatRooms;
     }
 
-    // Endpoint to create a new chat room (group)
     @PostMapping("/groups/create")
     public ResponseEntity<ChatRoom> createGroup(@RequestBody CreateGroupRequest request) {
         try {

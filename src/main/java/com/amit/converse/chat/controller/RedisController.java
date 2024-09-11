@@ -35,7 +35,7 @@ public class RedisController {
 
     @PostMapping("/save/activeChatRoom/{chatRoomId}/{userId}")
     public String updateActiveChatRoom(@PathVariable String userId, @PathVariable String chatRoomId) {
-        redisService.addUserIdToChatRoom(userId, chatRoomId);
+        redisService.addUserIdToChatRoom(chatRoomId,userId);
         return "Data saved";
     }
 

@@ -8,7 +8,9 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -20,8 +22,18 @@ public class User {
     @Id
     private String id;
     private String userId;
-    private List<String> chatRoomIds;
+    private Set<String> chatRoomIds = new HashSet<>();;
     private String username;
     private String password;
     private Instant lastSeenTimestamp;
+
+    public void addChatRoom(String chatRoomId){
+        chatRoomIds.add(chatRoomId);
+    }
+
+    public void removeChatRoom(String chatRoomId) {
+        if (chatRoomIds.contains(chatRoomId)) {
+            chatRoomIds.remove(chatRoomId);
+        }
+    }
 }
