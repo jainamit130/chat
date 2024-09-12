@@ -4,8 +4,6 @@ import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatMessageRepository;
-import com.amit.converse.chat.repository.ChatRoomRepository;
-import com.amit.converse.chat.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -18,16 +16,15 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ChatService {
 
-    private final ChatRoomRepository chatRoomRepository;
+    private final GroupService groupService;
     private final ChatMessageRepository chatMessageRepository;
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final RedisService redisService;
 
     public void addMessage(String chatRoomId, ChatMessage message) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+        ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
 
-        User user = userRepository.findByUserId(message.getSenderId());
+        User user = userService.getUser(message.getSenderId());
         message.setTimestamp(Instant.now());
         message.setChatRoomId(chatRoom.getId());
         message.setUser(user);
@@ -40,24 +37,26 @@ public class ChatService {
                 if(userId!=message.getSenderId()) {
                     onlineAndActiveUserIds.add(userId);
                 }
+                chatRoom.allMessagesMarkedDelivered(userId);
                 chatRoom.allMessagesMarkedRead(userId);
             }
         }
         message.setReadReceiptsByTime(onlineAndActiveUserIds);
-        chatRoomRepository.save(chatRoom);
         chatMessageRepository.save(message);
+        groupService.saveChatRoom(chatRoom);
     }
 
     public void markAllMessagesDelivered(String userId){
-        User user = userRepository.findByUserId(userId);
+        User user = userService.getUser(userId);
         if (user != null) {
             Set<String> chatRoomIds = user.getChatRoomIds();
             if (chatRoomIds != null && !chatRoomIds.isEmpty()) {
                 for(String chatRoomId: chatRoomIds){
-                    markAllMessagesReadOrDelivered(chatRoomId, userId, true);
+                    ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
+                    Integer toBeDeliveredMessagesCount=chatRoom.getUndeliveredMessageCount(userId);
+                    if(toBeDeliveredMessagesCount>0)
+                        markAllMessages(chatRoomId, userId, true,toBeDeliveredMessagesCount);
                 }
-            } else {
-                System.out.println("No chat rooms found for user: " + userId);
             }
         } else {
             System.out.println("User not found: " + userId);
@@ -66,17 +65,18 @@ public class ChatService {
 
 
     public void markAllMessagesRead(String chatRoomId,String userId){
-        markAllMessagesReadOrDelivered(chatRoomId,userId,false);
+        ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
+        Integer toBeMarkedMessagesCount=chatRoom.getUnreadMessageCount(userId);
+        if(toBeMarkedMessagesCount>0)
+            markAllMessages(chatRoomId,userId,false,toBeMarkedMessagesCount);
     }
 
-    public void markAllMessagesReadOrDelivered(String chatRoomId,String userId, Boolean isDelivered) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-        Integer unreadMessagesCount = chatRoom.getTotalMessagesCount()-chatRoom.getReadMessageCounts().get(userId);
-        PageRequest pageRequest = PageRequest.of(0, unreadMessagesCount, Sort.by(Sort.Direction.DESC, "timestamp"));
-        List<ChatMessage> unreadMessages = chatMessageRepository.findMessagesByChatRoomId(chatRoomId,pageRequest);
+    public void markAllMessages(String chatRoomId,String userId, Boolean isDelivered, Integer toBeMarkedMessagesCount) {
+        ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
+        PageRequest pageRequest = PageRequest.of(0, toBeMarkedMessagesCount, Sort.by(Sort.Direction.DESC, "timestamp"));
+        List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoomId,pageRequest);
         String timestampStr = Instant.now().toString();
-        for (ChatMessage unreadMessage: unreadMessages){
+        for (ChatMessage unreadMessage: messagesToBeMarked){
             if(isDelivered){
                 unreadMessage.addUserToDeliveredReceipt(timestampStr,userId);
             } else {
@@ -86,8 +86,10 @@ public class ChatService {
         }
         if(!isDelivered) {
             chatRoom.allMessagesMarkedRead(userId);
-            chatRoomRepository.save(chatRoom);
+        } else {
+            chatRoom.allMessagesMarkedDelivered(userId);
         }
+        groupService.saveChatRoom(chatRoom);
         return;
     }
 }

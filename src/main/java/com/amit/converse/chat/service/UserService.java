@@ -35,20 +35,30 @@ public class UserService {
     }
 
     public void updateUserLastSeen(String userId, Instant timestamp) {
-        User user = userRepository.findByUserId(userId);
-        user.setLastSeenTimestamp(timestamp);
-        userRepository.save(user);
+        User user = getUser(userId);
+//        user.setLastSeenTimestamp(timestamp);
+        saveUser(user);
         return;
     }
 
+    public void saveUser(User user) {
+        userRepository.save(user);
+    }
+
+    public User getUser(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new ConverseException("User not found!!"));
+        return user;
+    }
+
     public void groupJoinedOrLeft(String userId,String chatRoomId,Boolean isJoined){
-        User user = userRepository.findByUserId(userId);
+        User user = getUser(userId);
         if(isJoined){
             user.addChatRoom(chatRoomId);
         } else {
             user.removeChatRoom(chatRoomId);
         }
-        userRepository.save(user);
+        saveUser(user);
     }
 
     public List<UserResponseDto> getAllUsers(){

@@ -1,7 +1,6 @@
 package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.UserResponseDto;
-import com.amit.converse.chat.repository.UserRepository;
 import com.amit.converse.chat.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor

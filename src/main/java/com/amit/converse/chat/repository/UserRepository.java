@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends MongoRepository<User,String> {
     boolean existsByUsername(String username);
-    User findByUserId(String userId);
+    Optional<User> findByUserId(String userId);
     List<User> findAllByUsernameStartsWithIgnoreCase(String searchPrefix);
 }

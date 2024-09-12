@@ -2,9 +2,9 @@ package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -18,36 +18,35 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GroupService {
 
-    private final ChatMessageRepository chatMessageRepository;
     private final ChatRoomRepository chatRoomRepository;
     private final UserService userService;
+    private final SharedGroupChatService groupChatService;
     private final SimpMessagingTemplate messagingTemplate;
 
     public List<ChatRoom> getChatRoomsOfUser(String userId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdsContains(userId);
         for (ChatRoom chatRoom : chatRooms) {
-            ChatMessage latestMessage = chatMessageRepository.findTopByChatRoomIdOrderByTimestampDesc(chatRoom.getId());
+            ChatMessage latestMessage = groupChatService.getLatestMessageOfGroup(chatRoom.getId());
             chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(userId));
             chatRoom.setLatestMessage(latestMessage);
         }
-        return chatRooms != null ? chatRooms : Collections.emptyList(); // or throw exception if needed
+        return chatRooms;
     }
 
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId){
-        List<ChatMessage> chatMessages = chatMessageRepository.findAllByChatRoomId(chatRoomId);
+        List<ChatMessage> chatMessages = groupChatService.getAllMessagesOfGroup(chatRoomId);
         return chatMessages != null ? chatMessages : Collections.emptyList();
     }
 
     public ChatRoom createGroup(String groupName, String createdByUserId, List<String> memberIds) {
 
         Map<String, Integer> readMessageCounts = new HashMap<>();
-        for (String userId : memberIds) {
-            readMessageCounts.put(userId, 0);
-        }
+        Map<String, Integer> deliverMessageCounts = new HashMap<>();
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(groupName)
                 .userIds(memberIds)
                 .readMessageCounts(readMessageCounts)
+                .deliveredMessageCounts(deliverMessageCounts)
                 .createdBy(createdByUserId)
                 .totalMessagesCount(0)
                 .createdAt(getCurrentDateTimeAsString())
@@ -74,6 +73,17 @@ public class GroupService {
         return chatRoomRepository.save(chatRoom);
     }
 
+    public ChatRoom getChatRoom(String chatRoomId){
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+        return chatRoom;
+    }
+
+    public void saveChatRoom(ChatRoom chatRoom){
+        chatRoomRepository.save(chatRoom);
+        return;
+    }
+
     public ChatRoom removeMembers(String chatRoomId, List<String> memberIds) {
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
@@ -93,4 +103,8 @@ public class GroupService {
         return dateTime.format(formatter);
     }
 
+    public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, PageRequest pageRequest) {
+        List<ChatMessage> messagesToBeMarked = groupChatService.getAllMessagesOfGroup(chatRoomId,pageRequest);
+        return messagesToBeMarked;
+    }
 }

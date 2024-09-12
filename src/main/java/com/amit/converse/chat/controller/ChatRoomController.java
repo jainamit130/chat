@@ -25,13 +25,6 @@ import java.util.List;
 public class ChatRoomController {
 
     private final GroupService groupService;
-    private final ChatRoomRepository chatRoomRepository;
-
-    @GetMapping("/user/{userId}/rooms")
-    public List<ChatRoom> getChatRoomsForUser(@PathVariable String userId) {
-        List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdsContains(userId);
-        return chatRooms;
-    }
 
     @PostMapping("/groups/create")
     public ResponseEntity<ChatRoom> createGroup(@RequestBody CreateGroupRequest request) {
