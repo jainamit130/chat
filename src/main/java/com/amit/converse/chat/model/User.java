@@ -22,7 +22,7 @@ public class User {
     @Id
     private String id;
     private String userId;
-    private Set<String> chatRoomIds = new HashSet<>();;
+    private Set<String> chatRoomIds = new HashSet<>();
     private String username;
     private String password;
 //    private Instant lastSeenTimestamp;

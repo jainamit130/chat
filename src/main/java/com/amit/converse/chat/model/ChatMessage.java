@@ -23,6 +23,7 @@ public class ChatMessage {
     private String chatRoomId;
     private Instant timestamp;
     private String content;
+    private MessageStatus status;
     private boolean isEncrypted;
     private User user;
     private Map<String, Set<String>> deliveryReceiptsByTime = new TreeMap<>();

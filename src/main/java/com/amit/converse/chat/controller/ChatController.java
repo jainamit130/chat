@@ -4,6 +4,7 @@ import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.service.ChatService;
 import com.amit.converse.chat.service.GroupService;
+import com.amit.converse.chat.service.WebSocketMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -22,13 +23,13 @@ public class ChatController {
 
     private final ChatService chatService;
     private final GroupService groupService;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final WebSocketMessageService webSocketMessageService;
 
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
     public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
         try {
             chatService.addMessage(chatRoomId, chatMessage);
-            messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, chatMessage);
+            webSocketMessageService.sendMessage(chatRoomId,chatMessage);
         } catch (IllegalArgumentException e) {
         }
     }

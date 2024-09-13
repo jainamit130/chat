@@ -3,6 +3,7 @@ package com.amit.converse.chat.service;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.model.UserMessageStats;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -20,29 +21,39 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final UserService userService;
     private final RedisService redisService;
+    private final WebSocketMessageService webSocketMessageService;
 
     public void addMessage(String chatRoomId, ChatMessage message) {
         ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
-
         User user = userService.getUser(message.getSenderId());
+
         message.setTimestamp(Instant.now());
         message.setChatRoomId(chatRoom.getId());
         message.setUser(user);
+
         chatRoom.incrementTotalMessagesCount();
+
         Set<String> onlineUserIds = redisService.filterOnlineUsers(chatRoom.getUserIds());
         message.setDeliveryReceiptsByTime(onlineUserIds);
         Set<String> onlineAndActiveUserIds = new HashSet<>(Collections.singleton(message.getSenderId()));
+        UserMessageStats userMessageStats = chatRoom.getUserStats(user.getUserId());
+        userMessageStats.incrementSentMessages();
+        userMessageStats.incrementDeliveredMessages();
+        userMessageStats.incrementReadMessages();
         for (String userId : onlineUserIds) {
+            userMessageStats.incrementDeliveredMessages();
+            chatRoom.allMessagesMarkedDelivered(userId);
             if (redisService.isUserInChatRoom(chatRoomId,userId)) {
                 if(userId!=message.getSenderId()) {
                     onlineAndActiveUserIds.add(userId);
+                    userMessageStats.incrementReadMessages();
                 }
-                chatRoom.allMessagesMarkedDelivered(userId);
                 chatRoom.allMessagesMarkedRead(userId);
             }
         }
         message.setReadReceiptsByTime(onlineAndActiveUserIds);
         chatMessageRepository.save(message);
+        chatRoom.updateUserStats(user.getUserId(),userMessageStats);
         groupService.saveChatRoom(chatRoom);
     }
 
@@ -77,17 +88,23 @@ public class ChatService {
         List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoomId,pageRequest);
         String timestampStr = Instant.now().toString();
         for (ChatMessage unreadMessage: messagesToBeMarked){
+            UserMessageStats userMessageStats = chatRoom.getUserStats(unreadMessage.getSenderId());
             if(isDelivered){
                 unreadMessage.addUserToDeliveredReceipt(timestampStr,userId);
+                userMessageStats.incrementDeliveredMessages();
             } else {
                 unreadMessage.addUserToReadReceipt(timestampStr,userId);
+                userMessageStats.incrementReadMessages();
             }
+            chatRoom.updateUserStats(unreadMessage.getSenderId(),userMessageStats);
             chatMessageRepository.save(unreadMessage);
         }
         if(!isDelivered) {
             chatRoom.allMessagesMarkedRead(userId);
+            webSocketMessageService.sendMarkedMessageStatus(chatRoomId,userId,timestampStr,false);
         } else {
             chatRoom.allMessagesMarkedDelivered(userId);
+            webSocketMessageService.sendMarkedMessageStatus(chatRoomId,userId,timestampStr,true);
         }
         groupService.saveChatRoom(chatRoom);
         return;

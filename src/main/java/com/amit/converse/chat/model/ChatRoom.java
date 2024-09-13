@@ -18,13 +18,14 @@ public class ChatRoom {
     private String id;
     private String name;
     private List<String> userIds;
+    private Map<String,UserMessageStats>  userMessageStatsMap;
     private String createdBy;
     private String createdAt;
     private transient ChatMessage latestMessage;
     private transient Integer unreadMessageCount;
     private Integer totalMessagesCount;
-    private Map<String, Integer> readMessageCounts = new HashMap<>();
-    private Map<String, Integer> deliveredMessageCounts = new HashMap<>();
+    private Map<String, Integer> readMessageCounts;
+    private Map<String, Integer> deliveredMessageCounts;
 
     public void incrementTotalMessagesCount() {
         if(totalMessagesCount==null){
@@ -47,5 +48,14 @@ public class ChatRoom {
 
     public int  getUndeliveredMessageCount(String userId) {
         return totalMessagesCount-deliveredMessageCounts.getOrDefault(userId, 0);
+    }
+
+    public UserMessageStats getUserStats(String userId){
+        return userMessageStatsMap.get(userId);
+    }
+
+    public void updateUserStats(String userId,UserMessageStats userMessageStats) {
+        userMessageStatsMap.put(userId,userMessageStats);
+        return;
     }
 }

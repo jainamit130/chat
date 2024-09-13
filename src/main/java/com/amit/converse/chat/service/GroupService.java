@@ -21,7 +21,7 @@ public class GroupService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserService userService;
     private final SharedGroupChatService groupChatService;
-    private final SimpMessagingTemplate messagingTemplate;
+    private final WebSocketMessageService webSocketMessageService;
 
     public List<ChatRoom> getChatRoomsOfUser(String userId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdsContains(userId);
@@ -42,6 +42,8 @@ public class GroupService {
 
         Map<String, Integer> readMessageCounts = new HashMap<>();
         Map<String, Integer> deliverMessageCounts = new HashMap<>();
+        Map<String, Integer> userMessageStatsMap = new HashMap<>();
+
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(groupName)
                 .userIds(memberIds)
@@ -56,7 +58,7 @@ public class GroupService {
 
         for (String userId : memberIds) {
             userService.groupJoinedOrLeft(userId,chatRoom.getId(),true);
-            messagingTemplate.convertAndSend("/topic/user/" + userId, savedChatRoom);
+            webSocketMessageService.sendNewGroupStatusToMembers(userId,savedChatRoom);
         }
 
         return savedChatRoom;
