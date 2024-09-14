@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,9 +19,8 @@ public class ChatRoom {
     private String id;
     private String name;
     private List<String> userIds;
-    private Map<String,UserMessageStats>  userMessageStatsMap;
     private String createdBy;
-    private String createdAt;
+    private Instant createdAt;
     private transient ChatMessage latestMessage;
     private transient Integer unreadMessageCount;
     private Integer totalMessagesCount;
@@ -48,14 +48,5 @@ public class ChatRoom {
 
     public int  getUndeliveredMessageCount(String userId) {
         return totalMessagesCount-deliveredMessageCounts.getOrDefault(userId, 0);
-    }
-
-    public UserMessageStats getUserStats(String userId){
-        return userMessageStatsMap.get(userId);
-    }
-
-    public void updateUserStats(String userId,UserMessageStats userMessageStats) {
-        userMessageStatsMap.put(userId,userMessageStats);
-        return;
     }
 }

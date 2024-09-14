@@ -25,7 +25,8 @@ public class User {
     private Set<String> chatRoomIds = new HashSet<>();
     private String username;
     private String password;
-//    private Instant lastSeenTimestamp;
+    private Instant lastSeenTimestamp;
+    private String creationDate;
 
     public void addChatRoom(String chatRoomId){
         chatRoomIds.add(chatRoomId);

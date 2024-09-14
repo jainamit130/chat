@@ -28,8 +28,8 @@ public class ChatController {
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
     public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
         try {
-            chatService.addMessage(chatRoomId, chatMessage);
-            webSocketMessageService.sendMessage(chatRoomId,chatMessage);
+            ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage);
+            webSocketMessageService.sendMessage(chatRoomId,savedMessage);
         } catch (IllegalArgumentException e) {
         }
     }

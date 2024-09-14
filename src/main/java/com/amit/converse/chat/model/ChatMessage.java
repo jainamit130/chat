@@ -58,4 +58,8 @@ public class ChatMessage {
         deliveryReceiptsByTime.put(timestamp,userIds);
         return;
     }
+
+    public void setMessageStatus(MessageStatus newStatus) {
+        status = newStatus;
+    }
 }

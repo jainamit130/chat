@@ -5,10 +5,8 @@ import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +23,9 @@ public class UserService {
 
     @KafkaListener(topics = "user-events", groupId = "group_id")
     public User consume(String userEvent) {
-
         User user = new Gson().fromJson(userEvent, User.class);
+        Instant createdAt = Instant.parse(user.getCreationDate());
+        user.setLastSeenTimestamp(createdAt);
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Username already exists: " + user.getUsername());
         }
@@ -36,7 +35,7 @@ public class UserService {
 
     public void updateUserLastSeen(String userId, Instant timestamp) {
         User user = getUser(userId);
-//        user.setLastSeenTimestamp(timestamp);
+        user.setLastSeenTimestamp(timestamp);
         saveUser(user);
         return;
     }

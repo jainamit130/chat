@@ -2,8 +2,8 @@ package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
+import com.amit.converse.chat.model.MessageStatus;
 import com.amit.converse.chat.model.User;
-import com.amit.converse.chat.model.UserMessageStats;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -23,38 +23,31 @@ public class ChatService {
     private final RedisService redisService;
     private final WebSocketMessageService webSocketMessageService;
 
-    public void addMessage(String chatRoomId, ChatMessage message) {
+    public ChatMessage addMessage(String chatRoomId, ChatMessage message) {
         ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
         User user = userService.getUser(message.getSenderId());
 
         message.setTimestamp(Instant.now());
         message.setChatRoomId(chatRoom.getId());
         message.setUser(user);
-
+        message.setMessageStatus(MessageStatus.PENDING);
         chatRoom.incrementTotalMessagesCount();
+        message.setDeliveryReceiptsByTime(new HashSet<>());
 
         Set<String> onlineUserIds = redisService.filterOnlineUsers(chatRoom.getUserIds());
-        message.setDeliveryReceiptsByTime(onlineUserIds);
         Set<String> onlineAndActiveUserIds = new HashSet<>(Collections.singleton(message.getSenderId()));
-        UserMessageStats userMessageStats = chatRoom.getUserStats(user.getUserId());
-        userMessageStats.incrementSentMessages();
-        userMessageStats.incrementDeliveredMessages();
-        userMessageStats.incrementReadMessages();
         for (String userId : onlineUserIds) {
-            userMessageStats.incrementDeliveredMessages();
-            chatRoom.allMessagesMarkedDelivered(userId);
+            markAllMessagesDelivered(userId);
             if (redisService.isUserInChatRoom(chatRoomId,userId)) {
                 if(userId!=message.getSenderId()) {
                     onlineAndActiveUserIds.add(userId);
-                    userMessageStats.incrementReadMessages();
                 }
-                chatRoom.allMessagesMarkedRead(userId);
+                markAllMessagesRead(chatRoomId,userId);
             }
         }
-        message.setReadReceiptsByTime(onlineAndActiveUserIds);
-        chatMessageRepository.save(message);
-        chatRoom.updateUserStats(user.getUserId(),userMessageStats);
+        ChatMessage savedMessage = chatMessageRepository.save(message);
         groupService.saveChatRoom(chatRoom);
+        return savedMessage;
     }
 
     public void markAllMessagesDelivered(String userId){
@@ -87,24 +80,26 @@ public class ChatService {
         PageRequest pageRequest = PageRequest.of(0, toBeMarkedMessagesCount, Sort.by(Sort.Direction.DESC, "timestamp"));
         List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoomId,pageRequest);
         String timestampStr = Instant.now().toString();
-        for (ChatMessage unreadMessage: messagesToBeMarked){
-            UserMessageStats userMessageStats = chatRoom.getUserStats(unreadMessage.getSenderId());
+        for (ChatMessage messageToBeMarked: messagesToBeMarked){
             if(isDelivered){
-                unreadMessage.addUserToDeliveredReceipt(timestampStr,userId);
-                userMessageStats.incrementDeliveredMessages();
+                messageToBeMarked.addUserToDeliveredReceipt(timestampStr,userId);
+                if(messageToBeMarked.getDeliveryReceiptsByTime().size()==chatRoom.getUserIds().size()){
+                    messageToBeMarked.setMessageStatus(MessageStatus.DELIVERED);
+                    webSocketMessageService.sendMarkedMessageStatus(chatRoomId,messageToBeMarked.getSenderId(),false);
+                }
             } else {
-                unreadMessage.addUserToReadReceipt(timestampStr,userId);
-                userMessageStats.incrementReadMessages();
+                messageToBeMarked.addUserToReadReceipt(timestampStr,userId);
+                if(messageToBeMarked.getReadReceiptsByTime().size()==chatRoom.getUserIds().size()){
+                    messageToBeMarked.setMessageStatus(MessageStatus.READ);
+                    webSocketMessageService.sendMarkedMessageStatus(chatRoomId,messageToBeMarked.getSenderId(),false);
+                }
             }
-            chatRoom.updateUserStats(unreadMessage.getSenderId(),userMessageStats);
-            chatMessageRepository.save(unreadMessage);
+            chatMessageRepository.save(messageToBeMarked);
         }
         if(!isDelivered) {
             chatRoom.allMessagesMarkedRead(userId);
-            webSocketMessageService.sendMarkedMessageStatus(chatRoomId,userId,timestampStr,false);
         } else {
             chatRoom.allMessagesMarkedDelivered(userId);
-            webSocketMessageService.sendMarkedMessageStatus(chatRoomId,userId,timestampStr,true);
         }
         groupService.saveChatRoom(chatRoom);
         return;

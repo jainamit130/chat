@@ -42,7 +42,6 @@ public class GroupService {
 
         Map<String, Integer> readMessageCounts = new HashMap<>();
         Map<String, Integer> deliverMessageCounts = new HashMap<>();
-        Map<String, Integer> userMessageStatsMap = new HashMap<>();
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(groupName)
@@ -51,7 +50,7 @@ public class GroupService {
                 .deliveredMessageCounts(deliverMessageCounts)
                 .createdBy(createdByUserId)
                 .totalMessagesCount(0)
-                .createdAt(getCurrentDateTimeAsString())
+                .createdAt(Instant.now())
                 .build();
 
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);

@@ -3,13 +3,14 @@ package com.amit.converse.chat.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.time.Instant;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
-public class MessageStatusDto {
-    private String chatRoomId;
-    private Boolean isDelivered;
+public class UserEventDTO {
+    private String userId;
+    private String username;
+    private Instant creationDate;
 }

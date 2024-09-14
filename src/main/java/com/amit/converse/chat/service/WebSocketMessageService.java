@@ -32,8 +32,8 @@ public class WebSocketMessageService {
         messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, chatMessage);
     }
 
-    public void sendMarkedMessageStatus(String chatRoomId,String readerId,String timestampStr,Boolean isDelivered){
-        MessageStatusDto messageStatusDto = MessageStatusDto.builder().readerId(readerId).chatRoomId(chatRoomId).timestamp(timestampStr).isDelivered(isDelivered).build();
-        messagingTemplate.convertAndSend("/topic/message/"+chatRoomId,messageStatusDto);
+    public void sendMarkedMessageStatus(String chatRoomId,String senderId,Boolean isDelivered){
+        MessageStatusDto messageStatusDto = MessageStatusDto.builder().chatRoomId(chatRoomId).isDelivered(isDelivered).build();
+        messagingTemplate.convertAndSend("/topic/message/"+senderId,messageStatusDto);
     }
 }
