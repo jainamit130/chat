@@ -17,7 +17,7 @@ public class RedisController {
 
     @PostMapping("/save/lastSeen/{userId}")
     public void saveLastSeen(@PathVariable String userId, @RequestParam String timestamp) {
-        redisService.saveUserTimestamp(userId, timestamp);
+        redisService.setUserTimestamp(userId, timestamp);
         return;
     }
 
@@ -29,7 +29,7 @@ public class RedisController {
     @PostMapping("/update/lastSeen/{userId}")
     public String updateLastSeen(@PathVariable String userId) {
         userService.updateUserLastSeen(userId,redisService.getUserTimestamp(userId));
-        redisService.removeTimestamp(userId);
+        redisService.saveAndRemoveTimestamp(userId);
         return "User marked as offline";
     }
 

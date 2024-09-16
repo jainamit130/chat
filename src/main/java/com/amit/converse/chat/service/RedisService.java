@@ -7,17 +7,16 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
 public class RedisService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+    private final UserService userService;
 
-    public void saveUserTimestamp(String userId, String timestamp) {
+    public void setUserTimestamp(String userId, String timestamp) {
         redisTemplate.opsForValue().set("user:" + userId + ":timestamp", timestamp);
     }
 
@@ -31,7 +30,9 @@ public class RedisService {
         return Instant.parse(timestampString);
     }
 
-    public void removeTimestamp(String userId) {
+    public void saveAndRemoveTimestamp(String userId) {
+        Instant timestamp = getUserTimestamp(userId);
+        userService.updateLastSeenOfUser(userId,timestamp);
         String key = "user:" + userId + ":timestamp";
         redisTemplate.delete(key);
     }
