@@ -29,22 +29,6 @@ public class ChatMessage {
     private Map<String, Set<String>> deliveryReceiptsByTime = new TreeMap<>();
     private Map<String, Set<String>> readReceiptsByTime = new TreeMap<>();
 
-    public void setDeliveryReceiptsByTime(Set<String> onlineUserIds) {
-        if(onlineUserIds.size()==0){
-            return;
-        }
-        String now = Instant.now().toString();
-        deliveryReceiptsByTime.put(now, onlineUserIds);
-    }
-
-    public void setReadReceiptsByTime(Set<String> onlineAndActiveUserIds) {
-        if(onlineAndActiveUserIds.size()==0){
-            return;
-        }
-        String now = Instant.now().toString();
-        readReceiptsByTime.put(now, onlineAndActiveUserIds);
-    }
-
     public void addUserToReadReceipt(String timestamp,String userId){
         Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
         userIds.add(userId);
@@ -53,7 +37,7 @@ public class ChatMessage {
     }
 
     public void addUserToDeliveredReceipt(String timestamp,String userId){
-        Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
+        Set<String> userIds = deliveryReceiptsByTime.getOrDefault(timestamp,new HashSet());
         userIds.add(userId);
         deliveryReceiptsByTime.put(timestamp,userIds);
         return;

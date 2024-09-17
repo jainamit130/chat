@@ -4,6 +4,7 @@ import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.service.ChatService;
 import com.amit.converse.chat.service.GroupService;
+import com.amit.converse.chat.service.MarkMessageService;
 import com.amit.converse.chat.service.WebSocketMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -12,7 +13,6 @@ import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -23,6 +23,7 @@ public class ChatController {
 
     private final ChatService chatService;
     private final GroupService groupService;
+    private final MarkMessageService markMessageService;
     private final WebSocketMessageService webSocketMessageService;
 
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
@@ -36,13 +37,13 @@ public class ChatController {
 
     @MutationMapping
     public Boolean markAllMessagesRead(@Argument String chatRoomId, @Argument String userId) {
-        chatService.markAllMessagesRead(chatRoomId, userId);
+        markMessageService.markAllMessagesRead(chatRoomId, userId);
         return true;
     }
 
     @MutationMapping
     public Boolean markAllMessagesDelivered(@Argument String userId) {
-        chatService.markAllMessagesDelivered(userId);
+        markMessageService.markAllMessagesDelivered(userId);
         return true;
     }
 

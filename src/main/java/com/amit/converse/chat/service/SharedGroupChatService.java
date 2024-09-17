@@ -20,7 +20,7 @@ public class SharedGroupChatService {
     }
 
     public List<ChatMessage> getAllMessagesOfGroup(String chatRoomId, PageRequest pageRequest) {
-        List<ChatMessage> messages =chatMessageRepository.findAllByChatRoomId(chatRoomId);
+        List<ChatMessage> messages =chatMessageRepository.findMessagesByChatRoomId(chatRoomId,pageRequest);
         return messages;
     }
 
