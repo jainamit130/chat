@@ -25,7 +25,7 @@ type User {
 
 type Query {
     getChatRoomsOfUser(userId: String!): [ChatRoom!]!
-    getMessagesOfChatRoom(chatRoomId: String!): [ChatMessage!]!
+    getMessagesOfChatRoom(chatRoomId: String!,fromCount: Int = 0): [ChatMessage!]!
 }
 
 type Mutation {

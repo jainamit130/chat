@@ -5,7 +5,6 @@ import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -33,8 +32,8 @@ public class GroupService {
         return chatRooms;
     }
 
-    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId){
-        List<ChatMessage> chatMessages = groupChatService.getAllMessagesOfGroup(chatRoomId);
+    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId,Integer startIndex){
+        List<ChatMessage> chatMessages = groupChatService.getMessagesOfChatRoom(chatRoomId,startIndex,null);
         return chatMessages != null ? chatMessages : Collections.emptyList();
     }
 
@@ -104,8 +103,8 @@ public class GroupService {
         return dateTime.format(formatter);
     }
 
-    public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, PageRequest pageRequest) {
-        List<ChatMessage> messagesToBeMarked = groupChatService.getAllMessagesOfGroup(chatRoomId,pageRequest);
+    public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, Integer startIndex) {
+        List<ChatMessage> messagesToBeMarked = groupChatService.getMessagesOfChatRoom(chatRoomId,startIndex,null);
         return messagesToBeMarked;
     }
 }

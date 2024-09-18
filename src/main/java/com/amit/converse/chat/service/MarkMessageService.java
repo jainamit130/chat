@@ -49,8 +49,7 @@ public class MarkMessageService {
     }
 
     public void markAllMessages(ChatRoom chatRoom,String userId, Boolean isDelivered, Integer toBeMarkedMessagesCount) {
-        PageRequest pageRequest = PageRequest.of(0, toBeMarkedMessagesCount, Sort.by(Sort.Direction.DESC, "timestamp"));
-        List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoom.getId(),pageRequest);
+        List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoom.getId(),toBeMarkedMessagesCount);
         String timestampStr = Instant.now().toString();
         for (ChatMessage messageToBeMarked: messagesToBeMarked){
             if(isDelivered){

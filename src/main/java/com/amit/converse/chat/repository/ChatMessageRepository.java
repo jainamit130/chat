@@ -8,9 +8,11 @@ import org.springframework.data.mongodb.repository.Query;
 import java.util.List;
 
 public interface ChatMessageRepository extends MongoRepository<ChatMessage,String> {
-    List<ChatMessage> findAllByChatRoomId(String chatRoomId);
-    ChatMessage findTopByChatRoomIdOrderByTimestampDesc(String chatRoomId);
+    List<ChatMessage> findAllByChatRoomIdOrderByTimestampDesc(String chatRoomId);
 
     @Query("{ 'chatRoomId': ?0 }")
-    List<ChatMessage> findMessagesByChatRoomId(String chatRoomId, Pageable pageable);
+    List<ChatMessage> findMessagesWithPagination(String chatRoomId, Pageable pageable);
+    ChatMessage findTopByChatRoomIdOrderByTimestampDesc(String chatRoomId);
+
+    Integer countByChatRoomId(String chatRoomId);
 }
