@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -16,16 +17,32 @@ public class SharedGroupChatService {
 
     private final ChatMessageRepository chatMessageRepository;
 
-    public List<ChatMessage> getAllMessagesOfChatRoom(String chatRoomId) {
-        List<ChatMessage> messages =chatMessageRepository.findAllByChatRoomIdOrderByTimestampDesc(chatRoomId);
+    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, Pageable pageable) {
+        List<ChatMessage> messages =chatMessageRepository.findMessagesWithPagination(chatRoomId,pageable);
         return messages;
     }
 
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, Integer startIndex, Integer pageSize) {
         long totalMessages = chatMessageRepository.countByChatRoomId(chatRoomId);
         int offset = Math.min(startIndex, (int) totalMessages);
+        int remainingMessages = (int) totalMessages - offset;
 
-        Pageable pageable = PageRequest.of(offset, Integer.MAX_VALUE, Sort.by("timestamp").ascending());
+        if (remainingMessages <= 0) {
+            return Collections.emptyList();
+        }
+
+        if (pageSize == null || pageSize <= 0) {
+            pageSize = remainingMessages;
+        }
+
+        Pageable pageable;
+        if (pageSize > 0) {
+            int pageNumber = offset / pageSize;
+            pageable = PageRequest.of(pageNumber, pageSize, Sort.by("timestamp").ascending());
+        } else {
+            return Collections.emptyList();
+        }
+
         return chatMessageRepository.findMessagesWithPagination(chatRoomId, pageable);
     }
 

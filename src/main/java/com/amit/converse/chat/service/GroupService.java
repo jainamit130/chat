@@ -5,6 +5,7 @@ import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -103,8 +104,9 @@ public class GroupService {
         return dateTime.format(formatter);
     }
 
-    public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, Integer startIndex) {
-        List<ChatMessage> messagesToBeMarked = groupChatService.getMessagesOfChatRoom(chatRoomId,startIndex,null);
+    public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, Integer toBeMarkedMessagesCount) {
+        PageRequest pageRequest = PageRequest.of(0, toBeMarkedMessagesCount, Sort.by(Sort.Direction.DESC, "timestamp"));
+        List<ChatMessage> messagesToBeMarked = groupChatService.getMessagesOfChatRoom(chatRoomId,pageRequest);
         return messagesToBeMarked;
     }
 }
