@@ -40,7 +40,6 @@ public class MarkMessageService {
         }
     }
 
-
     public void markAllMessagesRead(String chatRoomId,String userId){
         ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
         Integer toBeMarkedMessagesCount=chatRoom.getUnreadMessageCount(userId);

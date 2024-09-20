@@ -28,20 +28,28 @@ public class ChatMessage {
     private MessageStatus status;
     private boolean isEncrypted;
     private User user;
+    private Set<String> deliveredRecipients;
+    private Set<String> readRecipients;
     private Map<String, Set<String>> deliveryReceiptsByTime = new TreeMap<>();
     private Map<String, Set<String>> readReceiptsByTime = new TreeMap<>();
 
     public void addUserToReadReceipt(String timestamp,String userId){
-        Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
-        userIds.add(userId);
-        readReceiptsByTime.put(timestamp,userIds);
+        if(!readRecipients.contains(userId)){
+            readRecipients.add(userId);
+            Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
+            userIds.add(userId);
+            readReceiptsByTime.put(timestamp,userIds);
+        }
         return;
     }
 
     public void addUserToDeliveredReceipt(String timestamp,String userId){
-        Set<String> userIds = deliveryReceiptsByTime.getOrDefault(timestamp,new HashSet());
-        userIds.add(userId);
-        deliveryReceiptsByTime.put(timestamp,userIds);
+        if(!deliveredRecipients.contains(userId)) {
+            deliveredRecipients.add(userId);
+            Set<String> userIds = deliveryReceiptsByTime.getOrDefault(timestamp, new HashSet());
+            userIds.add(userId);
+            deliveryReceiptsByTime.put(timestamp, userIds);
+        }
         return;
     }
 

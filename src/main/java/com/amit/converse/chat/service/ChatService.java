@@ -29,6 +29,8 @@ public class ChatService {
         message.setChatRoomId(chatRoomId);
         message.setUser(user);
         message.setMessageStatus(MessageStatus.PENDING);
+        message.setDeliveredRecipients(new HashSet<>());
+        message.setReadRecipients(new HashSet<>());
 
         ChatMessage savedMessage = chatMessageRepository.save(message);
 
