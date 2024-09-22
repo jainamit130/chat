@@ -16,11 +16,20 @@ type ChatMessage {
     content: String!
     isEncrypted: Boolean!
     user: User!
+    deliveredRecipients: [String]
+    readRecipients: [String]
+    deliveryReceiptsByTime: MapType
+    readReceiptsByTime: MapType
 }
 
 type User {
     id: String!
     username: String!
+}
+
+type MapType {
+    key: String
+    value: [String]
 }
 
 type Query {
