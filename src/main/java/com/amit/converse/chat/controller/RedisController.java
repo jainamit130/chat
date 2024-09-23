@@ -16,7 +16,10 @@ public class RedisController {
     private final UserService userService;
 
     @PostMapping("/save/lastSeen/{userId}")
-    public void saveLastSeen(@PathVariable String userId, @RequestParam String timestamp) {
+    public void saveLastSeen(@PathVariable String userId, @RequestParam String timestamp, @RequestParam(value = "prevChatRoomId", required = false) String prevChatRoomId) {
+        if(prevChatRoomId!=null){
+            redisService.addUserIdToChatRoom(prevChatRoomId,userId);
+        }
         redisService.setUserTimestamp(userId, timestamp);
         return;
     }
@@ -27,14 +30,20 @@ public class RedisController {
     }
 
     @PostMapping("/update/lastSeen/{userId}")
-    public String updateLastSeen(@PathVariable String userId) {
+    public String updateLastSeen(@PathVariable String userId, @RequestParam(value = "prevChatRoomId", required = false) String prevChatRoomId) {
         userService.updateUserLastSeen(userId,redisService.getUserTimestamp(userId));
+        if(prevChatRoomId!=null){
+            redisService.removeUserFromChatRoom(prevChatRoomId,userId);
+        }
         redisService.saveAndRemoveTimestamp(userId);
         return "User marked as offline";
     }
 
     @PostMapping("/save/activeChatRoom/{chatRoomId}/{userId}")
-    public String updateActiveChatRoom(@PathVariable String userId, @PathVariable String chatRoomId) {
+    public String updateActiveChatRoom(@PathVariable String userId, @PathVariable String chatRoomId, @RequestParam(value = "prevChatRoomId", required = false) String prevChatRoomId) {
+        if(prevChatRoomId!=null){
+            redisService.removeUserFromChatRoom(prevChatRoomId,userId);
+        }
         redisService.addUserIdToChatRoom(chatRoomId,userId);
         return "Data saved";
     }

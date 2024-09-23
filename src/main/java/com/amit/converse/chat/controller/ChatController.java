@@ -1,5 +1,6 @@
 package com.amit.converse.chat.controller;
 
+import com.amit.converse.chat.dto.MessageInfoDto;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.service.ChatService;
@@ -10,10 +11,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -25,6 +30,11 @@ public class ChatController {
     private final GroupService groupService;
     private final MarkMessageService markMessageService;
     private final WebSocketMessageService webSocketMessageService;
+
+    @GetMapping("/chat/message/info/{chatMessageId}")
+    public ResponseEntity<MessageInfoDto> getMessageInfo(@PathVariable String chatMessageId) {
+        return new ResponseEntity<MessageInfoDto>(chatService.getMessageInfo(chatMessageId), HttpStatus.OK);
+    }
 
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
     public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {

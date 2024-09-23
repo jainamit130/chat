@@ -10,7 +10,10 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,5 +78,16 @@ public class UserService {
         return userRepository.findAllByUsernameStartsWithIgnoreCase(searchPrefix).stream().map(user -> {
             return UserResponseDto.builder().username(user.getUsername()).id(user.getUserId()).build();
         }).collect(Collectors.toList());
+    }
+
+    public Set<String> processIdsToName(Set<String> receiptIds) {
+        Set<String> usernames = new HashSet<>();
+
+        for (String userId : receiptIds) {
+            Optional<User> userOptional = userRepository.findByUserId(userId);
+            userOptional.ifPresent(user -> usernames.add(user.getUsername()));
+        }
+
+        return usernames;
     }
 }
