@@ -1,5 +1,6 @@
 package com.amit.converse.chat.controller;
 
+import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.service.RedisService;
 import com.amit.converse.chat.service.UserService;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,9 @@ public class RedisController {
 
     @PostMapping("/save/lastSeen/{userId}")
     public void saveLastSeen(@PathVariable String userId, @RequestParam String timestamp, @RequestParam(value = "prevChatRoomId", required = false) String prevChatRoomId) {
+        if(userId==null){
+            return;
+        }
         if(prevChatRoomId!=null){
             redisService.addUserIdToChatRoom(prevChatRoomId,userId);
         }
@@ -31,6 +35,9 @@ public class RedisController {
 
     @PostMapping("/update/lastSeen/{userId}")
     public String updateLastSeen(@PathVariable String userId, @RequestParam(value = "prevChatRoomId", required = false) String prevChatRoomId) {
+        if(userId==null){
+            throw new ConverseException("User does not exist");
+        }
         userService.updateUserLastSeen(userId,redisService.getUserTimestamp(userId));
         if(prevChatRoomId!=null){
             redisService.removeUserFromChatRoom(prevChatRoomId,userId);
