@@ -6,8 +6,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 @Service
@@ -23,7 +21,7 @@ public class MessageProcessingService {
         ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
         chatRoom.incrementTotalMessagesCount();
         groupService.saveChatRoom(chatRoom);
-        Set<String> onlineUserIds = redisService.filterOnlineUsers(chatRoom.getUserIds());
+        Set<String> onlineUserIds = groupService.getOnlineUsersOfGroup(chatRoom);
         for (String userId : onlineUserIds) {
             markMessageService.markAllMessagesDelivered(userId);
             if (redisService.isUserInChatRoom(chatRoom.getId(), userId)) {

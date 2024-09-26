@@ -20,6 +20,7 @@ public class GroupService {
 
     private final ChatRoomRepository chatRoomRepository;
     private final UserService userService;
+    private final RedisService redisService;
     private final SharedGroupChatService groupChatService;
     private final WebSocketMessageService webSocketMessageService;
 
@@ -31,6 +32,15 @@ public class GroupService {
             chatRoom.setLatestMessage(latestMessage);
         }
         return chatRooms;
+    }
+
+    public Set<String> getOnlineUsersOfGroup(String chatRoomId){
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        return getOnlineUsersOfGroup(chatRoom);
+    }
+
+    public Set<String> getOnlineUsersOfGroup(ChatRoom chatRoom){
+        return redisService.filterOnlineUsers(chatRoom.getUserIds());
     }
 
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId,Integer startIndex){
