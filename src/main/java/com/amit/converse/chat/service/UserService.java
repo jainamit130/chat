@@ -80,14 +80,32 @@ public class UserService {
         }).collect(Collectors.toList());
     }
 
-    public Set<String> processIdsToName(Set<String> receiptIds) {
+    public Set<UserResponseDto> processIdsWithName(Set<String> userIds) {
+        Set<UserResponseDto> userResponsesDto = new HashSet<>();
+
+        List<User> users = userRepository.findAllByUserId(userIds);
+
+        for (User user : users) {
+            UserResponseDto userResponseDto = UserResponseDto.builder()
+                    .id(user.getUserId())
+                    .username(user.getUsername())
+                    .build();
+            userResponsesDto.add(userResponseDto);
+        }
+
+        return userResponsesDto;
+    }
+
+    public Set<String> processIdsToName(Set<String> userIds) {
         Set<String> usernames = new HashSet<>();
 
-        for (String userId : receiptIds) {
-            Optional<User> userOptional = userRepository.findByUserId(userId);
-            userOptional.ifPresent(user -> usernames.add(user.getUsername()));
+        List<User> users = userRepository.findAllById(userIds);
+
+        for (User user : users) {
+            usernames.add(user.getUsername());
         }
 
         return usernames;
     }
+
 }

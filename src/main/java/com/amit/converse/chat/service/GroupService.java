@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.dto.UserResponseDto;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.repository.ChatRoomRepository;
@@ -34,9 +35,10 @@ public class GroupService {
         return chatRooms;
     }
 
-    public Set<String> getOnlineUsersOfGroup(String chatRoomId){
+    public Set<UserResponseDto> getOnlineUsersOfGroup(String chatRoomId){
         ChatRoom chatRoom = getChatRoom(chatRoomId);
-        return getOnlineUsersOfGroup(chatRoom);
+        Set<String> onlineUserIds = getOnlineUsersOfGroup(chatRoom);
+        return userService.processIdsWithName(onlineUserIds);
     }
 
     public Set<String> getOnlineUsersOfGroup(ChatRoom chatRoom){
