@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class MessageStatusDto {
+    private String messageId;
     private String chatRoomId;
     private Boolean isDelivered;
 }

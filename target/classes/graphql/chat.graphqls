@@ -13,9 +13,17 @@ type ChatMessage {
     senderId: String!
     chatRoomId: String!
     timestamp: String!
+    status: MessageStatus!
     content: String!
     isEncrypted: Boolean!
     user: User!
+}
+
+enum MessageStatus {
+    SENT
+    DELIVERED
+    READ
+    FAILED
 }
 
 type User {

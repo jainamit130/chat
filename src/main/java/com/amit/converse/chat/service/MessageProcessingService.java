@@ -37,7 +37,7 @@ public class MessageProcessingService {
     @Async
     public void sendOnlineStatusToAllChatRooms(String userId, OnlineStatus status){
         User user = userService.getUser(userId);
-        OnlineStatusDto onlineStatusDto = OnlineStatusDto.builder().status(status).userId(userId).username(user.getUsername()).build();
+        OnlineStatusDto onlineStatusDto = OnlineStatusDto.builder().status(status).username(user.getUsername()).build();
         for(String chatRoomId: user.getChatRoomIds()){
             webSocketMessageService.sendOnlineStatusToGroup(chatRoomId,onlineStatusDto);
         }

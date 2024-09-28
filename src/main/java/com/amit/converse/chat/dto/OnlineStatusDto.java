@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class OnlineStatusDto {
-    private String userId;
     private String username;
     private OnlineStatus status;
 }

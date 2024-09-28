@@ -1,6 +1,8 @@
 package com.amit.converse.chat.repository;
 
 import com.amit.converse.chat.model.User;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.repository.query.Param;

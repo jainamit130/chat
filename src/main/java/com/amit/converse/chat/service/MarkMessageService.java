@@ -55,13 +55,13 @@ public class MarkMessageService {
                 messageToBeMarked.addUserToDeliveredReceipt(timestampStr,userId);
                 if(messageToBeMarked.getDeliveryReceiptsByTime().size()==chatRoom.getUserIds().size()){
                     messageToBeMarked.setMessageStatus(MessageStatus.DELIVERED);
-                    webSocketMessageService.sendMarkedMessageStatus(chatRoom.getId(),messageToBeMarked.getSenderId(),false);
+                    webSocketMessageService.sendMarkedMessageStatus(chatRoom.getId(),messageToBeMarked.getSenderId(),messageToBeMarked.getId(),false);
                 }
             } else {
                 messageToBeMarked.addUserToReadReceipt(timestampStr,userId);
                 if(messageToBeMarked.getReadReceiptsByTime().size()==chatRoom.getUserIds().size()){
                     messageToBeMarked.setMessageStatus(MessageStatus.READ);
-                    webSocketMessageService.sendMarkedMessageStatus(chatRoom.getId(),messageToBeMarked.getSenderId(),false);
+                    webSocketMessageService.sendMarkedMessageStatus(chatRoom.getId(),messageToBeMarked.getSenderId(),messageToBeMarked.getId(),false);
                 }
             }
             chatMessageRepository.save(messageToBeMarked);

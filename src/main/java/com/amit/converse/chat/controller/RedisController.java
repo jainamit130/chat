@@ -56,12 +56,12 @@ public class RedisController {
     }
 
     @PostMapping("/save/activeChatRoom/{chatRoomId}/{userId}")
-    public ResponseEntity<Set<UserResponseDto>> saveActiveChatRoom(@PathVariable String userId, @PathVariable String chatRoomId, @RequestParam(value = "prevChatRoomId", required = false) String prevChatRoomId) {
+    public ResponseEntity<Set<String>> saveActiveChatRoom(@PathVariable String userId, @PathVariable String chatRoomId, @RequestParam(value = "prevChatRoomId", required = false) String prevChatRoomId) {
         if(prevChatRoomId!=null){
             redisService.removeUserFromChatRoom(prevChatRoomId,userId);
         }
         redisService.addUserIdToChatRoom(chatRoomId,userId);
-        return new ResponseEntity<>(groupService.getOnlineUsersOfGroup(chatRoomId), HttpStatus.OK);
+        return new ResponseEntity<Set<String>>(groupService.getOnlineUsersOfGroup(chatRoomId), HttpStatus.OK);
     }
 
     @GetMapping("/get/activeChatRoom/{chatRoomId}")

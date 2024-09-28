@@ -99,12 +99,12 @@ public class UserService {
     public Set<String> processIdsToName(Set<String> userIds) {
         Set<String> usernames = new HashSet<>();
 
-        List<User> users = userRepository.findAllById(userIds);
-
-        for (User user : users) {
-            usernames.add(user.getUsername());
+        for (String userId : userIds) {
+            Optional<User> user = userRepository.findByUserId(userId);
+            if (user.isPresent()) {
+                usernames.add(user.get().getUsername());
+            }
         }
-
         return usernames;
     }
 

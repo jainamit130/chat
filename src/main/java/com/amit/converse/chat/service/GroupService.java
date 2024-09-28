@@ -35,10 +35,10 @@ public class GroupService {
         return chatRooms;
     }
 
-    public Set<UserResponseDto> getOnlineUsersOfGroup(String chatRoomId){
+    public Set<String> getOnlineUsersOfGroup(String chatRoomId){
         ChatRoom chatRoom = getChatRoom(chatRoomId);
         Set<String> onlineUserIds = getOnlineUsersOfGroup(chatRoom);
-        return userService.processIdsWithName(onlineUserIds);
+        return userService.processIdsToName(onlineUserIds);
     }
 
     public Set<String> getOnlineUsersOfGroup(ChatRoom chatRoom){
