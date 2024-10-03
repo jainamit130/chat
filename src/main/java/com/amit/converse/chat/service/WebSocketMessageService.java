@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -29,8 +30,8 @@ public class WebSocketMessageService {
         messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, chatMessage);
     }
 
-    public void sendMarkedMessageStatus(String chatRoomId,String senderId,String messageId,Boolean isDelivered){
-        MessageStatusDto messageStatusDto = MessageStatusDto.builder().messageId(messageId).chatRoomId(chatRoomId).isDelivered(isDelivered).build();
+    public void sendMarkedMessageStatus(String chatRoomId, String senderId, List<String> messageIds, Boolean isDelivered){
+        MessageStatusDto messageStatusDto = MessageStatusDto.builder().messageIds(messageIds).chatRoomId(chatRoomId).isDelivered(isDelivered).build();
         messagingTemplate.convertAndSend("/topic/message/"+senderId,messageStatusDto);
     }
 

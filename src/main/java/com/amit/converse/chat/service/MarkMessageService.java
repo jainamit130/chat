@@ -11,8 +11,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -48,24 +47,39 @@ public class MarkMessageService {
     }
 
     public void markAllMessages(ChatRoom chatRoom,String userId, Boolean isDelivered, Integer toBeMarkedMessagesCount) {
-        List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoom.getId(),toBeMarkedMessagesCount);
+        List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoom.getId(), toBeMarkedMessagesCount);
         String timestampStr = Instant.now().toString();
-        for (ChatMessage messageToBeMarked: messagesToBeMarked){
-            if(isDelivered){
-                messageToBeMarked.addUserToDeliveredReceipt(timestampStr,userId);
-                if(messageToBeMarked.getDeliveryReceiptsByTime().size()==chatRoom.getUserIds().size()){
+        Map<String, List<String>> messageIdsToBeMarked = new HashMap<>();
+
+        for (ChatMessage messageToBeMarked : messagesToBeMarked) {
+            if (isDelivered) {
+                messageToBeMarked.addUserToDeliveredReceipt(timestampStr, userId);
+
+                if (messageToBeMarked.getDeliveryReceiptsByTime().size() == chatRoom.getUserIds().size()) {
                     messageToBeMarked.setMessageStatus(MessageStatus.DELIVERED);
-                    webSocketMessageService.sendMarkedMessageStatus(chatRoom.getId(),messageToBeMarked.getSenderId(),messageToBeMarked.getId(),false);
+                    List<String> senderIdMessageIdsToBeMarked = messageIdsToBeMarked.getOrDefault(messageToBeMarked.getSenderId(), new ArrayList<>());
+                    senderIdMessageIdsToBeMarked.add(messageToBeMarked.getId());
+                    messageIdsToBeMarked.put(messageToBeMarked.getSenderId(), senderIdMessageIdsToBeMarked);
                 }
             } else {
-                messageToBeMarked.addUserToReadReceipt(timestampStr,userId);
-                if(messageToBeMarked.getReadReceiptsByTime().size()==chatRoom.getUserIds().size()){
+                messageToBeMarked.addUserToReadReceipt(timestampStr, userId);
+
+                if (messageToBeMarked.getReadReceiptsByTime().size() == chatRoom.getUserIds().size()) {
                     messageToBeMarked.setMessageStatus(MessageStatus.READ);
-                    webSocketMessageService.sendMarkedMessageStatus(chatRoom.getId(),messageToBeMarked.getSenderId(),messageToBeMarked.getId(),false);
+                    List<String> senderIdMessageIdsToBeMarked = messageIdsToBeMarked.getOrDefault(messageToBeMarked.getSenderId(), new ArrayList<>());
+                    senderIdMessageIdsToBeMarked.add(messageToBeMarked.getId());
+                    messageIdsToBeMarked.put(messageToBeMarked.getSenderId(), senderIdMessageIdsToBeMarked);
                 }
             }
             chatMessageRepository.save(messageToBeMarked);
         }
+
+        for (Map.Entry<String, List<String>> entry : messageIdsToBeMarked.entrySet()) {
+            String senderId = entry.getKey();
+            List<String> senderIdMessageIdsToBeMarked = entry.getValue();
+            webSocketMessageService.sendMarkedMessageStatus(chatRoom.getId(), senderId, senderIdMessageIdsToBeMarked, isDelivered);
+        }
+
         if(!isDelivered) {
             chatRoom.allMessagesMarkedRead(userId);
         } else {

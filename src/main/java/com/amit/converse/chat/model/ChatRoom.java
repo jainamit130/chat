@@ -1,5 +1,6 @@
 package com.amit.converse.chat.model;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -19,8 +20,11 @@ public class ChatRoom {
     private String id;
     private String name;
     private List<String> userIds;
+    @NotBlank
+    private ChatRoomType chatRoomType;
     private String createdBy;
     private Instant createdAt;
+    private Boolean isGroup;
     private transient ChatMessage latestMessage;
     private transient Integer unreadMessageCount;
     private Integer totalMessagesCount;

@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserService {
 
+    private final SharedService sharedService;
     private final UserRepository userRepository;
 
     @KafkaListener(topics = "user-events", groupId = "group_id")
@@ -30,7 +31,7 @@ public class UserService {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Username already exists: " + user.getUsername());
         }
-
+        sharedService.createSelfChatRoom(user.getUserId(),user.getUsername());
         return userRepository.save(user);
     }
 
@@ -80,22 +81,6 @@ public class UserService {
         }).collect(Collectors.toList());
     }
 
-    public Set<UserResponseDto> processIdsWithName(Set<String> userIds) {
-        Set<UserResponseDto> userResponsesDto = new HashSet<>();
-
-        List<User> users = userRepository.findAllByUserId(userIds);
-
-        for (User user : users) {
-            UserResponseDto userResponseDto = UserResponseDto.builder()
-                    .id(user.getUserId())
-                    .username(user.getUsername())
-                    .build();
-            userResponsesDto.add(userResponseDto);
-        }
-
-        return userResponsesDto;
-    }
-
     public Set<String> processIdsToName(Set<String> userIds) {
         Set<String> usernames = new HashSet<>();
 
@@ -107,5 +92,4 @@ public class UserService {
         }
         return usernames;
     }
-
 }

@@ -5,12 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class MessageStatusDto {
-    private String messageId;
+    private List<String> messageIds;
     private String chatRoomId;
     private Boolean isDelivered;
 }

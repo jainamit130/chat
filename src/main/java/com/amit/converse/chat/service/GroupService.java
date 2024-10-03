@@ -1,8 +1,8 @@
 package com.amit.converse.chat.service;
 
-import com.amit.converse.chat.dto.UserResponseDto;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
+import com.amit.converse.chat.model.ChatRoomType;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -22,13 +22,13 @@ public class GroupService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserService userService;
     private final RedisService redisService;
-    private final SharedGroupChatService groupChatService;
+    private final SharedService sharedService;
     private final WebSocketMessageService webSocketMessageService;
 
     public List<ChatRoom> getChatRoomsOfUser(String userId) {
         List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdsContains(userId);
         for (ChatRoom chatRoom : chatRooms) {
-            ChatMessage latestMessage = groupChatService.getLatestMessageOfGroup(chatRoom.getId());
+            ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId());
             chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(userId));
             chatRoom.setLatestMessage(latestMessage);
         }
@@ -46,21 +46,22 @@ public class GroupService {
     }
 
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId,Integer startIndex){
-        List<ChatMessage> chatMessages = groupChatService.getMessagesOfChatRoom(chatRoomId,startIndex,null);
+        List<ChatMessage> chatMessages = sharedService.getMessagesOfChatRoom(chatRoomId,startIndex,null);
         return chatMessages != null ? chatMessages : Collections.emptyList();
     }
 
-    public ChatRoom createGroup(String groupName, String createdByUserId, List<String> memberIds) {
-
+    public ChatRoom createGroup(String groupName, ChatRoomType chatRoomType, String createdById, List<String> memberIds) {
         Map<String, Integer> readMessageCounts = new HashMap<>();
         Map<String, Integer> deliverMessageCounts = new HashMap<>();
+        memberIds.add(createdById);
 
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(groupName)
                 .userIds(memberIds)
+                .chatRoomType(chatRoomType)
                 .readMessageCounts(readMessageCounts)
                 .deliveredMessageCounts(deliverMessageCounts)
-                .createdBy(createdByUserId)
+                .createdBy(createdById)
                 .totalMessagesCount(0)
                 .createdAt(Instant.now())
                 .build();
@@ -118,7 +119,7 @@ public class GroupService {
 
     public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, Integer toBeMarkedMessagesCount) {
         PageRequest pageRequest = PageRequest.of(0, toBeMarkedMessagesCount, Sort.by(Sort.Direction.DESC, "timestamp"));
-        List<ChatMessage> messagesToBeMarked = groupChatService.getMessagesOfChatRoom(chatRoomId,pageRequest);
+        List<ChatMessage> messagesToBeMarked = sharedService.getMessagesOfChatRoom(chatRoomId,pageRequest);
         return messagesToBeMarked;
     }
 }

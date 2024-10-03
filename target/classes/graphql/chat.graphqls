@@ -2,6 +2,7 @@ type ChatRoom {
     id: String!
     name: String!
     userIds: [String!]!
+    chatRoomType: ChatRoomType!
     createdBy: String!
     createdAt: String!
     unreadMessageCount: Int!
@@ -20,10 +21,16 @@ type ChatMessage {
 }
 
 enum MessageStatus {
-    SENT
     DELIVERED
     READ
+    PENDING
     FAILED
+}
+
+enum ChatRoomType {
+    INDIVIDUAL
+    GROUP
+    SELF
 }
 
 type User {
