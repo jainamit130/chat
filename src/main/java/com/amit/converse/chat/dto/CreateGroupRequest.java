@@ -1,5 +1,6 @@
 package com.amit.converse.chat.dto;
 
+import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoomType;
 import lombok.*;
 
@@ -14,4 +15,5 @@ public class CreateGroupRequest {
     private ChatRoomType chatRoomType;
     private String createdById;
     private List<String> members;
+    private String message;
 }

@@ -10,9 +10,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -20,6 +17,7 @@ import java.util.*;
 public class GroupService {
 
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatService chatService;
     private final UserService userService;
     private final RedisService redisService;
     private final SharedService sharedService;
@@ -36,7 +34,7 @@ public class GroupService {
     }
 
     public Set<String> getOnlineUsersOfGroup(String chatRoomId){
-        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        ChatRoom chatRoom = sharedService.getChatRoom(chatRoomId);
         Set<String> onlineUserIds = getOnlineUsersOfGroup(chatRoom);
         return userService.processIdsToName(onlineUserIds);
     }
@@ -50,7 +48,7 @@ public class GroupService {
         return chatMessages != null ? chatMessages : Collections.emptyList();
     }
 
-    public ChatRoom createGroup(String groupName, ChatRoomType chatRoomType, String createdById, List<String> memberIds) {
+    public ChatRoom createGroup(String groupName, ChatRoomType chatRoomType, String createdById, List<String> memberIds, String message) {
         Map<String, Integer> readMessageCounts = new HashMap<>();
         Map<String, Integer> deliverMessageCounts = new HashMap<>();
         memberIds.add(createdById);
@@ -69,10 +67,13 @@ public class GroupService {
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
         for (String userId : memberIds) {
-            userService.groupJoinedOrLeft(userId,chatRoom.getId(),true);
+            userService.groupJoinedOrLeft(userId,savedChatRoom.getId(),true);
             webSocketMessageService.sendNewGroupStatusToMembers(userId,savedChatRoom);
         }
-
+        if(savedChatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
+            ChatMessage chatMessage = ChatMessage.builder().chatRoomId(savedChatRoom.getId()).content(message).senderId(createdById).build();
+            chatService.addMessage(savedChatRoom.getId(),chatMessage);
+        }
         return savedChatRoom;
     }
 
@@ -87,17 +88,6 @@ public class GroupService {
         return chatRoomRepository.save(chatRoom);
     }
 
-    public ChatRoom getChatRoom(String chatRoomId){
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-        return chatRoom;
-    }
-
-    public void saveChatRoom(ChatRoom chatRoom){
-        chatRoomRepository.save(chatRoom);
-        return;
-    }
-
     public ChatRoom removeMembers(String chatRoomId, List<String> memberIds) {
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
@@ -107,19 +97,5 @@ public class GroupService {
         }
         chatRoom.getUserIds().removeAll(memberIds);
         return chatRoomRepository.save(chatRoom);
-    }
-
-    private static String getCurrentDateTimeAsString() {
-        long currentTimeMillis = System.currentTimeMillis();
-        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(currentTimeMillis), ZoneOffset.UTC);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return dateTime.format(formatter);
-    }
-
-    public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, Integer toBeMarkedMessagesCount) {
-        PageRequest pageRequest = PageRequest.of(0, toBeMarkedMessagesCount, Sort.by(Sort.Direction.DESC, "timestamp"));
-        List<ChatMessage> messagesToBeMarked = sharedService.getMessagesOfChatRoom(chatRoomId,pageRequest);
-        return messagesToBeMarked;
     }
 }

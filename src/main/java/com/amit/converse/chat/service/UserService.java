@@ -31,8 +31,7 @@ public class UserService {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Username already exists: " + user.getUsername());
         }
-        sharedService.createSelfChatRoom(user.getUserId(),user.getUsername());
-        return userRepository.save(user);
+        return sharedService.createUserAndSelfChatRoom(user);
     }
 
     public void updateUserLastSeen(String userId, Instant timestamp) {
