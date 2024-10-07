@@ -7,7 +7,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +23,8 @@ public class ChatRoom {
     private ChatRoomType chatRoomType;
     private String createdBy;
     private Instant createdAt;
-    private Boolean isGroup;
+    private String creatorUsername;
+    private String recipientUsername;
     private transient ChatMessage latestMessage;
     private transient Integer unreadMessageCount;
     private Integer totalMessagesCount;

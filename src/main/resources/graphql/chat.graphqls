@@ -7,6 +7,8 @@ type ChatRoom {
     createdAt: String!
     unreadMessageCount: Int!
     latestMessage: ChatMessage
+    recipientUsername: String
+    creatorUsername: String
 }
 
 type ChatMessage {

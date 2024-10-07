@@ -40,6 +40,7 @@ public class ChatController {
     public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
         try {
             ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage);
+            groupService.notifyNewIndividualChat(chatRoomId);
             webSocketMessageService.sendMessage(chatRoomId,savedMessage);
         } catch (IllegalArgumentException e) {
         }

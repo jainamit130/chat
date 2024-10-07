@@ -25,11 +25,6 @@ public class SharedService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
 
-    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, Pageable pageable) {
-        List<ChatMessage> messages =chatMessageRepository.findMessagesWithPagination(chatRoomId,pageable);
-        return messages;
-    }
-
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, Integer startIndex, Integer pageSize) {
         long totalMessages = chatMessageRepository.countByChatRoomId(chatRoomId);
         int offset = Math.min(startIndex, (int) totalMessages);
@@ -81,22 +76,5 @@ public class SharedService {
         user.addChatRoom(savedChatRoom.getId());
         userRepository.save(user);
         return savedUser;
-    }
-
-    public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, Integer toBeMarkedMessagesCount) {
-        PageRequest pageRequest = PageRequest.of(0, toBeMarkedMessagesCount, Sort.by(Sort.Direction.DESC, "timestamp"));
-        List<ChatMessage> messagesToBeMarked = getMessagesOfChatRoom(chatRoomId,pageRequest);
-        return messagesToBeMarked;
-    }
-
-    public ChatRoom getChatRoom(String chatRoomId){
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-        return chatRoom;
-    }
-
-    public void saveChatRoom(ChatRoom chatRoom){
-        chatRoomRepository.save(chatRoom);
-        return;
     }
 }
