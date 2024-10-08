@@ -33,6 +33,7 @@ public class ChatService {
 
         ChatMessage savedMessage = chatMessageRepository.save(message);
 
+//        messageProcessingService.sendMessage(savedMessage);
         messageProcessingService.processMessageAfterSave(chatRoomId);
 
         return savedMessage;

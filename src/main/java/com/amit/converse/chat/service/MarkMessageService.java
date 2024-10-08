@@ -7,6 +7,7 @@ import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.*;
@@ -44,6 +45,7 @@ public class MarkMessageService {
             markAllMessages(chatRoom,userId,false,toBeMarkedMessagesCount);
     }
 
+    @Transactional
     public void markAllMessages(ChatRoom chatRoom,String userId, Boolean isDelivered, Integer toBeMarkedMessagesCount) {
         List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoom.getId(), toBeMarkedMessagesCount);
         String timestampStr = Instant.now().toString();
@@ -69,8 +71,9 @@ public class MarkMessageService {
                     messageIdsToBeMarked.put(messageToBeMarked.getSenderId(), senderIdMessageIdsToBeMarked);
                 }
             }
-            chatMessageRepository.save(messageToBeMarked);
         }
+
+        chatMessageRepository.saveAll(messagesToBeMarked);
 
         for (Map.Entry<String, List<String>> entry : messageIdsToBeMarked.entrySet()) {
             String senderId = entry.getKey();

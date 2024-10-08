@@ -34,7 +34,9 @@ public class GroupService {
     }
 
     public List<ChatRoom> getChatRoomsOfUser(String userId) {
-        List<ChatRoom> chatRooms = chatRoomRepository.findByUserIdsContains(userId);
+        User user = userService.getUser(userId);
+        Set<String> chatRoomIds = user.getChatRoomIds();
+        List<ChatRoom> chatRooms = chatRoomRepository.findAllById(chatRoomIds);
         for (ChatRoom chatRoom : chatRooms) {
             ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId());
             chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(userId));
@@ -66,7 +68,7 @@ public class GroupService {
         Map<String, Integer> deliverMessageCounts = new HashMap<>();
         User creatorUser = userService.getUser(createdById);
         memberIds.add(createdById);
-
+        memberIds = new ArrayList<>(new HashSet<>(memberIds));
         ChatRoom chatRoom = ChatRoom.builder()
                 .name(groupName)
                 .creatorUsername(creatorUser.getUsername())
@@ -87,6 +89,7 @@ public class GroupService {
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
         if(savedChatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
+            userService.groupJoinedOrLeft(createdById,savedChatRoom.getId(),true);
             webSocketMessageService.sendNewGroupStatusToMember(createdById,savedChatRoom);
             return savedChatRoom;
         }
@@ -136,12 +139,14 @@ public class GroupService {
         return;
     }
 
-    public void notifyNewIndividualChat(String chatRoomId) {
+    public void notifyNewIndividualChat(String chatRoomId) throws InterruptedException {
         ChatRoom chatRoom = getChatRoom(chatRoomId);
         if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
             User recipient = getRecipientUser(chatRoom);
             if(!recipient.getChatRoomIds().contains(chatRoomId)){
+                userService.groupJoinedOrLeft(recipient.getUserId(),chatRoom.getId(),true);
                 webSocketMessageService.sendNewGroupStatusToMember(recipient.getUserId(),chatRoom);
+                Thread.sleep(1000);
             }
         }
     }

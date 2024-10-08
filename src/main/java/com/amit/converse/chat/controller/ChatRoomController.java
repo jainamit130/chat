@@ -36,7 +36,6 @@ public class ChatRoomController {
         }
     }
 
-    // Endpoint to add members to an existing chat room
     @PostMapping("/groups/add/{chatRoomId}")
     public ResponseEntity<ChatRoom> addMembersToGroup(@PathVariable String chatRoomId,
                                                       @RequestBody AddMembersRequest request) {

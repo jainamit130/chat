@@ -1,5 +1,6 @@
 package com.amit.converse.chat.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,7 @@ import java.util.*;
 @NoArgsConstructor
 @Builder
 @Document(collection = "chatMessages")
+@JsonIgnoreProperties(ignoreUnknown = true)
 @CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
 public class ChatMessage {
 

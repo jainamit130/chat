@@ -43,6 +43,8 @@ public class ChatController {
             groupService.notifyNewIndividualChat(chatRoomId);
             webSocketMessageService.sendMessage(chatRoomId,savedMessage);
         } catch (IllegalArgumentException e) {
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
