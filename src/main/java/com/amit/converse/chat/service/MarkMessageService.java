@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Service
 @AllArgsConstructor
@@ -45,7 +47,33 @@ public class MarkMessageService {
             markAllMessages(chatRoom,userId,false,toBeMarkedMessagesCount);
     }
 
-    @Transactional
+    public void markOneMessage(ChatRoom chatRoom,String userId, Boolean isDelivered, ChatMessage chatMessage) {
+        String timestampStr = Instant.now().toString();
+        if(isDelivered){
+            chatMessage.addUserToDeliveredReceipt(timestampStr, userId);
+            chatMessage.setMessageStatus(MessageStatus.DELIVERED);
+            if (chatMessage.getDeliveryReceiptsByTime().size() == chatRoom.getUserIds().size()){
+                webSocketMessageService.sendMarkedMessageStatus(chatRoom.getId(), chatMessage.getSenderId(), Collections.singletonList(chatMessage.getId()), isDelivered);
+            }
+        } else {
+            chatMessage.addUserToReadReceipt(timestampStr, userId);
+            chatMessage.setMessageStatus(MessageStatus.READ);
+            if (chatMessage.getReadReceiptsByTime().size() == chatRoom.getUserIds().size()){
+                webSocketMessageService.sendMarkedMessageStatus(chatRoom.getId(), chatMessage.getSenderId(), Collections.singletonList(chatMessage.getId()), isDelivered);
+            }
+        }
+
+        chatMessageRepository.save(chatMessage);
+
+        if(!isDelivered) {
+            chatRoom.allMessagesMarkedRead(userId);
+        } else {
+            chatRoom.allMessagesMarkedDelivered(userId);
+        }
+        groupService.saveChatRoom(chatRoom);
+        return;
+    }
+
     public void markAllMessages(ChatRoom chatRoom,String userId, Boolean isDelivered, Integer toBeMarkedMessagesCount) {
         List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoom.getId(), toBeMarkedMessagesCount);
         String timestampStr = Instant.now().toString();
