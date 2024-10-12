@@ -1,5 +1,8 @@
 package com.amit.converse.chat.config;
 
+import com.amit.converse.common.UserServiceGrpc;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.security.authentication.BasicGrpcAuthenticationReader;
 import net.devh.boot.grpc.server.security.authentication.GrpcAuthenticationReader;
@@ -17,11 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Configuration
 @RequiredArgsConstructor
 public class ApplicationConfig {
-
-    @Bean
-    public GrpcAuthenticationReader grpcAuthenticationReader() {
-        return new BasicGrpcAuthenticationReader(); // Replace with your actual implementation
-    }
 
     @Bean
     public UserDetailsService userDetailsService(){

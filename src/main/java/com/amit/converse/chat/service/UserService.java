@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.dto.UserEventDTO;
 import com.amit.converse.chat.dto.UserResponseDto;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
@@ -23,16 +24,39 @@ public class UserService {
     private final SharedService sharedService;
     private final UserRepository userRepository;
 
-    @KafkaListener(topics = "user-events", groupId = "group_id")
-    public User consume(String userEvent) {
-        User user = new Gson().fromJson(userEvent, User.class);
-        Instant createdAt = Instant.parse(user.getCreationDate());
-        user.setLastSeenTimestamp(createdAt);
+    public boolean consume(UserEventDTO userEvent) {
+        User user = User.builder()
+                .userId(userEvent.getUserId())
+                .username(userEvent.getUsername())
+                .creationDate(userEvent.getCreationDate())
+                .lastSeenTimestamp(userEvent.getCreationDate())
+                .build();
+
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new IllegalArgumentException("Username already exists: " + user.getUsername());
+            System.out.println("Username already exists: " + user.getUsername());
+            return false;
         }
-        return sharedService.createUserAndSelfChatRoom(user);
+
+        try {
+            sharedService.createUserAndSelfChatRoom(user);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
+
+
+
+//    @KafkaListener(topics = "user-events", groupId = "group_id")
+//    public User consume(String userEvent) {
+//        User user = new Gson().fromJson(userEvent, User.class);
+//        Instant createdAt = Instant.parse(user.getCreationDate());
+//        user.setLastSeenTimestamp(createdAt);
+//        if (userRepository.existsByUsername(user.getUsername())) {
+//            throw new IllegalArgumentException("Username already exists: " + user.getUsername());
+//        }
+//        return sharedService.createUserAndSelfChatRoom(user);
+//    }
 
     public void updateUserLastSeen(String userId, Instant timestamp) {
         User user = getUser(userId);

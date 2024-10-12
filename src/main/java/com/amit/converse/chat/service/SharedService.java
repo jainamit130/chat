@@ -72,9 +72,7 @@ public class SharedService {
                 .build();
 
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
-        User savedUser = userRepository.save(user);
         user.addChatRoom(savedChatRoom.getId());
-        userRepository.save(user);
-        return savedUser;
+        return userRepository.save(user);
     }
 }
