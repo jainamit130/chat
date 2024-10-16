@@ -27,7 +27,7 @@ public class User {
     private String password;
     private OnlineStatus status;
     private Instant lastSeenTimestamp;
-    private String creationDate;
+    private Instant creationDate;
 
     public void addChatRoom(String chatRoomId){
         chatRoomIds.add(chatRoomId);

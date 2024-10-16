@@ -1,12 +1,13 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.dto.UserEventDTO;
 import com.amit.converse.chat.dto.UserResponseDto;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
 import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
-import org.springframework.kafka.annotation.KafkaListener;
+//import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -23,16 +24,38 @@ public class UserService {
     private final SharedService sharedService;
     private final UserRepository userRepository;
 
-    @KafkaListener(topics = "user-events", groupId = "group_id")
-    public User consume(String userEvent) {
-        User user = new Gson().fromJson(userEvent, User.class);
-        Instant createdAt = Instant.parse(user.getCreationDate());
-        user.setLastSeenTimestamp(createdAt);
+//    @KafkaListener(topics = "user-events", groupId = "group_id")
+//    public User consume(String userEvent) {
+//        User user = new Gson().fromJson(userEvent, User.class);
+//        Instant createdAt = Instant.parse(user.getCreationDate());
+//        user.setLastSeenTimestamp(createdAt);
+//        if (userRepository.existsByUsername(user.getUsername())) {
+//            throw new IllegalArgumentException("Username already exists: " + user.getUsername());
+//        }
+//        return sharedService.createUserAndSelfChatRoom(user);
+//    }
+
+    public boolean consume(UserEventDTO userEvent) {
+        User user = User.builder()
+                .userId(userEvent.getUserId())
+                .username(userEvent.getUsername())
+                .creationDate(userEvent.getCreationDate())
+                .lastSeenTimestamp(userEvent.getCreationDate())
+                .chatRoomIds(new HashSet<>())
+                .build();
+
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Username already exists: " + user.getUsername());
         }
-        return sharedService.createUserAndSelfChatRoom(user);
+
+        try {
+            sharedService.createUserAndSelfChatRoom(user);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
+
 
     public void updateUserLastSeen(String userId, Instant timestamp) {
         User user = getUser(userId);
