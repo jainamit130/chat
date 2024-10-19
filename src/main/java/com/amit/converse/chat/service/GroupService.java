@@ -146,7 +146,6 @@ public class GroupService {
             if(!recipient.getChatRoomIds().contains(chatRoomId)){
                 userService.groupJoinedOrLeft(recipient.getUserId(),chatRoom.getId(),true);
                 webSocketMessageService.sendNewGroupStatusToMember(recipient.getUserId(),chatRoom);
-                Thread.sleep(1000);
             }
         }
     }
