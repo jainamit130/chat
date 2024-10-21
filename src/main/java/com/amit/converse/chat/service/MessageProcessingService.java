@@ -70,6 +70,7 @@ public class MessageProcessingService {
                     markMessageService.markAllMessages(chatRoom,userId,false,toBeReadMarkedMessagesCount);
             }
         }
+        // Notify new individual chat
         notifyNewIndividualChat(chatRoom);
     }
 
