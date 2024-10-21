@@ -24,21 +24,16 @@ public class RedisController {
     private final MessageProcessingService messageProcessingService;
 
     @PostMapping("/save/lastSeen/{userId}")
-    public void saveLastSeen(@PathVariable String userId, @RequestParam String timestamp, @RequestParam(value = "prevChatRoomId", required = false) String prevChatRoomId) {
+    public void saveLastSeen(@PathVariable String userId, @RequestParam(value = "prevChatRoomId", required = false) String prevChatRoomId) {
         if(userId==null){
             return;
         }
         if(prevChatRoomId!=null){
             redisService.addUserIdToChatRoom(prevChatRoomId,userId);
         }
+        redisService.setUser(userId);
         messageProcessingService.sendOnlineStatusToAllChatRooms(userId, OnlineStatus.ONLINE);
-        redisService.setUserTimestamp(userId, timestamp);
         return;
-    }
-
-    @GetMapping("/get/lastSeen/{userId}")
-    public Instant getUserLastSeen(@PathVariable String userId) {
-        return redisService.getUserTimestamp(userId);
     }
 
     @PostMapping("/update/lastSeen/{userId}")
@@ -46,12 +41,12 @@ public class RedisController {
         if(userId==null){
             throw new ConverseException("User does not exist");
         }
-        userService.updateUserLastSeen(userId,redisService.getUserTimestamp(userId));
+        userService.updateUserLastSeen(userId,Instant.now());
         if(prevChatRoomId!=null){
             redisService.removeUserFromChatRoom(prevChatRoomId,userId);
         }
+        redisService.removeUser(userId);
         messageProcessingService.sendOnlineStatusToAllChatRooms(userId, OnlineStatus.OFFLINE);
-        redisService.saveAndRemoveTimestamp(userId);
         return "User marked as offline";
     }
 

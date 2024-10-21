@@ -41,7 +41,7 @@ public class GroupService {
             ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId());
             chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(userId));
             if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
-                chatRoom.setName(getRecipientUser(chatRoom).getUsername());
+                chatRoom.setName(user.getUsername()==chatRoom.getCreatorUsername()?chatRoom.getRecipientUsername():chatRoom.getCreatorUsername());
             }
             chatRoom.setLatestMessage(latestMessage);
         }
@@ -82,7 +82,12 @@ public class GroupService {
                 .build();
 
         if (chatRoomType == ChatRoomType.INDIVIDUAL) {
-            User recipientUser = getRecipientUser(chatRoom);
+            // Check if already existing
+            Optional<ChatRoom> existingChatRoomOptional = chatRoomRepository.findIndividualChatRoomByUserIds(ChatRoomType.INDIVIDUAL,memberIds.get(0),memberIds.get(1));
+            if(existingChatRoomOptional.isPresent()){
+                return existingChatRoomOptional.get();
+            }
+            User recipientUser = sharedService.getRecipientUser(chatRoom);
             chatRoom.setRecipientUsername(recipientUser.getUsername());
         }
 
@@ -137,26 +142,5 @@ public class GroupService {
     public void saveChatRoom(ChatRoom chatRoom){
         chatRoomRepository.save(chatRoom);
         return;
-    }
-
-    public void notifyNewIndividualChat(String chatRoomId) throws InterruptedException {
-        ChatRoom chatRoom = getChatRoom(chatRoomId);
-        if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
-            User recipient = getRecipientUser(chatRoom);
-            if(!recipient.getChatRoomIds().contains(chatRoomId)){
-                userService.groupJoinedOrLeft(recipient.getUserId(),chatRoom.getId(),true);
-                webSocketMessageService.sendNewGroupStatusToMember(recipient.getUserId(),chatRoom);
-            }
-        }
-    }
-
-    private User getRecipientUser(ChatRoom chatRoom) {
-        String recipientUserId = chatRoom.getUserIds()
-                .stream()
-                .filter(userId -> !userId.equals(chatRoom.getCreatedBy()))
-                .findFirst()
-                .orElseThrow(() -> new ConverseException("No other user found"));
-        User recipientUser = userService.getUser(recipientUserId);
-        return recipientUser;
     }
 }

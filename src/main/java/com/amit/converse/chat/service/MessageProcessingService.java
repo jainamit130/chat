@@ -1,10 +1,7 @@
 package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.dto.OnlineStatusDto;
-import com.amit.converse.chat.model.ChatMessage;
-import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.model.OnlineStatus;
-import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.model.*;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,6 +21,7 @@ public class MessageProcessingService {
     private final ChatRoomRepository chatRoomRepository;
     private final RedisService redisService;
     private final UserService userService;
+    private final SharedService sharedService;
     private final WebSocketMessageService webSocketMessageService;
     private final MarkMessageService markMessageService;
     private final ObjectMapper objectMapper;
@@ -58,9 +56,8 @@ public class MessageProcessingService {
 //    }
 
     @Async
-    public void processMessageAfterSave(String chatRoomId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+    public void processMessageAfterSave(String chatRoomId) throws InterruptedException {
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
         chatRoom.incrementTotalMessagesCount();
         Set<String> onlineUserIds = redisService.filterOnlineUsers(chatRoom.getUserIds());
         for (String userId : onlineUserIds) {
@@ -71,6 +68,28 @@ public class MessageProcessingService {
                 Integer toBeReadMarkedMessagesCount=chatRoom.getUnreadMessageCount(userId);
                 if(toBeReadMarkedMessagesCount>0)
                     markMessageService.markAllMessages(chatRoom,userId,false,toBeReadMarkedMessagesCount);
+            }
+        }
+        notifyNewIndividualChat(chatRoom);
+    }
+
+    public ChatRoom getChatRoom(String chatRoomId){
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+
+        return chatRoom;
+    }
+
+    public void notifyNewIndividualChat(ChatRoom chatRoom) throws InterruptedException {
+        if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
+            User recipient = sharedService.getRecipientUser(chatRoom);
+            if(!recipient.getChatRoomIds().contains(chatRoom.getId())){
+                ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId());
+                chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(recipient.getUserId()));
+                chatRoom.setName(sharedService.getRecipientUser(chatRoom).getUsername());
+                chatRoom.setLatestMessage(latestMessage);
+                userService.groupJoinedOrLeft(recipient.getUserId(),chatRoom.getId(),true);
+                webSocketMessageService.sendNewGroupStatusToMember(recipient.getUserId(),chatRoom);
             }
         }
     }

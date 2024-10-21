@@ -20,7 +20,7 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final UserService userService;
 
-    public ChatMessage addMessage(String chatRoomId, ChatMessage message) {
+    public ChatMessage addMessage(String chatRoomId, ChatMessage message) throws InterruptedException {
 
         User user = userService.getUser(message.getSenderId());
 

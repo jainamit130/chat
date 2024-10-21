@@ -75,4 +75,15 @@ public class SharedService {
         user.addChatRoom(savedChatRoom.getId());
         return userRepository.save(user);
     }
+
+    User getRecipientUser(ChatRoom chatRoom) {
+        String recipientUserId = chatRoom.getUserIds()
+                .stream()
+                .filter(userId -> !userId.equals(chatRoom.getCreatedBy()))
+                .findFirst()
+                .orElseThrow(() -> new ConverseException("No other user found"));
+        User recipientUser = userRepository.findByUserId(recipientUserId)
+                .orElseThrow(()-> new ConverseException("User not found!"));
+        return recipientUser;
+    }
 }

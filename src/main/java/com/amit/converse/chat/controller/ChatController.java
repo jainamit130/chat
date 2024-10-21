@@ -37,15 +37,9 @@ public class ChatController {
     }
 
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
-    public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        try {
-            ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage);
-            groupService.notifyNewIndividualChat(chatRoomId);
-            webSocketMessageService.sendMessage(chatRoomId,savedMessage);
-        } catch (IllegalArgumentException e) {
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage) throws InterruptedException {
+        ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage);
+        webSocketMessageService.sendMessage(chatRoomId,savedMessage);
     }
 
     @MutationMapping
