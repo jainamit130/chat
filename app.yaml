@@ -1,9 +1,0 @@
-runtime: java21
-
-env_variables:
-
-instance_class: F1
-
-handlers:
-  - url: /.*
-    script: auto
