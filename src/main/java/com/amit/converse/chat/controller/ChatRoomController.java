@@ -2,12 +2,15 @@ package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.AddMembersRequest;
 import com.amit.converse.chat.dto.CreateGroupRequest;
+import com.amit.converse.chat.dto.CreateGroupResponse;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
+import com.amit.converse.chat.model.ChatRoomType;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import com.amit.converse.chat.service.ChatService;
 import com.amit.converse.chat.service.GroupService;
+import com.amit.converse.chat.service.WebSocketMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,13 +28,21 @@ import java.util.List;
 public class ChatRoomController {
 
     private final GroupService groupService;
+    private final ChatService chatService;
+    private final WebSocketMessageService webSocketMessageService;
 
     @PostMapping("/groups/create")
-    public ResponseEntity<ChatRoom> createGroup(@RequestBody CreateGroupRequest request) {
+    public ResponseEntity<CreateGroupResponse> createGroup(@RequestBody CreateGroupRequest request) {
         try {
-            ChatRoom chatRoom = groupService.createGroup(request.getGroupName(), request.getChatRoomType(), request.getCreatedById(), request.getMembers());
-            return ResponseEntity.ok(chatRoom);
-        } catch (IllegalArgumentException e) {
+            String createdChatRoomId = groupService.createGroup(request.getGroupName(), request.getChatRoomType(), request.getCreatedById(), request.getMembers());
+            if(request.getChatRoomType()== ChatRoomType.INDIVIDUAL){
+                Thread.sleep(1000);
+                ChatMessage savedMessage = chatService.addMessage(createdChatRoomId, request.getLatestMessage());
+                webSocketMessageService.sendMessage(createdChatRoomId,savedMessage);
+            }
+            CreateGroupResponse groupResponse = CreateGroupResponse.builder().chatRoomId(createdChatRoomId).build();
+            return new ResponseEntity<>(groupResponse,HttpStatus.OK);
+        } catch (IllegalArgumentException | InterruptedException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }

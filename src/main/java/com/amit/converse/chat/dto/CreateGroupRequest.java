@@ -15,4 +15,5 @@ public class CreateGroupRequest {
     private ChatRoomType chatRoomType;
     private String createdById;
     private List<String> members;
+    private ChatMessage latestMessage;
 }

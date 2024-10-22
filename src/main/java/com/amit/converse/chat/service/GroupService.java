@@ -63,7 +63,7 @@ public class GroupService {
         return chatMessages != null ? chatMessages : Collections.emptyList();
     }
 
-    public ChatRoom createGroup(String groupName, ChatRoomType chatRoomType, String createdById, List<String> memberIds) {
+    public String createGroup(String groupName, ChatRoomType chatRoomType, String createdById, List<String> memberIds) {
         Map<String, Integer> readMessageCounts = new HashMap<>();
         Map<String, Integer> deliverMessageCounts = new HashMap<>();
         User creatorUser = userService.getUser(createdById);
@@ -82,10 +82,9 @@ public class GroupService {
                 .build();
 
         if (chatRoomType == ChatRoomType.INDIVIDUAL) {
-            // Check if already existing
             Optional<ChatRoom> existingChatRoomOptional = chatRoomRepository.findIndividualChatRoomByUserIds(ChatRoomType.INDIVIDUAL,memberIds.get(0),memberIds.get(1));
             if(existingChatRoomOptional.isPresent()){
-                return existingChatRoomOptional.get();
+                return existingChatRoomOptional.get().getId();
             }
             User recipientUser = sharedService.getRecipientUser(chatRoom);
             chatRoom.setRecipientUsername(recipientUser.getUsername());
@@ -93,17 +92,11 @@ public class GroupService {
 
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
 
-        if(savedChatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
-            userService.groupJoinedOrLeft(createdById,savedChatRoom.getId(),true);
-            webSocketMessageService.sendNewGroupStatusToMember(createdById,savedChatRoom);
-            return savedChatRoom;
-        }
-
         for (String userId : memberIds) {
             userService.groupJoinedOrLeft(userId,savedChatRoom.getId(),true);
             webSocketMessageService.sendNewGroupStatusToMember(userId,savedChatRoom);
         }
-        return savedChatRoom;
+        return savedChatRoom.getId();
     }
 
     public ChatRoom addMembers(String chatRoomId, List<String> memberIds) {
