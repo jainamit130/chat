@@ -74,8 +74,7 @@ public class UserService {
         return user;
     }
 
-    public void groupJoinedOrLeft(String userId,String chatRoomId,Boolean isJoined){
-        User user = getUser(userId);
+    public void groupJoinedOrLeft(User user,String chatRoomId,Boolean isJoined){
         if(isJoined){
             user.addChatRoom(chatRoomId);
         } else {

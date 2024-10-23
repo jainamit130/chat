@@ -25,6 +25,17 @@ public class SharedService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
 
+    public List<User> getAllUsers(List<String> userIds) {
+        List<User> users = userRepository.findAllByUserIdIn(userIds);
+        return users;
+    }
+
+    public User getUser(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new ConverseException("User not found!!"));
+        return user;
+    }
+
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, Integer startIndex, Integer pageSize) {
         long totalMessages = chatMessageRepository.countByChatRoomId(chatRoomId);
         int offset = Math.min(startIndex, (int) totalMessages);

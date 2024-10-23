@@ -56,6 +56,14 @@ public class MessageProcessingService {
 //    }
 
     @Async
+    public void processMessageAsync(String chatRoomId) throws InterruptedException {
+        processMessageAfterSave(chatRoomId);
+    }
+
+    public void processMessageSync(String chatRoomId) throws InterruptedException {
+        processMessageAfterSave(chatRoomId);
+    }
+
     public void processMessageAfterSave(String chatRoomId) throws InterruptedException {
         ChatRoom chatRoom = getChatRoom(chatRoomId);
         chatRoom.incrementTotalMessagesCount();
@@ -70,8 +78,6 @@ public class MessageProcessingService {
                     markMessageService.markAllMessages(chatRoom,userId,false,toBeReadMarkedMessagesCount);
             }
         }
-        // Notify new individual chat
-        notifyNewIndividualChat(chatRoom);
     }
 
     public ChatRoom getChatRoom(String chatRoomId){
@@ -79,20 +85,6 @@ public class MessageProcessingService {
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
 
         return chatRoom;
-    }
-
-    public void notifyNewIndividualChat(ChatRoom chatRoom) throws InterruptedException {
-        if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
-            User recipient = sharedService.getRecipientUser(chatRoom);
-            if(!recipient.getChatRoomIds().contains(chatRoom.getId())){
-                ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId());
-                chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(recipient.getUserId()));
-                chatRoom.setName(sharedService.getRecipientUser(chatRoom).getUsername());
-                chatRoom.setLatestMessage(latestMessage);
-                userService.groupJoinedOrLeft(recipient.getUserId(),chatRoom.getId(),true);
-                webSocketMessageService.sendNewGroupStatusToMember(recipient.getUserId(),chatRoom);
-            }
-        }
     }
 
     @Async

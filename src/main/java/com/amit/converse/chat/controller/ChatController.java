@@ -38,7 +38,7 @@ public class ChatController {
 
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
     public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage) throws InterruptedException {
-        ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage);
+        ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage, false);
         webSocketMessageService.sendMessage(chatRoomId,savedMessage);
     }
 

@@ -36,9 +36,8 @@ public class ChatRoomController {
         try {
             String createdChatRoomId = groupService.createGroup(request.getGroupName(), request.getChatRoomType(), request.getCreatedById(), request.getMembers());
             if(request.getChatRoomType()== ChatRoomType.INDIVIDUAL){
-                Thread.sleep(1000);
-                ChatMessage savedMessage = chatService.addMessage(createdChatRoomId, request.getLatestMessage());
-                webSocketMessageService.sendMessage(createdChatRoomId,savedMessage);
+                ChatMessage savedMessage = chatService.addMessage(createdChatRoomId, request.getLatestMessage(),true);
+                groupService.sendNewChatStatusToMember(createdChatRoomId);
             }
             CreateGroupResponse groupResponse = CreateGroupResponse.builder().chatRoomId(createdChatRoomId).build();
             return new ResponseEntity<>(groupResponse,HttpStatus.OK);

@@ -20,7 +20,7 @@ public class ChatService {
     private final ChatMessageRepository chatMessageRepository;
     private final UserService userService;
 
-    public ChatMessage addMessage(String chatRoomId, ChatMessage message) throws InterruptedException {
+    public ChatMessage addMessage(String chatRoomId, ChatMessage message, Boolean isSync) throws InterruptedException {
 
         User user = userService.getUser(message.getSenderId());
 
@@ -33,8 +33,11 @@ public class ChatService {
 
         ChatMessage savedMessage = chatMessageRepository.save(message);
 
-//        messageProcessingService.sendMessage(savedMessage);
-        messageProcessingService.processMessageAfterSave(chatRoomId);
+        if(isSync){
+            messageProcessingService.processMessageSync(chatRoomId);
+        } else {
+            messageProcessingService.processMessageAsync(chatRoomId);
+        }
 
         return savedMessage;
     }

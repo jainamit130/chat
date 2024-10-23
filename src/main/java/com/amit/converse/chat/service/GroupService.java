@@ -33,17 +33,21 @@ public class GroupService {
         return chatRoom;
     }
 
+    public void setExtraDetails(User user,ChatRoom chatRoom){
+        ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId());
+        chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(user.getUserId()));
+        if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
+            chatRoom.setName(user.getUsername()==chatRoom.getCreatorUsername()?chatRoom.getRecipientUsername():chatRoom.getCreatorUsername());
+        }
+        chatRoom.setLatestMessage(latestMessage);
+    }
+
     public List<ChatRoom> getChatRoomsOfUser(String userId) {
         User user = userService.getUser(userId);
         Set<String> chatRoomIds = user.getChatRoomIds();
         List<ChatRoom> chatRooms = chatRoomRepository.findAllById(chatRoomIds);
         for (ChatRoom chatRoom : chatRooms) {
-            ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId());
-            chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(userId));
-            if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
-                chatRoom.setName(user.getUsername()==chatRoom.getCreatorUsername()?chatRoom.getRecipientUsername():chatRoom.getCreatorUsername());
-            }
-            chatRoom.setLatestMessage(latestMessage);
+            setExtraDetails(user,chatRoom);
         }
         return chatRooms;
     }
@@ -91,20 +95,34 @@ public class GroupService {
         }
 
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
-
-        for (String userId : memberIds) {
-            userService.groupJoinedOrLeft(userId,savedChatRoom.getId(),true);
-            webSocketMessageService.sendNewGroupStatusToMember(userId,savedChatRoom);
+        List<User> users = sharedService.getAllUsers(memberIds);
+        if(chatRoomType!=ChatRoomType.INDIVIDUAL){
+            for (User user : users) {
+                userService.groupJoinedOrLeft(user,savedChatRoom.getId(),true);
+                webSocketMessageService.sendNewGroupStatusToMember(user.getUserId(),savedChatRoom);
+            }
         }
+
         return savedChatRoom.getId();
+    }
+
+    public void sendNewChatStatusToMember(String chatRoomId){
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        for (String userId : chatRoom.getUserIds()) {
+            User user = sharedService.getUser(userId);
+            setExtraDetails(user,chatRoom);
+            userService.groupJoinedOrLeft(user,chatRoomId,true);
+            webSocketMessageService.sendNewGroupStatusToMember(userId,chatRoom);
+        }
     }
 
     public ChatRoom addMembers(String chatRoomId, List<String> memberIds) {
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-        for(String userId : memberIds){
-            userService.groupJoinedOrLeft(userId,chatRoom.getId(),true);
+        List<User> userIds = sharedService.getAllUsers(memberIds);
+        for(User user : userIds){
+            userService.groupJoinedOrLeft(user,chatRoom.getId(),true);
         }
         chatRoom.getUserIds().addAll(memberIds);
         return chatRoomRepository.save(chatRoom);
@@ -114,8 +132,9 @@ public class GroupService {
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-        for(String userId : memberIds){
-            userService.groupJoinedOrLeft(userId,chatRoom.getId(),false);
+        List<User> users = sharedService.getAllUsers(memberIds);
+        for(User user : users){
+            userService.groupJoinedOrLeft(user,chatRoom.getId(),false);
         }
         chatRoom.getUserIds().removeAll(memberIds);
         return chatRoomRepository.save(chatRoom);
