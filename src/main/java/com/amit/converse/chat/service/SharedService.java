@@ -87,10 +87,10 @@ public class SharedService {
         return userRepository.save(user);
     }
 
-    User getRecipientUser(ChatRoom chatRoom) {
+    User getCounterpartUser(ChatRoom chatRoom,String participantUserId) {
         String recipientUserId = chatRoom.getUserIds()
                 .stream()
-                .filter(userId -> !userId.equals(chatRoom.getCreatedBy()))
+                .filter(userId -> !userId.equals(participantUserId))
                 .findFirst()
                 .orElseThrow(() -> new ConverseException("No other user found"));
         User recipientUser = userRepository.findByUserId(recipientUserId)

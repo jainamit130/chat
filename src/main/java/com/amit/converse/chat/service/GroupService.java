@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.dto.GroupStatusResponse;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
@@ -31,6 +32,15 @@ public class GroupService {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
         return chatRoom;
+    }
+
+    public Instant getLastSeenTimeStamp(String chatRoomId, String userId) {
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        if(chatRoom.getChatRoomType()==ChatRoomType.INDIVIDUAL){
+            User counterPartUser = sharedService.getCounterpartUser(chatRoom,userId);
+            return counterPartUser.getLastSeenTimestamp();
+        }
+        return null;
     }
 
     public void setExtraDetails(User user,ChatRoom chatRoom){
@@ -90,8 +100,8 @@ public class GroupService {
             if(existingChatRoomOptional.isPresent()){
                 return existingChatRoomOptional.get().getId();
             }
-            User recipientUser = sharedService.getRecipientUser(chatRoom);
-            chatRoom.setRecipientUsername(recipientUser.getUsername());
+            User counterpartUser = sharedService.getCounterpartUser(chatRoom,createdById);
+            chatRoom.setRecipientUsername(counterpartUser.getUsername());
         }
 
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);

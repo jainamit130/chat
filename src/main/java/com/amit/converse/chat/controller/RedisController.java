@@ -1,5 +1,6 @@
 package com.amit.converse.chat.controller;
 
+import com.amit.converse.chat.dto.GroupStatusResponse;
 import com.amit.converse.chat.dto.OnlineStatusDto;
 import com.amit.converse.chat.dto.UserResponseDto;
 import com.amit.converse.chat.exceptions.ConverseException;
@@ -51,12 +52,18 @@ public class RedisController {
     }
 
     @PostMapping("/save/activeChatRoom/{chatRoomId}/{userId}")
-    public ResponseEntity<Set<String>> saveActiveChatRoom(@PathVariable String userId, @PathVariable String chatRoomId, @RequestParam(value = "prevChatRoomId", required = false) String prevChatRoomId) {
+    public ResponseEntity<GroupStatusResponse> saveActiveChatRoom(@PathVariable String userId, @PathVariable String chatRoomId, @RequestParam(value = "prevChatRoomId", required = false) String prevChatRoomId) {
         if(prevChatRoomId!=null){
             redisService.removeUserFromChatRoom(prevChatRoomId,userId);
         }
         redisService.addUserIdToChatRoom(chatRoomId,userId);
-        return new ResponseEntity<Set<String>>(groupService.getOnlineUsersOfGroup(chatRoomId), HttpStatus.OK);
+        Long onlineMembersCount = redisService.getOnlineUserCountForChatRoom(chatRoomId,userId);
+        Instant lastSeenTimestamp = null;
+        if(onlineMembersCount==0){
+            lastSeenTimestamp = groupService.getLastSeenTimeStamp(chatRoomId,userId);
+        }
+        GroupStatusResponse response = GroupStatusResponse.builder().onlineMembersCount(onlineMembersCount).lastSeenTimestamp(lastSeenTimestamp).build();
+        return new ResponseEntity<GroupStatusResponse>(response, HttpStatus.OK);
     }
 
     @GetMapping("/get/activeChatRoom/{chatRoomId}")

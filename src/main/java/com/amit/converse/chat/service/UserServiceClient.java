@@ -5,10 +5,15 @@ import com.amit.converse.common.*;
 import com.google.protobuf.Timestamp;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
+import io.grpc.netty.shaded.io.netty.handler.ssl.SslContext;
+import io.grpc.netty.shaded.io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import io.grpc.stub.StreamObserver;
 import lombok.AllArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 
 import java.time.Instant;
 
@@ -16,16 +21,6 @@ import java.time.Instant;
 @AllArgsConstructor
 public class UserServiceClient extends UserServiceGrpc.UserServiceImplBase {
     private final UserService userService;
-    private final UserServiceGrpc.UserServiceBlockingStub stub;
-
-    @Autowired
-    public UserServiceClient(UserService userService) {
-        this.userService = userService;
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 9091)
-                .usePlaintext()
-                .build();
-        this.stub = UserServiceGrpc.newBlockingStub(channel);
-    }
 
     @Override
     public void sendMessage(SendMessageRequest request, StreamObserver<SendMessageResponse> responseObserver) {
