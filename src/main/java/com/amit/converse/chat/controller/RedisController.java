@@ -4,6 +4,8 @@ import com.amit.converse.chat.dto.GroupStatusResponse;
 import com.amit.converse.chat.dto.OnlineStatusDto;
 import com.amit.converse.chat.dto.UserResponseDto;
 import com.amit.converse.chat.exceptions.ConverseException;
+import com.amit.converse.chat.model.ChatRoom;
+import com.amit.converse.chat.model.ChatRoomType;
 import com.amit.converse.chat.model.OnlineStatus;
 import com.amit.converse.chat.service.*;
 import lombok.AllArgsConstructor;
@@ -57,12 +59,13 @@ public class RedisController {
             redisService.removeUserFromChatRoom(prevChatRoomId,userId);
         }
         redisService.addUserIdToChatRoom(chatRoomId,userId);
-        Long onlineMembersCount = redisService.getOnlineUserCountForChatRoom(chatRoomId,userId);
-        Instant lastSeenTimestamp = null;
-        if(onlineMembersCount==0){
-            lastSeenTimestamp = groupService.getLastSeenTimeStamp(chatRoomId,userId);
-        }
-        GroupStatusResponse response = GroupStatusResponse.builder().onlineMembersCount(onlineMembersCount).lastSeenTimestamp(lastSeenTimestamp).build();
+        ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
+        Set<String> onlineUsers = groupService.getOnlineUsersOfGroup(chatRoom);
+        Instant lastSeenTimstamp = null;
+        // If ChatRoom is Individual get Last Seen
+        if(chatRoom.getChatRoomType()== ChatRoomType.INDIVIDUAL)
+            lastSeenTimstamp=groupService.getLastSeenTimeStampOfCouterPartUser(chatRoom,userId);
+        GroupStatusResponse response = GroupStatusResponse.builder().onlineUsers(onlineUsers).lastSeenTimestamp(lastSeenTimstamp).build();
         return new ResponseEntity<GroupStatusResponse>(response, HttpStatus.OK);
     }
 

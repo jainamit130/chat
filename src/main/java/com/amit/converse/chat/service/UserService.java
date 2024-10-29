@@ -56,7 +56,6 @@ public class UserService {
         }
     }
 
-
     public void updateUserLastSeen(String userId, Instant timestamp) {
         User user = getUser(userId);
         user.setLastSeenTimestamp(timestamp);

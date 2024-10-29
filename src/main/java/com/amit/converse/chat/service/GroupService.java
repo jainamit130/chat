@@ -34,13 +34,9 @@ public class GroupService {
         return chatRoom;
     }
 
-    public Instant getLastSeenTimeStamp(String chatRoomId, String userId) {
-        ChatRoom chatRoom = getChatRoom(chatRoomId);
-        if(chatRoom.getChatRoomType()==ChatRoomType.INDIVIDUAL){
-            User counterPartUser = sharedService.getCounterpartUser(chatRoom,userId);
-            return counterPartUser.getLastSeenTimestamp();
-        }
-        return null;
+    public Instant getLastSeenTimeStampOfCouterPartUser(ChatRoom chatRoom, String userId) {
+        User counterPartUser = sharedService.getCounterpartUser(chatRoom,userId);
+        return counterPartUser.getLastSeenTimestamp();
     }
 
     public void setExtraDetails(User user,ChatRoom chatRoom){
@@ -62,14 +58,9 @@ public class GroupService {
         return chatRooms;
     }
 
-    public Set<String> getOnlineUsersOfGroup(String chatRoomId){
-        ChatRoom chatRoom = getChatRoom(chatRoomId);
-        Set<String> onlineUserIds = getOnlineUsersOfGroup(chatRoom);
-        return userService.processIdsToName(onlineUserIds);
-    }
-
     public Set<String> getOnlineUsersOfGroup(ChatRoom chatRoom){
-        return redisService.filterOnlineUsers(chatRoom.getUserIds());
+        Set<String> onlineUserIds = redisService.filterOnlineUsers(chatRoom.getUserIds());
+        return userService.processIdsToName(onlineUserIds);
     }
 
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId,Integer startIndex){

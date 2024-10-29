@@ -50,17 +50,6 @@ public class RedisService {
         redisTemplate.opsForSet().add("chatRoom:" + chatRoomId + ":userIds", userId);
     }
 
-    public Long getOnlineUserCountForChatRoom(String chatRoomId, String userId) {
-        String key = "chatRoom:" + chatRoomId + ":userIds";
-        Long totalCount = redisTemplate.opsForSet().size(key);
-
-        if (redisTemplate.opsForSet().isMember(key, userId)) {
-            return totalCount - 1;
-        }
-
-        return totalCount;
-    }
-
     public Set<String> filterOnlineUsers(List<String> userIds) {
         Set<String> onlineUsers = new HashSet<>();
 

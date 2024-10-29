@@ -6,12 +6,13 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Builder
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class GroupStatusResponse {
-    Long onlineMembersCount;
+    Set<String> onlineUsers;
     Instant lastSeenTimestamp;
 }
