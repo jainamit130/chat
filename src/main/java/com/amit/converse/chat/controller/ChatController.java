@@ -19,6 +19,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
 
@@ -64,6 +65,11 @@ public class ChatController {
     public List<ChatMessage> getMessagesOfChatRoom(@Argument String chatRoomId,@Argument Integer fromCount){
         List<ChatMessage> chatMessages=groupService.getMessagesOfChatRoom(chatRoomId,fromCount);
         return chatMessages;
+    }
+
+    @PostMapping("/deleteForEveryone")
+    public ResponseEntity<Boolean> deleteMessageForEveryone(@Argument String messageId, @Argument String userId){
+        return new ResponseEntity(chatService.deleteForEveryone(messageId,userId),HttpStatus.OK);
     }
 
 //    @PostMapping("/test/grpc-call")

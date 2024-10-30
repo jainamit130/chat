@@ -9,6 +9,7 @@ import com.amit.converse.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.*;
 
@@ -16,6 +17,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class ChatService {
 
+    private static final Duration DELETE_FOR_EVERYONE_LIMIT = Duration.ofMinutes(2);
     private final MessageProcessingService messageProcessingService;
     private final ChatMessageRepository chatMessageRepository;
     private final UserService userService;
@@ -65,5 +67,18 @@ public class ChatService {
         }
 
         return updatedMap;
+    }
+
+    public Boolean deleteForEveryone(String messageId, String userId) {
+        ChatMessage message = chatMessageRepository.findById(messageId)
+                .orElseThrow(()-> new ConverseException("message does not exist!"));
+        Instant deletionDeadline = message.getTimestamp().plus(DELETE_FOR_EVERYONE_LIMIT);
+        if(userId==message.getSenderId() && !message.getDeletedForUsers().contains(userId) && Instant.now().isBefore(deletionDeadline)){
+            message.setContent("This message was deleted");
+            message.setDeletedForEveryone(true);
+            chatMessageRepository.save(message);
+            return true;
+        }
+        return false;
     }
 }

@@ -30,6 +30,8 @@ public class ChatMessage {
     private MessageStatus status;
     private boolean isEncrypted;
     private User user;
+    private Set<String> deletedForUsers;
+    private Boolean deletedForEveryone;
     private Set<String> deliveredRecipients;
     private Set<String> readRecipients;
     private Map<String, Set<String>> deliveryReceiptsByTime = new TreeMap<>();
