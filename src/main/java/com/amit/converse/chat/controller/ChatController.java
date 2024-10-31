@@ -62,8 +62,8 @@ public class ChatController {
     }
 
     @QueryMapping
-    public List<ChatMessage> getMessagesOfChatRoom(@Argument String chatRoomId,@Argument Integer fromCount){
-        List<ChatMessage> chatMessages=groupService.getMessagesOfChatRoom(chatRoomId,fromCount);
+    public List<ChatMessage> getMessagesOfChatRoom(@Argument String chatRoomId, @Argument String userId ,@Argument Integer fromCount){
+        List<ChatMessage> chatMessages=groupService.getMessagesOfChatRoom(chatRoomId,userId,fromCount);
         return chatMessages;
     }
 

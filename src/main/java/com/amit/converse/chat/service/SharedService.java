@@ -36,8 +36,8 @@ public class SharedService {
         return user;
     }
 
-    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, Integer startIndex, Integer pageSize) {
-        long totalMessages = chatMessageRepository.countByChatRoomId(chatRoomId);
+    public List<ChatMessage> getMessagesOfChatRoom(ChatRoom chatRoom,String userId, Instant userFetchStartTimestamp, Integer startIndex, Integer pageSize) {
+        long totalMessages = chatMessageRepository.countByChatRoomId(chatRoom.getId());
         int offset = Math.min(startIndex, (int) totalMessages);
         int remainingMessages = (int) totalMessages - offset;
 
@@ -57,7 +57,7 @@ public class SharedService {
             return Collections.emptyList();
         }
 
-        return chatMessageRepository.findMessagesWithPagination(chatRoomId, pageable);
+        return chatMessageRepository.findMessagesWithPaginationAfterTimestamp(chatRoom.getId(), userFetchStartTimestamp, pageable);
     }
 
     public ChatMessage getLatestMessageOfGroup(String chatRoomId){

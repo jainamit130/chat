@@ -29,6 +29,10 @@ public class WebSocketMessageService {
         messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, chatMessage);
     }
 
+    public void sendDeletedMessageStatus(String chatRoomId, String messageId) {
+        messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, messageId);
+    }
+
     public void sendMarkedMessageStatus(String chatRoomId, String senderId, List<String> messageIds, Boolean isDelivered){
         MessageStatusDto messageStatusDto = MessageStatusDto.builder().messageIds(messageIds).chatRoomId(chatRoomId).isDelivered(isDelivered).build();
         messagingTemplate.convertAndSend("/topic/message/"+senderId,messageStatusDto);

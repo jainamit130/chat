@@ -47,7 +47,7 @@ public class MarkMessageService {
 
     @Transactional
     public void markAllMessages(ChatRoom chatRoom,String userId, Boolean isDelivered, Integer toBeMarkedMessagesCount) {
-        List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoom.getId(), toBeMarkedMessagesCount);
+        List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoom.getId(), userId, toBeMarkedMessagesCount);
         String timestampStr = Instant.now().toString();
         Map<String, List<String>> messageIdsToBeMarked = new HashMap<>();
 

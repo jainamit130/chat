@@ -30,6 +30,8 @@ public class ChatRoom {
     private Integer totalMessagesCount;
     private Map<String, Integer> readMessageCounts;
     private Map<String, Integer> deliveredMessageCounts;
+    // Clear Chat feature
+    private Map<String, Instant> userFetchStartTimeMap;
 
     public void incrementTotalMessagesCount() {
         if(totalMessagesCount==null){
@@ -53,4 +55,5 @@ public class ChatRoom {
     public int  getUndeliveredMessageCount(String userId) {
         return totalMessagesCount-deliveredMessageCounts.getOrDefault(userId, 0);
     }
+
 }

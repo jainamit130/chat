@@ -63,9 +63,17 @@ public class GroupService {
         return userService.processIdsToName(onlineUserIds);
     }
 
-    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId,Integer startIndex){
-        List<ChatMessage> chatMessages = sharedService.getMessagesOfChatRoom(chatRoomId,startIndex,null);
+    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, String userId,Integer startIndex){
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(userId, chatRoom.getCreatedAt());
+        List<ChatMessage> chatMessages = sharedService.getMessagesOfChatRoom(chatRoom,userId,userFetchStartTimestamp,startIndex,null);
         return chatMessages != null ? chatMessages : Collections.emptyList();
+    }
+
+    public void clearChat(String chatRoomId,String userId){
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        Map<String,Instant> userFetchStartTimeMap = chatRoom.getUserFetchStartTimeMap();
+        userFetchStartTimeMap.put(userId,Instant.now());
     }
 
     public String createGroup(String groupName, ChatRoomType chatRoomType, String createdById, List<String> memberIds) {
@@ -141,14 +149,16 @@ public class GroupService {
         return chatRoomRepository.save(chatRoom);
     }
 
-    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, Pageable pageable) {
-        List<ChatMessage> messages =chatMessageRepository.findMessagesWithPagination(chatRoomId,pageable);
+    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, String userId, Pageable pageable) {
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(userId, chatRoom.getCreatedAt());
+        List<ChatMessage> messages =chatMessageRepository.findMessagesWithPaginationAfterTimestamp(chatRoomId,userFetchStartTimestamp,pageable);
         return messages;
     }
 
-    public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, Integer toBeMarkedMessagesCount) {
+    public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, String userId, Integer toBeMarkedMessagesCount) {
         PageRequest pageRequest = PageRequest.of(0, toBeMarkedMessagesCount, Sort.by(Sort.Direction.DESC, "timestamp"));
-        List<ChatMessage> messagesToBeMarked = getMessagesOfChatRoom(chatRoomId,pageRequest);
+        List<ChatMessage> messagesToBeMarked = getMessagesOfChatRoom(chatRoomId,userId,pageRequest);
         return messagesToBeMarked;
     }
 

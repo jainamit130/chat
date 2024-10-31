@@ -21,6 +21,7 @@ public class ChatService {
     private final MessageProcessingService messageProcessingService;
     private final ChatMessageRepository chatMessageRepository;
     private final UserService userService;
+    private final WebSocketMessageService webSocketMessageService;
 
     public ChatMessage addMessage(String chatRoomId, ChatMessage message, Boolean isSync) throws InterruptedException {
 
@@ -77,6 +78,7 @@ public class ChatService {
             message.setContent("This message was deleted");
             message.setDeletedForEveryone(true);
             chatMessageRepository.save(message);
+            webSocketMessageService.sendDeletedMessageStatus(message.getChatRoomId(),messageId);
             return true;
         }
         return false;
