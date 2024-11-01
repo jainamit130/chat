@@ -13,9 +13,20 @@ import java.util.List;
 public interface ChatMessageRepository extends MongoRepository<ChatMessage,String> {
     List<ChatMessage> findAllByChatRoomIdOrderByTimestampDesc(String chatRoomId);
 
-    @Query("{ 'chatRoomId': ?0, 'timestamp': { $gt: ?1 } }")
-    List<ChatMessage> findMessagesWithPaginationAfterTimestamp(String chatRoomId, Instant timestamp, Pageable pageable);
-    ChatMessage findTopByChatRoomIdOrderByTimestampDesc(String chatRoomId);
+    @Query(value = "{ 'chatRoomId': ?0, 'timestamp': { $gt: ?1 }, 'deletedForUsers': { $nin: [?2] } }", sort = "{ 'timestamp': 1 }")
+    List<ChatMessage> findMessagesWithPaginationAfterTimestamp(
+            String chatRoomId, Instant timestamp, String userId, Pageable pageable
+    );
 
-    Integer countByChatRoomId(String chatRoomId);
+
+    @Query(value = "{ 'chatRoomId': ?0, 'deletedForUsers': { $nin: [?1] } }", sort = "{ 'timestamp': -1 }")
+    ChatMessage findTopByChatRoomIdAndNotDeletedForUserOrderByTimestampDesc(
+            String chatRoomId, String userId
+    );
+
+
+
+    @Query(value = "{ 'chatRoomId': ?0, 'deletedForUsers': { $nin: [?1] } }", count = true)
+    Integer countMessagesByChatRoomIdAndNotDeletedForUser(String chatRoomId, String userId);
+
 }

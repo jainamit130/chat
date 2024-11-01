@@ -31,6 +31,7 @@ public class ChatService {
         message.setChatRoomId(chatRoomId);
         message.setUser(user);
         message.setMessageStatus(MessageStatus.PENDING);
+        message.setDeletedForUsers(new HashSet<>());
         message.setDeliveredRecipients(new HashSet<>());
         message.setReadRecipients(new HashSet<>());
 
@@ -79,6 +80,19 @@ public class ChatService {
             message.setDeletedForEveryone(true);
             chatMessageRepository.save(message);
             webSocketMessageService.sendDeletedMessageStatus(message.getChatRoomId(),messageId);
+            return true;
+        }
+        return false;
+    }
+
+    public Boolean deleteForMe(String messageId, String userId) {
+        ChatMessage message = chatMessageRepository.findById(messageId)
+                .orElseThrow(() -> new ConverseException("message does not exist!"));
+        Set<String> deletedForUsers = message.getDeletedForUsers();
+        if(!deletedForUsers.contains(userId)){
+            deletedForUsers.add(userId);
+            message.setDeletedForUsers(deletedForUsers);
+            chatMessageRepository.save(message);
             return true;
         }
         return false;

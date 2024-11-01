@@ -40,7 +40,7 @@ public class GroupService {
     }
 
     public void setExtraDetails(User user,ChatRoom chatRoom){
-        ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId());
+        ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId(),user.getUserId());
         chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(user.getUserId()));
         if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
             chatRoom.setName(user.getUsername()==chatRoom.getCreatorUsername()?chatRoom.getRecipientUsername():chatRoom.getCreatorUsername());
@@ -152,7 +152,7 @@ public class GroupService {
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, String userId, Pageable pageable) {
         ChatRoom chatRoom = getChatRoom(chatRoomId);
         Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(userId, chatRoom.getCreatedAt());
-        List<ChatMessage> messages =chatMessageRepository.findMessagesWithPaginationAfterTimestamp(chatRoomId,userFetchStartTimestamp,pageable);
+        List<ChatMessage> messages =chatMessageRepository.findTopByChatRoomIdAndNotDeletedForUserOrderByTimestampDesc(chatRoomId,userFetchStartTimestamp,pageable);
         return messages;
     }
 

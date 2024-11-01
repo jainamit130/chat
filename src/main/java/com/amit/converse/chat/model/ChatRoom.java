@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,4 +57,10 @@ public class ChatRoom {
         return totalMessagesCount-deliveredMessageCounts.getOrDefault(userId, 0);
     }
 
+    public Map<String,Instant> getUserFetchStartTimeMap() {
+        if(userFetchStartTimeMap==null){
+            return new HashMap<>();
+        }
+        return userFetchStartTimeMap;
+    }
 }
