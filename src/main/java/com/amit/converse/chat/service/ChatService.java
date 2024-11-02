@@ -75,7 +75,8 @@ public class ChatService {
         ChatMessage message = chatMessageRepository.findById(messageId)
                 .orElseThrow(()-> new ConverseException("message does not exist!"));
         Instant deletionDeadline = message.getTimestamp().plus(DELETE_FOR_EVERYONE_LIMIT);
-        if(userId==message.getSenderId() && !message.getDeletedForUsers().contains(userId) && Instant.now().isBefore(deletionDeadline)){
+        if(userId.equals(String.valueOf(message.getSenderId()))
+                && !message.getDeletedForUsers().contains(userId) && Instant.now().isBefore(deletionDeadline)){
             message.setContent("This message was deleted");
             message.setDeletedForEveryone(true);
             chatMessageRepository.save(message);

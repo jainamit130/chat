@@ -152,7 +152,7 @@ public class GroupService {
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, String userId, Pageable pageable) {
         ChatRoom chatRoom = getChatRoom(chatRoomId);
         Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(userId, chatRoom.getCreatedAt());
-        List<ChatMessage> messages =chatMessageRepository.findTopByChatRoomIdAndNotDeletedForUserOrderByTimestampDesc(chatRoomId,userFetchStartTimestamp,pageable);
+        List<ChatMessage> messages =chatMessageRepository.findMessagesWithPaginationAfterTimestamp(chatRoomId,userFetchStartTimestamp,userId,pageable);
         return messages;
     }
 

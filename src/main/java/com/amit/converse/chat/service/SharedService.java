@@ -61,7 +61,7 @@ public class SharedService {
     }
 
     public ChatMessage getLatestMessageOfGroup(String chatRoomId,String userId){
-        ChatMessage latestMessage = chatMessageRepository.findTopByChatRoomIdAndNotDeletedForUserOrderByTimestampDesc(chatRoomId,userId);
+        ChatMessage latestMessage = chatMessageRepository.findLatestMessage(chatRoomId,userId);
         return latestMessage;
     }
 
