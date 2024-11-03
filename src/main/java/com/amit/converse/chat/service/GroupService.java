@@ -40,7 +40,7 @@ public class GroupService {
     }
 
     public void setExtraDetails(User user,ChatRoom chatRoom){
-        ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId(),user.getUserId());
+        ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom,user.getUserId());
         chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(user.getUserId()));
         if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
             chatRoom.setName(user.getUsername()==chatRoom.getCreatorUsername()?chatRoom.getRecipientUsername():chatRoom.getCreatorUsername());
@@ -70,11 +70,25 @@ public class GroupService {
         return chatMessages != null ? chatMessages : Collections.emptyList();
     }
 
-    public void clearChat(String chatRoomId,String userId){
-        ChatRoom chatRoom = getChatRoom(chatRoomId);
-        Map<String,Instant> userFetchStartTimeMap = chatRoom.getUserFetchStartTimeMap();
-        userFetchStartTimeMap.put(userId,Instant.now());
+    public Boolean clearChat(String chatRoomId, String userId) {
+        try {
+            ChatRoom chatRoom = getChatRoom(chatRoomId);
+            Map<String, Instant> userFetchStartTimeMap = chatRoom.getUserFetchStartTimeMap();
+            Instant lastClearedTimestamp = chatRoom.getCreatedAt();
+            if(userFetchStartTimeMap.containsKey(userId)){
+                lastClearedTimestamp=userFetchStartTimeMap.get(userId);
+            }
+            // Delete for this user from the last cleared instant to the current instant
+            sharedService.deleteMessagesFromToInstant(lastClearedTimestamp,userId,chatRoom.getUserIds().size());
+            userFetchStartTimeMap.put(userId, Instant.now());
+            return true;
+        } catch (Exception e) {
+            System.err.println("Failed to clear chat for chatRoomId: " + chatRoomId);
+            e.printStackTrace();
+            return false;
+        }
     }
+
 
     public String createGroup(String groupName, ChatRoomType chatRoomType, String createdById, List<String> memberIds) {
         Map<String, Integer> readMessageCounts = new HashMap<>();

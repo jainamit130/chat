@@ -68,14 +68,15 @@ public class ChatRoomController {
         }
     }
 
-    @PostMapping("/clearChat/{chatRoomId}")
-    public ResponseEntity clearChat(@PathVariable String chatRoomId, @RequestBody String userId) {
+    @PostMapping("/groups/clearChat/{chatRoomId}")
+    public ResponseEntity<Boolean> clearChat(@PathVariable String chatRoomId, @RequestBody String userId) {
         try {
-            groupService.clearChat(chatRoomId,userId);
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(groupService.clearChat(chatRoomId,userId),HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+
 
 }

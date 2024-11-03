@@ -12,6 +12,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -37,7 +38,7 @@ public class SharedService {
     }
 
     public List<ChatMessage> getMessagesOfChatRoom(ChatRoom chatRoom,String userId, Instant userFetchStartTimestamp, Integer startIndex, Integer pageSize) {
-        long totalMessages = chatMessageRepository.countMessagesByChatRoomIdAndNotDeletedForUser(chatRoom.getId(),userId);
+        long totalMessages = chatMessageRepository.countMessagesByChatRoomIdAndNotDeletedForUser(chatRoom.getId(),userFetchStartTimestamp,userId);
         int offset = Math.min(startIndex, (int) totalMessages);
         int remainingMessages = (int) totalMessages - offset;
 
@@ -60,8 +61,9 @@ public class SharedService {
         return chatMessageRepository.findMessagesWithPaginationAfterTimestamp(chatRoom.getId(), userFetchStartTimestamp ,userId, pageable);
     }
 
-    public ChatMessage getLatestMessageOfGroup(String chatRoomId,String userId){
-        ChatMessage latestMessage = chatMessageRepository.findLatestMessage(chatRoomId,userId);
+    public ChatMessage getLatestMessageOfGroup(ChatRoom chatRoom,String userId){
+        Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(userId, chatRoom.getCreatedAt());
+        ChatMessage latestMessage = chatMessageRepository.findLatestMessage(chatRoom.getId(),userFetchStartTimestamp,userId);
         return latestMessage;
     }
 
@@ -96,5 +98,16 @@ public class SharedService {
         User recipientUser = userRepository.findByUserId(recipientUserId)
                 .orElseThrow(()-> new ConverseException("User not found!"));
         return recipientUser;
+    }
+
+    @Async
+    public void deleteMessagesFromToInstant(Instant lastClearedTimestamp,String userId,Integer groupSize) {
+        List<ChatMessage> messages = chatMessageRepository.findByTimestampBetween(lastClearedTimestamp,Instant.now());
+        for(ChatMessage message:messages){
+            message.addUserToDeletedForUsers(userId);
+            if(message.getDeletedForUsers().size()==groupSize){
+                chatMessageRepository.deleteById(message.getId());
+            }
+        }
     }
 }

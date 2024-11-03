@@ -60,4 +60,11 @@ public class ChatMessage {
     public void setMessageStatus(MessageStatus newStatus) {
         status = newStatus;
     }
+
+    public void addUserToDeletedForUsers(String userId) {
+        if(deletedForUsers==null){
+            deletedForUsers=new HashSet<>();
+        }
+        deletedForUsers.add(userId);
+    }
 }
