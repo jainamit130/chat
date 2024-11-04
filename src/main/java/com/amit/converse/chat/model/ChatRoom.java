@@ -28,11 +28,14 @@ public class ChatRoom {
     private String recipientUsername;
     private transient ChatMessage latestMessage;
     private transient Integer unreadMessageCount;
+    private transient Boolean exitedMember;
     private Integer totalMessagesCount;
     private Map<String, Integer> readMessageCounts;
     private Map<String, Integer> deliveredMessageCounts;
     // Clear Chat feature
     private Map<String, Instant> userFetchStartTimeMap;
+    // Exit Group Feature
+    private Map<String,Instant> exitedMembers;
 
     public void incrementTotalMessagesCount() {
         if(totalMessagesCount==null){
@@ -62,5 +65,18 @@ public class ChatRoom {
             return new HashMap<>();
         }
         return userFetchStartTimeMap;
+    }
+
+    public void exitGroup(String userId){
+        exitedMembers.put(userId,Instant.now());
+    }
+
+    public boolean isExitedMember(String userId) {
+        if(exitedMembers.containsKey(userId)){
+            exitedMember=true;
+            return true;
+        }
+        exitedMember=false;
+        return false;
     }
 }

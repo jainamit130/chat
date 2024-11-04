@@ -37,8 +37,8 @@ public class SharedService {
         return user;
     }
 
-    public List<ChatMessage> getMessagesOfChatRoom(ChatRoom chatRoom,String userId, Instant userFetchStartTimestamp, Integer startIndex, Integer pageSize) {
-        long totalMessages = chatMessageRepository.countMessagesByChatRoomIdAndNotDeletedForUser(chatRoom.getId(),userFetchStartTimestamp,userId);
+    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId,Instant toTimestamp,String userId, Instant userFetchStartTimestamp, Integer startIndex, Integer pageSize) {
+        long totalMessages = chatMessageRepository.countMessagesByChatRoomIdAndNotDeletedForUser(chatRoomId,toTimestamp,userFetchStartTimestamp,userId);
         int offset = Math.min(startIndex, (int) totalMessages);
         int remainingMessages = (int) totalMessages - offset;
 
@@ -57,13 +57,11 @@ public class SharedService {
         } else {
             return Collections.emptyList();
         }
-
-        return chatMessageRepository.findMessagesWithPaginationAfterTimestamp(chatRoom.getId(), userFetchStartTimestamp ,userId, pageable);
+        return chatMessageRepository.findMessagesWithPaginationAfterTimestamp(chatRoomId,userFetchStartTimestamp,toTimestamp,userId, pageable);
     }
 
-    public ChatMessage getLatestMessageOfGroup(ChatRoom chatRoom,String userId){
-        Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(userId, chatRoom.getCreatedAt());
-        ChatMessage latestMessage = chatMessageRepository.findLatestMessage(chatRoom.getId(),userFetchStartTimestamp,userId);
+    public ChatMessage getLatestMessageOfGroup(String chatRoomId,Instant toTimestamp,Instant userFetchStartTimestamp,String userId){
+        ChatMessage latestMessage = chatMessageRepository.findLatestMessage(chatRoomId,userFetchStartTimestamp,toTimestamp,userId);
         return latestMessage;
     }
 

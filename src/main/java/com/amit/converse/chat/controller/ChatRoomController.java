@@ -58,11 +58,21 @@ public class ChatRoomController {
     }
 
     @PostMapping("/groups/remove/{chatRoomId}")
-    public ResponseEntity<ChatRoom> removeMembersFromGroup(@PathVariable String chatRoomId,
+    public ResponseEntity<Boolean> removeMembersFromGroup(@PathVariable String chatRoomId,
                                                            @RequestBody AddMembersRequest request) {
         try {
-            ChatRoom chatRoom = groupService.removeMembers(chatRoomId, request.getMemberIds());
-            return ResponseEntity.ok(chatRoom);
+            return new ResponseEntity(groupService.removeMembers(chatRoomId, request.getMemberIds()),HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @PostMapping("/groups/delete/{chatRoomId}")
+    public ResponseEntity<Boolean> deleteGroup(@PathVariable String chatRoomId, @RequestBody String userId) {
+        try {
+//            groupService.deleteGroup(chatRoomId, userId)
+            // To Be Completed
+            return new ResponseEntity(true,HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }

@@ -40,7 +40,12 @@ public class GroupService {
     }
 
     public void setExtraDetails(User user,ChatRoom chatRoom){
-        ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom,user.getUserId());
+        Instant toTimestamp = Instant.now();
+        if(chatRoom.isExitedMember(user.getId())){
+            toTimestamp=chatRoom.getExitedMembers().get(user.getUserId());
+        }
+        Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(user.getUserId(), chatRoom.getCreatedAt());
+        ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId(),toTimestamp,userFetchStartTimestamp,user.getUserId());
         chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(user.getUserId()));
         if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
             chatRoom.setName(user.getUsername()==chatRoom.getCreatorUsername()?chatRoom.getRecipientUsername():chatRoom.getCreatorUsername());
@@ -65,8 +70,12 @@ public class GroupService {
 
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, String userId,Integer startIndex){
         ChatRoom chatRoom = getChatRoom(chatRoomId);
+        Instant toTimestamp = Instant.now();
+        if(chatRoom.isExitedMember(userId)){
+            toTimestamp=chatRoom.getExitedMembers().get(userId);
+        }
         Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(userId, chatRoom.getCreatedAt());
-        List<ChatMessage> chatMessages = sharedService.getMessagesOfChatRoom(chatRoom,userId,userFetchStartTimestamp,startIndex,null);
+        List<ChatMessage> chatMessages = sharedService.getMessagesOfChatRoom(chatRoom.getId(),toTimestamp,userId,userFetchStartTimestamp,startIndex,null);
         return chatMessages != null ? chatMessages : Collections.emptyList();
     }
 
@@ -151,22 +160,42 @@ public class GroupService {
         return chatRoomRepository.save(chatRoom);
     }
 
-    public ChatRoom removeMembers(String chatRoomId, List<String> memberIds) {
-
+    public Boolean removeMembers(String chatRoomId, List<String> memberIds) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-        List<User> users = sharedService.getAllUsers(memberIds);
-        for(User user : users){
-            userService.groupJoinedOrLeft(user,chatRoom.getId(),false);
+                .orElse(null);
+        if (chatRoom == null) {
+            return false;
         }
-        chatRoom.getUserIds().removeAll(memberIds);
-        return chatRoomRepository.save(chatRoom);
+
+        List<User> users = sharedService.getAllUsers(memberIds);
+
+        if (users.size() != memberIds.size()) {
+            return false;
+        }
+
+        for (User user : users) {
+            chatRoom.exitGroup(user.getId());
+        }
+
+        boolean membersRemoved = chatRoom.getUserIds().removeAll(memberIds);
+
+        if (membersRemoved) {
+            chatRoomRepository.save(chatRoom);
+            return true;
+        } else {
+            return false;
+        }
     }
+
 
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, String userId, Pageable pageable) {
         ChatRoom chatRoom = getChatRoom(chatRoomId);
+        Instant toTimestamp = Instant.now();
+        if(chatRoom.isExitedMember(userId)){
+            toTimestamp=chatRoom.getExitedMembers().get(userId);
+        }
         Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(userId, chatRoom.getCreatedAt());
-        List<ChatMessage> messages =chatMessageRepository.findMessagesWithPaginationAfterTimestamp(chatRoomId,userFetchStartTimestamp,userId,pageable);
+        List<ChatMessage> messages =chatMessageRepository.findMessagesWithPaginationAfterTimestamp(chatRoomId,userFetchStartTimestamp,toTimestamp,userId,pageable);
         return messages;
     }
 
@@ -180,4 +209,10 @@ public class GroupService {
         chatRoomRepository.save(chatRoom);
         return;
     }
+
+//    public Boolean deleteGroup(String chatRoomId, String userId) {
+//        // Clear chat for the userId
+//        clearChat(chatRoomId,userId);
+//
+//    }
 }
