@@ -30,6 +30,8 @@ public class ChatMessage {
     private MessageStatus status;
     private boolean isEncrypted;
     private User user;
+    private Set<String> deletedForUsers;
+    private Boolean deletedForEveryone;
     private Set<String> deliveredRecipients;
     private Set<String> readRecipients;
     private Map<String, Set<String>> deliveryReceiptsByTime = new TreeMap<>();
@@ -57,5 +59,12 @@ public class ChatMessage {
 
     public void setMessageStatus(MessageStatus newStatus) {
         status = newStatus;
+    }
+
+    public void addUserToDeletedForUsers(String userId) {
+        if(deletedForUsers==null){
+            deletedForUsers=new HashSet<>();
+        }
+        deletedForUsers.add(userId);
     }
 }

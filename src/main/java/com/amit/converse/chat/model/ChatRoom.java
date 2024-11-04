@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +31,8 @@ public class ChatRoom {
     private Integer totalMessagesCount;
     private Map<String, Integer> readMessageCounts;
     private Map<String, Integer> deliveredMessageCounts;
+    // Clear Chat feature
+    private Map<String, Instant> userFetchStartTimeMap;
 
     public void incrementTotalMessagesCount() {
         if(totalMessagesCount==null){
@@ -52,5 +55,12 @@ public class ChatRoom {
 
     public int  getUndeliveredMessageCount(String userId) {
         return totalMessagesCount-deliveredMessageCounts.getOrDefault(userId, 0);
+    }
+
+    public Map<String,Instant> getUserFetchStartTimeMap() {
+        if(userFetchStartTimeMap==null){
+            return new HashMap<>();
+        }
+        return userFetchStartTimeMap;
     }
 }

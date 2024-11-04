@@ -17,6 +17,5 @@ public interface UserRepository extends MongoRepository<User,String> {
     boolean existsByUsername(String username);
     Optional<User> findByUserId(String userId);
     List<User> findAllByUsernameStartsWithIgnoreCase(String searchPrefix);
-    @Query("SELECT u FROM User u WHERE u.userId IN :userIds")
-    List<User> findAllByUserId(@Param("userIds") Set<String> userIds);
+    List<User> findAllByUserIdIn(List<String> userIds);
 }

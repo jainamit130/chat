@@ -1,34 +1,42 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.dto.UserEventDTO;
 import com.amit.converse.common.*;
+import com.google.protobuf.Timestamp;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import org.springframework.stereotype.Service;
+import io.grpc.netty.shaded.io.grpc.netty.GrpcSslContexts;
+import io.grpc.netty.shaded.io.grpc.netty.NettyChannelBuilder;
+import io.grpc.netty.shaded.io.netty.handler.ssl.SslContext;
+import io.grpc.netty.shaded.io.netty.handler.ssl.util.InsecureTrustManagerFactory;
+import io.grpc.stub.StreamObserver;
+import lombok.AllArgsConstructor;
+import net.devh.boot.grpc.server.service.GrpcService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 
-@Service
-public class UserServiceClient {
-    private final ChatServiceGrpc.ChatServiceBlockingStub stub;
+import java.time.Instant;
 
-    public UserServiceClient(){
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost",9091)
-                .usePlaintext()
+@GrpcService
+@AllArgsConstructor
+public class UserServiceClient extends UserServiceGrpc.UserServiceImplBase {
+    private final UserService userService;
+
+    @Override
+    public void sendMessage(SendMessageRequest request, StreamObserver<SendMessageResponse> responseObserver) {
+        User user = request.getUser();
+
+        Timestamp timestamp=user.getCreationDate();
+        UserEventDTO userEvent = UserEventDTO.builder().userId(user.getUserId()).username(user.getUsername()).
+                creationDate(Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos())).build();
+
+        boolean success = userService.consume(userEvent);
+        SendMessageResponse response = SendMessageResponse.newBuilder()
+                .setSuccess(success)
                 .build();
-        stub = ChatServiceGrpc.newBlockingStub(channel);
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
     }
 
-    public SendMessageResponse sendMessage(ChatMessage message) {
-        SendMessageRequest request = SendMessageRequest.newBuilder()
-                .setMessage(message)
-                .build();
-        SendMessageResponse response = stub.sendMessage(request);
-        return response;
-    }
-
-    public GetMessagesResponse getMessages(String userId, String chatterUserId){
-        GetMessagesRequest request = GetMessagesRequest.newBuilder()
-                .setUserId(userId)
-                .setChatWithUserId(chatterUserId)
-                .build();
-        return stub.getMessages(request);
-    }
 }

@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.dto.GroupStatusResponse;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
@@ -33,37 +34,63 @@ public class GroupService {
         return chatRoom;
     }
 
+    public Instant getLastSeenTimeStampOfCouterPartUser(ChatRoom chatRoom, String userId) {
+        User counterPartUser = sharedService.getCounterpartUser(chatRoom,userId);
+        return counterPartUser.getLastSeenTimestamp();
+    }
+
+    public void setExtraDetails(User user,ChatRoom chatRoom){
+        ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom,user.getUserId());
+        chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(user.getUserId()));
+        if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
+            chatRoom.setName(user.getUsername()==chatRoom.getCreatorUsername()?chatRoom.getRecipientUsername():chatRoom.getCreatorUsername());
+        }
+        chatRoom.setLatestMessage(latestMessage);
+    }
+
     public List<ChatRoom> getChatRoomsOfUser(String userId) {
         User user = userService.getUser(userId);
         Set<String> chatRoomIds = user.getChatRoomIds();
         List<ChatRoom> chatRooms = chatRoomRepository.findAllById(chatRoomIds);
         for (ChatRoom chatRoom : chatRooms) {
-            ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId());
-            chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(userId));
-            if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
-                chatRoom.setName(getRecipientUser(chatRoom).getUsername());
-            }
-            chatRoom.setLatestMessage(latestMessage);
+            setExtraDetails(user,chatRoom);
         }
         return chatRooms;
     }
 
-    public Set<String> getOnlineUsersOfGroup(String chatRoomId){
-        ChatRoom chatRoom = getChatRoom(chatRoomId);
-        Set<String> onlineUserIds = getOnlineUsersOfGroup(chatRoom);
+    public Set<String> getOnlineUsersOfGroup(ChatRoom chatRoom){
+        Set<String> onlineUserIds = redisService.filterOnlineUsers(chatRoom.getUserIds());
         return userService.processIdsToName(onlineUserIds);
     }
 
-    public Set<String> getOnlineUsersOfGroup(ChatRoom chatRoom){
-        return redisService.filterOnlineUsers(chatRoom.getUserIds());
-    }
-
-    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId,Integer startIndex){
-        List<ChatMessage> chatMessages = sharedService.getMessagesOfChatRoom(chatRoomId,startIndex,null);
+    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, String userId,Integer startIndex){
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(userId, chatRoom.getCreatedAt());
+        List<ChatMessage> chatMessages = sharedService.getMessagesOfChatRoom(chatRoom,userId,userFetchStartTimestamp,startIndex,null);
         return chatMessages != null ? chatMessages : Collections.emptyList();
     }
 
-    public ChatRoom createGroup(String groupName, ChatRoomType chatRoomType, String createdById, List<String> memberIds) {
+    public Boolean clearChat(String chatRoomId, String userId) {
+        try {
+            ChatRoom chatRoom = getChatRoom(chatRoomId);
+            Map<String, Instant> userFetchStartTimeMap = chatRoom.getUserFetchStartTimeMap();
+            Instant lastClearedTimestamp = chatRoom.getCreatedAt();
+            if(userFetchStartTimeMap.containsKey(userId)){
+                lastClearedTimestamp=userFetchStartTimeMap.get(userId);
+            }
+            // Delete for this user from the last cleared instant to the current instant
+            sharedService.deleteMessagesFromToInstant(lastClearedTimestamp,userId,chatRoom.getUserIds().size());
+            userFetchStartTimeMap.put(userId, Instant.now());
+            return true;
+        } catch (Exception e) {
+            System.err.println("Failed to clear chat for chatRoomId: " + chatRoomId);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public String createGroup(String groupName, ChatRoomType chatRoomType, String createdById, List<String> memberIds) {
         Map<String, Integer> readMessageCounts = new HashMap<>();
         Map<String, Integer> deliverMessageCounts = new HashMap<>();
         User creatorUser = userService.getUser(createdById);
@@ -82,31 +109,43 @@ public class GroupService {
                 .build();
 
         if (chatRoomType == ChatRoomType.INDIVIDUAL) {
-            User recipientUser = getRecipientUser(chatRoom);
-            chatRoom.setRecipientUsername(recipientUser.getUsername());
+            Optional<ChatRoom> existingChatRoomOptional = chatRoomRepository.findIndividualChatRoomByUserIds(ChatRoomType.INDIVIDUAL,memberIds.get(0),memberIds.get(1));
+            if(existingChatRoomOptional.isPresent()){
+                return existingChatRoomOptional.get().getId();
+            }
+            User counterpartUser = sharedService.getCounterpartUser(chatRoom,createdById);
+            chatRoom.setRecipientUsername(counterpartUser.getUsername());
         }
 
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);
-
-        if(savedChatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
-            userService.groupJoinedOrLeft(createdById,savedChatRoom.getId(),true);
-            webSocketMessageService.sendNewGroupStatusToMember(createdById,savedChatRoom);
-            return savedChatRoom;
+        List<User> users = sharedService.getAllUsers(memberIds);
+        if(chatRoomType!=ChatRoomType.INDIVIDUAL){
+            for (User user : users) {
+                userService.groupJoinedOrLeft(user,savedChatRoom.getId(),true);
+                webSocketMessageService.sendNewGroupStatusToMember(user.getUserId(),savedChatRoom);
+            }
         }
 
-        for (String userId : memberIds) {
-            userService.groupJoinedOrLeft(userId,savedChatRoom.getId(),true);
-            webSocketMessageService.sendNewGroupStatusToMember(userId,savedChatRoom);
+        return savedChatRoom.getId();
+    }
+
+    public void sendNewChatStatusToMember(String chatRoomId){
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        for (String userId : chatRoom.getUserIds()) {
+            User user = sharedService.getUser(userId);
+            setExtraDetails(user,chatRoom);
+            userService.groupJoinedOrLeft(user,chatRoomId,true);
+            webSocketMessageService.sendNewGroupStatusToMember(userId,chatRoom);
         }
-        return savedChatRoom;
     }
 
     public ChatRoom addMembers(String chatRoomId, List<String> memberIds) {
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-        for(String userId : memberIds){
-            userService.groupJoinedOrLeft(userId,chatRoom.getId(),true);
+        List<User> userIds = sharedService.getAllUsers(memberIds);
+        for(User user : userIds){
+            userService.groupJoinedOrLeft(user,chatRoom.getId(),true);
         }
         chatRoom.getUserIds().addAll(memberIds);
         return chatRoomRepository.save(chatRoom);
@@ -116,48 +155,29 @@ public class GroupService {
 
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
-        for(String userId : memberIds){
-            userService.groupJoinedOrLeft(userId,chatRoom.getId(),false);
+        List<User> users = sharedService.getAllUsers(memberIds);
+        for(User user : users){
+            userService.groupJoinedOrLeft(user,chatRoom.getId(),false);
         }
         chatRoom.getUserIds().removeAll(memberIds);
         return chatRoomRepository.save(chatRoom);
     }
 
-    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, Pageable pageable) {
-        List<ChatMessage> messages =chatMessageRepository.findMessagesWithPagination(chatRoomId,pageable);
+    public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, String userId, Pageable pageable) {
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(userId, chatRoom.getCreatedAt());
+        List<ChatMessage> messages =chatMessageRepository.findMessagesWithPaginationAfterTimestamp(chatRoomId,userFetchStartTimestamp,userId,pageable);
         return messages;
     }
 
-    public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, Integer toBeMarkedMessagesCount) {
+    public List<ChatMessage> getMessagesToBeMarked(String chatRoomId, String userId, Integer toBeMarkedMessagesCount) {
         PageRequest pageRequest = PageRequest.of(0, toBeMarkedMessagesCount, Sort.by(Sort.Direction.DESC, "timestamp"));
-        List<ChatMessage> messagesToBeMarked = getMessagesOfChatRoom(chatRoomId,pageRequest);
+        List<ChatMessage> messagesToBeMarked = getMessagesOfChatRoom(chatRoomId,userId,pageRequest);
         return messagesToBeMarked;
     }
 
     public void saveChatRoom(ChatRoom chatRoom){
         chatRoomRepository.save(chatRoom);
         return;
-    }
-
-    public void notifyNewIndividualChat(String chatRoomId) throws InterruptedException {
-        ChatRoom chatRoom = getChatRoom(chatRoomId);
-        if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
-            User recipient = getRecipientUser(chatRoom);
-            if(!recipient.getChatRoomIds().contains(chatRoomId)){
-                userService.groupJoinedOrLeft(recipient.getUserId(),chatRoom.getId(),true);
-                webSocketMessageService.sendNewGroupStatusToMember(recipient.getUserId(),chatRoom);
-                Thread.sleep(1000);
-            }
-        }
-    }
-
-    private User getRecipientUser(ChatRoom chatRoom) {
-        String recipientUserId = chatRoom.getUserIds()
-                .stream()
-                .filter(userId -> !userId.equals(chatRoom.getCreatedBy()))
-                .findFirst()
-                .orElseThrow(() -> new ConverseException("No other user found"));
-        User recipientUser = userService.getUser(recipientUserId);
-        return recipientUser;
     }
 }

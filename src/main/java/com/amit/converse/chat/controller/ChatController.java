@@ -19,6 +19,8 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
@@ -37,15 +39,9 @@ public class ChatController {
     }
 
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
-    public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage, SimpMessageHeaderAccessor headerAccessor) {
-        try {
-            ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage);
-            groupService.notifyNewIndividualChat(chatRoomId);
-            webSocketMessageService.sendMessage(chatRoomId,savedMessage);
-        } catch (IllegalArgumentException e) {
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage) throws InterruptedException {
+        ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage, false);
+        webSocketMessageService.sendMessage(chatRoomId,savedMessage);
     }
 
     @MutationMapping
@@ -67,9 +63,19 @@ public class ChatController {
     }
 
     @QueryMapping
-    public List<ChatMessage> getMessagesOfChatRoom(@Argument String chatRoomId,@Argument Integer fromCount){
-        List<ChatMessage> chatMessages=groupService.getMessagesOfChatRoom(chatRoomId,fromCount);
+    public List<ChatMessage> getMessagesOfChatRoom(@Argument String chatRoomId, @Argument String userId ,@Argument Integer fromCount){
+        List<ChatMessage> chatMessages=groupService.getMessagesOfChatRoom(chatRoomId,userId,fromCount);
         return chatMessages;
+    }
+
+    @PostMapping("/chat/message/deleteForMe/{messageId}")
+    public ResponseEntity<Boolean> deleteForMe(@PathVariable String messageId, @RequestBody String userId){
+        return new ResponseEntity(chatService.deleteForMe(messageId,userId),HttpStatus.OK);
+    }
+
+    @PostMapping("/chat/message/deleteForEveryone/{messageId}")
+    public ResponseEntity<Boolean> deleteMessageForEveryone(@PathVariable String messageId, @RequestBody String userId){
+        return new ResponseEntity(chatService.deleteForEveryone(messageId,userId),HttpStatus.OK);
     }
 
 //    @PostMapping("/test/grpc-call")

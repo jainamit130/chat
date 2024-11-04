@@ -1,0 +1,11 @@
+steps:
+  - name: 'maven:3.9.5-eclipse-temurin-21'
+    entrypoint: 'mvn'  # Explicitly use the mvn command
+    args: ['clean', 'package', '-s', './src/main/resources/settings.xml']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'gcr.io/converse-438110/converse-common-img', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', 'gcr.io/converse-438110/converse-common-img']
+

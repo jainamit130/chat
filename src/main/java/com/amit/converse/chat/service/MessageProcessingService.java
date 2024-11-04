@@ -1,16 +1,13 @@
 package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.dto.OnlineStatusDto;
-import com.amit.converse.chat.model.ChatMessage;
-import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.model.OnlineStatus;
-import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.model.*;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
+//import org.springframework.kafka.annotation.KafkaListener;
+//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -24,10 +21,11 @@ public class MessageProcessingService {
     private final ChatRoomRepository chatRoomRepository;
     private final RedisService redisService;
     private final UserService userService;
+    private final SharedService sharedService;
     private final WebSocketMessageService webSocketMessageService;
     private final MarkMessageService markMessageService;
     private final ObjectMapper objectMapper;
-    private final KafkaTemplate<String, String> kafkaTemplate;
+//    private final KafkaTemplate<String, String> kafkaTemplate;
     private static final String TOPIC_NAME = "chatMessages";
 
 //    public void sendMessage(ChatMessage message) {
@@ -58,9 +56,16 @@ public class MessageProcessingService {
 //    }
 
     @Async
-    public void processMessageAfterSave(String chatRoomId) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+    public void processMessageAsync(String chatRoomId) throws InterruptedException {
+        processMessageAfterSave(chatRoomId);
+    }
+
+    public void processMessageSync(String chatRoomId) throws InterruptedException {
+        processMessageAfterSave(chatRoomId);
+    }
+
+    public void processMessageAfterSave(String chatRoomId) throws InterruptedException {
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
         chatRoom.incrementTotalMessagesCount();
         Set<String> onlineUserIds = redisService.filterOnlineUsers(chatRoom.getUserIds());
         for (String userId : onlineUserIds) {
@@ -73,6 +78,13 @@ public class MessageProcessingService {
                     markMessageService.markAllMessages(chatRoom,userId,false,toBeReadMarkedMessagesCount);
             }
         }
+    }
+
+    public ChatRoom getChatRoom(String chatRoomId){
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+
+        return chatRoom;
     }
 
     @Async

@@ -16,26 +16,30 @@ public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserService userService;
 
-    public void setUserTimestamp(String userId, String timestamp) {
-        redisTemplate.opsForValue().set("user:" + userId + ":timestamp", timestamp);
+    public void setUser(String userId) {
+        redisTemplate.opsForValue().set("user:" + userId,"");
     }
 
-    public Instant getUserTimestamp(String userId) {
-        String timestampString = (String) redisTemplate.opsForValue().get("user:" + userId + ":timestamp");
+//    public Instant getUserTimestamp(String userId) {
+//        String timestampString = (String) redisTemplate.opsForValue().get("user:" + userId + ":timestamp");
+//
+//        if (timestampString == null) {
+//            return null;
+//        }
+//
+//        return Instant.parse(timestampString);
+//    }
 
-        if (timestampString == null) {
-            return null;
+    public void removeUser(String userId) {
+        String key = "user:" + userId;
+        try {
+            redisTemplate.delete(key);
+        } catch (Exception e) {
+            System.err.println("Error deleting key: " + key + " for user: " + userId);
+            e.printStackTrace();
         }
-
-        return Instant.parse(timestampString);
     }
 
-    public void saveAndRemoveTimestamp(String userId) {
-        Instant timestamp = getUserTimestamp(userId);
-        userService.updateLastSeenOfUser(userId,timestamp);
-        String key = "user:" + userId + ":timestamp";
-        redisTemplate.delete(key);
-    }
 
 
     public boolean isUserInChatRoom(String chatRoomId, String userId) {
@@ -46,12 +50,11 @@ public class RedisService {
         redisTemplate.opsForSet().add("chatRoom:" + chatRoomId + ":userIds", userId);
     }
 
-
     public Set<String> filterOnlineUsers(List<String> userIds) {
         Set<String> onlineUsers = new HashSet<>();
 
         for (String userId : userIds) {
-            String redisKey = "user:" + userId + ":timestamp";
+            String redisKey = "user:" + userId;
 
             Boolean exists = redisTemplate.hasKey(redisKey);
 
@@ -67,7 +70,7 @@ public class RedisService {
     public void removeUserFromChatRoom(String chatRoomId, String userId) {
         String chatRoomKey = "chatRoom:" + chatRoomId + ":userIds";
 
-        redisTemplate.opsForSet().remove(chatRoomKey,userId);
+        redisTemplate.opsForSet().remove(chatRoomKey, userId);
 
         Long size = redisTemplate.opsForSet().size(chatRoomKey);
 
