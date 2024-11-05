@@ -7,9 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Data
 @Builder
@@ -29,12 +27,13 @@ public class ChatRoom {
     private transient ChatMessage latestMessage;
     private transient Integer unreadMessageCount;
     private transient Boolean exitedMember;
+    private Set<String> deletedForUsers;
     private Integer totalMessagesCount;
     private Map<String, Integer> readMessageCounts;
     private Map<String, Integer> deliveredMessageCounts;
     // Clear Chat feature
     private Map<String, Instant> userFetchStartTimeMap;
-    // Exit Group Feature
+    // Exit Group Feature Only For Groups
     private Map<String,Instant> exitedMembers;
 
     public void incrementTotalMessagesCount() {
@@ -42,10 +41,6 @@ public class ChatRoom {
             totalMessagesCount=0;
         }
         totalMessagesCount++;
-    }
-
-    public void allMessagesMarkedDelivered(String userId) {
-        deliveredMessageCounts.put(userId, totalMessagesCount);
     }
 
     public void allMessagesMarkedRead(String userId) {
@@ -68,15 +63,33 @@ public class ChatRoom {
     }
 
     public void exitGroup(String userId){
+        if(exitedMembers==null){
+            exitedMembers=new HashMap<>();
+        }
         exitedMembers.put(userId,Instant.now());
     }
 
     public boolean isExitedMember(String userId) {
+        if(exitedMembers==null){
+            exitedMembers=new HashMap<>();
+        }
         if(exitedMembers.containsKey(userId)){
             exitedMember=true;
             return true;
         }
         exitedMember=false;
         return false;
+    }
+
+    public void allMessagesMarkedDelivered(String userId) {
+        deliveredMessageCounts.put(userId, totalMessagesCount);
+    }
+
+    public Boolean deleteChat(String userId) {
+            if(deletedForUsers==null){
+                deletedForUsers=new HashSet<>();
+            }
+            deletedForUsers.add(userId);
+                return true;
     }
 }

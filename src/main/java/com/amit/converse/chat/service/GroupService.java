@@ -80,8 +80,12 @@ public class GroupService {
     }
 
     public Boolean clearChat(String chatRoomId, String userId) {
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        return clearChat(chatRoom,userId);
+    }
+
+    public Boolean clearChat(ChatRoom chatRoom, String userId) {
         try {
-            ChatRoom chatRoom = getChatRoom(chatRoomId);
             Map<String, Instant> userFetchStartTimeMap = chatRoom.getUserFetchStartTimeMap();
             Instant lastClearedTimestamp = chatRoom.getCreatedAt();
             if(userFetchStartTimeMap.containsKey(userId)){
@@ -92,7 +96,7 @@ public class GroupService {
             userFetchStartTimeMap.put(userId, Instant.now());
             return true;
         } catch (Exception e) {
-            System.err.println("Failed to clear chat for chatRoomId: " + chatRoomId);
+            System.err.println("Failed to clear chat for chatRoomId: " + chatRoom.getId());
             e.printStackTrace();
             return false;
         }
@@ -161,9 +165,8 @@ public class GroupService {
     }
 
     public Boolean removeMembers(String chatRoomId, List<String> memberIds) {
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElse(null);
-        if (chatRoom == null) {
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        if(chatRoom.getChatRoomType()==ChatRoomType.INDIVIDUAL){
             return false;
         }
 
@@ -174,7 +177,7 @@ public class GroupService {
         }
 
         for (User user : users) {
-            chatRoom.exitGroup(user.getId());
+            chatRoom.exitGroup(user.getUserId());
         }
 
         boolean membersRemoved = chatRoom.getUserIds().removeAll(memberIds);
@@ -210,9 +213,47 @@ public class GroupService {
         return;
     }
 
-//    public Boolean deleteGroup(String chatRoomId, String userId) {
-//        // Clear chat for the userId
-//        clearChat(chatRoomId,userId);
-//
-//    }
+    public Boolean deleteChat(String chatRoomId, String userId) {
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+
+        if (chatRoom.getChatRoomType() == ChatRoomType.GROUP) {
+            return deleteGroupChat(chatRoom, userId);
+        }
+
+        if (chatRoom.getChatRoomType() == ChatRoomType.INDIVIDUAL) {
+            return deleteIndividualChat(chatRoom, userId);
+        }
+
+        return false;
+    }
+
+    private Boolean deleteGroupChat(ChatRoom chatRoom, String userId) {
+        if (!chatRoom.isExitedMember(userId)) {
+            return false;
+        }
+        if (chatRoom.deleteChat(userId)) {
+            userService.groupJoinedOrLeft(userId,chatRoom.getId(),false);
+            clearChat(chatRoom, userId);
+            if(chatRoom.getDeletedForUsers().size()==chatRoom.getExitedMembers().size() && chatRoom.getUserIds().isEmpty()) {
+                chatRoomRepository.deleteById(chatRoom.getId());
+            } else {
+                chatRoomRepository.save(chatRoom);
+            }
+        }
+        return true;
+    }
+
+    private Boolean deleteIndividualChat(ChatRoom chatRoom, String userId) {
+        if (chatRoom.deleteChat(userId)) {
+            userService.groupJoinedOrLeft(userId,chatRoom.getId(),false);
+            if(chatRoom.getDeletedForUsers().size()==2) {
+                chatRoomRepository.deleteById(chatRoom.getId());
+            } else {
+                chatRoomRepository.save(chatRoom);
+            }
+            clearChat(chatRoom, userId);
+            return true;
+        }
+        return false;
+    }
 }

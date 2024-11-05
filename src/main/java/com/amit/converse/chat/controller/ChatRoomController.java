@@ -70,9 +70,7 @@ public class ChatRoomController {
     @PostMapping("/groups/delete/{chatRoomId}")
     public ResponseEntity<Boolean> deleteGroup(@PathVariable String chatRoomId, @RequestBody String userId) {
         try {
-//            groupService.deleteGroup(chatRoomId, userId)
-            // To Be Completed
-            return new ResponseEntity(true,HttpStatus.OK);
+            return new ResponseEntity(groupService.deleteChat(chatRoomId, userId),HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
