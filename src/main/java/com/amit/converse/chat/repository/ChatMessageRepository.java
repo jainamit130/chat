@@ -14,20 +14,20 @@ import java.util.List;
 public interface ChatMessageRepository extends MongoRepository<ChatMessage,String> {
     List<ChatMessage> findAllByChatRoomIdOrderByTimestampDesc(String chatRoomId);
 
-    @Query("{ 'chatRoomId': ?0, 'timestamp': { $gt: ?1, $lt: ?2 }, 'deletedForUsers': { $ne: ?2 } }")
+    @Query("{ 'chatRoomId': ?0, 'timestamp': { $gt: ?1, $lt: ?2 }, 'deletedForUsers': { $ne: ?3 } }")
     List<ChatMessage> findMessagesWithPaginationAfterTimestamp(
             String chatRoomId, Instant fetchFromTimestamp, Instant toTimestamp, String userId, Pageable pageable
     );
 
     @Aggregation(pipeline = {
-            "{ $match: { 'chatRoomId': ?0, 'timestamp': { $gt: ?1, $lt: ?2 }, 'deletedForUsers': { $nin: [?2] } }}",
+            "{ $match: { 'chatRoomId': ?0, 'timestamp': { $gt: ?1, $lt: ?2 }, 'deletedForUsers': { $nin: [?3] } }}",
             "{ $sort: { 'timestamp': -1 } }",
             "{ $limit: 1 }"
     })
     ChatMessage findLatestMessage(String chatRoomId,Instant fetchFromTimestamp,Instant toTimestamp, String userId);
 
 
-    @Query(value = "{ 'chatRoomId': ?0,'timestamp': { $gt: ?1, $lt: ?2 },'deletedForUsers': { $nin: [?2] } }", count = true)
+    @Query(value = "{ 'chatRoomId': ?0,'timestamp': { $gt: ?1, $lt: ?2 },'deletedForUsers': { $nin: [?3] } }", count = true)
     Integer countMessagesByChatRoomIdAndNotDeletedForUser(String chatRoomId, Instant fetchFromTimestamp, Instant toTimestamp, String userId);
 
     List<ChatMessage> findByTimestampBetween(Instant start, Instant end);
