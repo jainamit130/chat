@@ -92,7 +92,7 @@ public class GroupService {
                 lastClearedTimestamp=userFetchStartTimeMap.get(userId);
             }
             // Delete for this user from the last cleared instant to the current instant
-            sharedService.deleteMessagesFromToInstant(lastClearedTimestamp,userId,chatRoom.getUserIds().size());
+            sharedService.deleteMessagesFromToInstant(lastClearedTimestamp,userId,chatRoom.getUserIds().size()+chatRoom.getExitedMembers().size());
             userFetchStartTimeMap.put(userId, Instant.now());
             return true;
         } catch (Exception e) {
