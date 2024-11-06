@@ -1,23 +1,16 @@
 package com.amit.converse.chat.controller;
 
-import com.amit.converse.chat.dto.AddMembersRequest;
 import com.amit.converse.chat.dto.CreateGroupRequest;
 import com.amit.converse.chat.dto.CreateGroupResponse;
-import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.ChatRoomType;
-import com.amit.converse.chat.repository.ChatRoomRepository;
 import com.amit.converse.chat.service.ChatService;
 import com.amit.converse.chat.service.GroupService;
 import com.amit.converse.chat.service.WebSocketMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -48,9 +41,9 @@ public class ChatRoomController {
 
     @PostMapping("/groups/add/{chatRoomId}")
     public ResponseEntity<ChatRoom> addMembersToGroup(@PathVariable String chatRoomId,
-                                                      @RequestBody AddMembersRequest request) {
+                                                      @RequestBody List<String> memberIds) {
         try {
-            ChatRoom chatRoom = groupService.addMembers(chatRoomId, request.getMemberIds());
+            ChatRoom chatRoom = groupService.addMembers(chatRoomId, memberIds);
             return ResponseEntity.ok(chatRoom);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -59,9 +52,9 @@ public class ChatRoomController {
 
     @PostMapping("/groups/remove/{chatRoomId}")
     public ResponseEntity<Boolean> removeMembersFromGroup(@PathVariable String chatRoomId,
-                                                           @RequestBody AddMembersRequest request) {
+                                                           @RequestBody List<String> memberIds) {
         try {
-            return new ResponseEntity(groupService.removeMembers(chatRoomId, request.getMemberIds()),HttpStatus.OK);
+            return new ResponseEntity(groupService.removeMembers(chatRoomId, memberIds),HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -84,7 +77,5 @@ public class ChatRoomController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-
-
 
 }

@@ -12,7 +12,7 @@ import java.util.Set;
 @Data
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class GroupStatusResponse {
+public class OnlineUsersDto {
     Set<String> onlineUsers;
     Instant lastSeenTimestamp;
 }

@@ -1,7 +1,5 @@
 package com.amit.converse.chat.service;
 
-import com.amit.converse.chat.dto.GroupStatusResponse;
-import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.ChatRoomType;
@@ -50,6 +48,7 @@ public class GroupService {
         if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
             chatRoom.setName(user.getUsername()==chatRoom.getCreatorUsername()?chatRoom.getRecipientUsername():chatRoom.getCreatorUsername());
         }
+        chatRoom.setIsExited(chatRoom.isExitedMember(user.getUserId()));
         chatRoom.setLatestMessage(latestMessage);
     }
 
@@ -178,6 +177,7 @@ public class GroupService {
 
         for (User user : users) {
             chatRoom.exitGroup(user.getUserId());
+            webSocketMessageService.sendExitMemberStatus(chatRoomId,user.getUserId());
         }
 
         boolean membersRemoved = chatRoom.getUserIds().removeAll(memberIds);

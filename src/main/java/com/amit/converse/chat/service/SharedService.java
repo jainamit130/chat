@@ -99,13 +99,21 @@ public class SharedService {
     }
 
     @Async
-    public void deleteMessagesFromToInstant(Instant lastClearedTimestamp,String userId,Integer groupSize) {
-        List<ChatMessage> messages = chatMessageRepository.findByTimestampBetween(lastClearedTimestamp,Instant.now());
-        for(ChatMessage message:messages){
+    public void deleteMessagesFromToInstant(Instant lastClearedTimestamp, String userId, Integer groupSize) {
+        List<ChatMessage> messages = chatMessageRepository.findByTimestampBetween(lastClearedTimestamp, Instant.now());
+        List<ChatMessage> messagesToSave = new ArrayList<>();
+
+        for (ChatMessage message : messages) {
             message.addUserToDeletedForUsers(userId);
-            if(message.getDeletedForUsers().size()==groupSize){
+            if (message.getDeletedForUsers().size() == groupSize) {
                 chatMessageRepository.deleteById(message.getId());
+            } else {
+                messagesToSave.add(message);
             }
+        }
+
+        if (!messagesToSave.isEmpty()) {
+            chatMessageRepository.saveAll(messagesToSave);
         }
     }
 }

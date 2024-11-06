@@ -9,7 +9,7 @@ type ChatRoom {
     latestMessage: ChatMessage
     recipientUsername: String
     creatorUsername: String
-    exited: Boolean
+    isExited: Boolean
 }
 
 type ChatMessage {

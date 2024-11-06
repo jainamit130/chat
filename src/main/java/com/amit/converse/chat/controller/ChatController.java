@@ -40,6 +40,10 @@ public class ChatController {
 
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
     public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage) throws InterruptedException {
+        ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
+        if(chatRoom.isExitedMember(chatMessage.getSenderId())){
+            return;
+        }
         ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage, false);
         webSocketMessageService.sendMessage(chatRoomId,savedMessage);
     }

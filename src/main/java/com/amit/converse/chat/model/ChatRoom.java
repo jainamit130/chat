@@ -26,7 +26,7 @@ public class ChatRoom {
     private String recipientUsername;
     private transient ChatMessage latestMessage;
     private transient Integer unreadMessageCount;
-    private transient Boolean exitedMember;
+    private transient Boolean isExited;
     private Set<String> deletedForUsers;
     private Integer totalMessagesCount;
     private Map<String, Integer> readMessageCounts;
@@ -74,10 +74,8 @@ public class ChatRoom {
             exitedMembers=new HashMap<>();
         }
         if(exitedMembers.containsKey(userId)){
-            exitedMember=true;
             return true;
         }
-        exitedMember=false;
         return false;
     }
 
@@ -86,10 +84,10 @@ public class ChatRoom {
     }
 
     public Boolean deleteChat(String userId) {
-            if(deletedForUsers==null){
-                deletedForUsers=new HashSet<>();
-            }
-            deletedForUsers.add(userId);
-                return true;
+        if(deletedForUsers==null){
+            deletedForUsers=new HashSet<>();
+        }
+        deletedForUsers.add(userId);
+        return true;
     }
 }
