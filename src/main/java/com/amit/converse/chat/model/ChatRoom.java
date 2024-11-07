@@ -83,6 +83,20 @@ public class ChatRoom {
         deliveredMessageCounts.put(userId, totalMessagesCount);
     }
 
+    public Set<String> getDeletedForUsers() {
+        if(deletedForUsers==null){
+            deletedForUsers = new HashSet<>();
+        }
+        return deletedForUsers;
+    }
+
+    public Map<String,Instant> getExitedMembers() {
+        if(exitedMembers==null){
+            exitedMembers = new HashMap<>();
+        }
+        return exitedMembers;
+    }
+
     public Boolean deleteChat(String userId) {
         if(deletedForUsers==null){
             deletedForUsers=new HashSet<>();

@@ -3,10 +3,9 @@ package com.amit.converse.chat.controller;
 import com.amit.converse.chat.dto.MessageInfoDto;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.service.ChatService;
-import com.amit.converse.chat.service.GroupService;
-import com.amit.converse.chat.service.MarkMessageService;
-import com.amit.converse.chat.service.WebSocketMessageService;
+import com.amit.converse.chat.model.ChatRoomType;
+import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -30,6 +29,7 @@ public class ChatController {
 
     private final ChatService chatService;
     private final GroupService groupService;
+    private final UserService userService;
     private final MarkMessageService markMessageService;
     private final WebSocketMessageService webSocketMessageService;
 
@@ -45,6 +45,14 @@ public class ChatController {
             return;
         }
         ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage, false);
+        if(chatRoom.getChatRoomType()== ChatRoomType.INDIVIDUAL){
+            User recipient = groupService.getCounterPartUser(chatRoom,chatMessage.getSenderId());
+            if(chatRoom.getDeletedForUsers().contains(recipient.getUserId())){
+                userService.groupJoinedOrLeft(recipient,chatRoom.getId(),true);
+                groupService.sendNewChatStatusToMember(chatRoom.getId());
+                return;
+            }
+        }
         webSocketMessageService.sendMessage(chatRoomId,savedMessage);
     }
 

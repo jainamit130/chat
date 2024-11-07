@@ -68,7 +68,6 @@ public class UserService {
     }
 
     public User getUser(String userId) {
-        System.out.println("User not found error?: "+userId);
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new ConverseException("User not found!!"));
         return user;

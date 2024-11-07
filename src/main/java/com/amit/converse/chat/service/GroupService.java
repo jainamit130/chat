@@ -101,6 +101,10 @@ public class GroupService {
         }
     }
 
+    public User getCounterPartUser(ChatRoom chatRoom,String userId) {
+        return sharedService.getCounterpartUser(chatRoom,userId);
+    }
+
 
     public String createGroup(String groupName, ChatRoomType chatRoomType, String createdById, List<String> memberIds) {
         Map<String, Integer> readMessageCounts = new HashMap<>();
