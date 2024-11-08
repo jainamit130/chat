@@ -30,13 +30,16 @@ public class ChatMessage {
     private MessageStatus status;
     private boolean isEncrypted;
     private User user;
+    private Set<String> deliveredRecipients;
+    private Set<String> readRecipients;
     private Set<String> deletedForUsers;
     private Boolean deletedForEveryone;
     private Map<String, Set<String>> deliveryReceiptsByTime = new TreeMap<>();
     private Map<String, Set<String>> readReceiptsByTime = new TreeMap<>();
 
     public void addUserToReadReceipt(String timestamp,String userId){
-        if(!readReceiptsByTime.containsKey(userId)){
+        if(!readRecipients.contains(userId)){
+            readRecipients.add(userId);
             Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
             userIds.add(userId);
             readReceiptsByTime.put(timestamp,userIds);
@@ -45,7 +48,8 @@ public class ChatMessage {
     }
 
     public void addUserToDeliveredReceipt(String timestamp,String userId){
-        if(!deliveryReceiptsByTime.containsKey(userId)) {
+        if(!deliveredRecipients.contains(userId)) {
+            deliveredRecipients.add(userId);
             Set<String> userIds = deliveryReceiptsByTime.getOrDefault(timestamp, new HashSet());
             userIds.add(userId);
             deliveryReceiptsByTime.put(timestamp, userIds);

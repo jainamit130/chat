@@ -244,6 +244,7 @@ public class GroupService {
                 chatRoomRepository.save(chatRoom);
             }
         }
+        redisService.removeUserFromChatRoom(chatRoom.getId(),userId);
         return true;
     }
 
@@ -256,6 +257,7 @@ public class GroupService {
                 chatRoomRepository.save(chatRoom);
             }
             clearChat(chatRoom, userId);
+            redisService.removeUserFromChatRoom(chatRoom.getId(),userId);
             return true;
         }
         return false;

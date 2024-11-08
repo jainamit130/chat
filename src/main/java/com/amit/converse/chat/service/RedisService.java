@@ -40,8 +40,6 @@ public class RedisService {
         }
     }
 
-
-
     public boolean isUserInChatRoom(String chatRoomId, String userId) {
         return redisTemplate.opsForSet().isMember("chatRoom:" + chatRoomId + ":userIds", userId);
     }

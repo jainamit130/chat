@@ -44,15 +44,15 @@ public class ChatController {
         if(chatRoom.isExitedMember(chatMessage.getSenderId())){
             return;
         }
-        ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage, false);
         if(chatRoom.getChatRoomType()== ChatRoomType.INDIVIDUAL){
             User recipient = groupService.getCounterPartUser(chatRoom,chatMessage.getSenderId());
             if(chatRoom.getDeletedForUsers().contains(recipient.getUserId())){
                 userService.groupJoinedOrLeft(recipient,chatRoom.getId(),true);
+                ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage, true);
                 groupService.sendNewChatStatusToMember(chatRoom.getId());
-                return;
             }
         }
+        ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage, false);
         webSocketMessageService.sendMessage(chatRoomId,savedMessage);
     }
 
