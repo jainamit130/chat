@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -27,10 +28,18 @@ public class ChatRoomController {
     @PostMapping("/groups/create")
     public ResponseEntity<CreateGroupResponse> createGroup(@RequestBody CreateGroupRequest request) {
         try {
-            String createdChatRoomId = groupService.createGroup(request.getGroupName(), request.getChatRoomType(), request.getCreatedById(), request.getMembers());
-            if(request.getChatRoomType()== ChatRoomType.INDIVIDUAL){
-                ChatMessage savedMessage = chatService.addMessage(createdChatRoomId, request.getLatestMessage(),true);
-                groupService.sendNewChatStatusToMember(createdChatRoomId);
+            Map.Entry<String, Boolean> result = groupService.createGroup(request.getGroupName(), request.getChatRoomType(), request.getCreatedById(), request.getMembers());
+            String createdChatRoomId = result.getKey();
+            boolean isAlreadyPresent = result.getValue();
+            ChatMessage savedMessage = null;
+            if(isAlreadyPresent) {
+                savedMessage = chatService.addMessage(createdChatRoomId, request.getLatestMessage(), false);
+                webSocketMessageService.sendMessage(createdChatRoomId,savedMessage);
+            } else {
+                if(request.getChatRoomType()== ChatRoomType.INDIVIDUAL){
+                    savedMessage = chatService.addMessage(createdChatRoomId, request.getLatestMessage(),true);
+                    groupService.sendNewChatStatusToMember(createdChatRoomId);
+                }
             }
             CreateGroupResponse groupResponse = CreateGroupResponse.builder().chatRoomId(createdChatRoomId).build();
             return new ResponseEntity<>(groupResponse,HttpStatus.OK);

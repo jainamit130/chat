@@ -104,4 +104,14 @@ public class ChatRoom {
         deletedForUsers.add(userId);
         return true;
     }
+
+    public void undoDeleteChat(String userId) {
+        if(chatRoomType==ChatRoomType.INDIVIDUAL) {
+            if(deletedForUsers==null){
+                deletedForUsers=new HashSet<>();
+            } else {
+                deletedForUsers.remove(userId);
+            }
+        }
+    }
 }

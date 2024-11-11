@@ -41,18 +41,15 @@ public class ChatController {
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
     public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage) throws InterruptedException {
         ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
-        if(chatRoom.isExitedMember(chatMessage.getSenderId())){
+        ChatMessage savedMessage = null;
+        if(chatRoom.getChatRoomType()== ChatRoomType.INDIVIDUAL && chatRoom.getDeletedForUsers().contains(groupService.getCounterPartUser(chatRoom,chatMessage.getSenderId()).getUserId())){
+            savedMessage = chatService.addMessage(chatRoomId, chatMessage,false);
+            webSocketMessageService.sendMessage(chatRoomId,savedMessage);
+            groupService.sendNewChatStatusToMember(chatRoomId);
             return;
+        } else {
+            savedMessage = chatService.addMessage(chatRoomId, chatMessage, false);
         }
-        if(chatRoom.getChatRoomType()== ChatRoomType.INDIVIDUAL){
-            User recipient = groupService.getCounterPartUser(chatRoom,chatMessage.getSenderId());
-            if(chatRoom.getDeletedForUsers().contains(recipient.getUserId())){
-                userService.groupJoinedOrLeft(recipient,chatRoom.getId(),true);
-                ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage, true);
-                groupService.sendNewChatStatusToMember(chatRoom.getId());
-            }
-        }
-        ChatMessage savedMessage = chatService.addMessage(chatRoomId, chatMessage, false);
         webSocketMessageService.sendMessage(chatRoomId,savedMessage);
     }
 
