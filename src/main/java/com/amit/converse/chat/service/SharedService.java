@@ -26,6 +26,14 @@ public class SharedService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
 
+    public ChatRoom getChatRoom(String chatRoomId){
+        if(chatRoomId==null)
+            System.out.println("The chatRoom is null!");
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+        return chatRoom;
+    }
+
     public List<User> getAllUsers(List<String> userIds) {
         List<User> users = userRepository.findAllByUserIdIn(userIds);
         return users;

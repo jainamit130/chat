@@ -29,15 +29,17 @@ public class GroupService {
     public ChatRoom getChatRoom(String chatRoomId){
         if(chatRoomId==null)
             System.out.println("The chatRoom is null!");
-        System.out.println(chatRoomId);
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
         return chatRoom;
     }
 
     public Instant getLastSeenTimeStampOfCouterPartUser(ChatRoom chatRoom, String userId) {
-        User counterPartUser = sharedService.getCounterpartUser(chatRoom,userId);
-        return counterPartUser.getLastSeenTimestamp();
+        if(chatRoom.getChatRoomType()==ChatRoomType.INDIVIDUAL){
+            User counterPartUser = sharedService.getCounterpartUser(chatRoom,userId);
+            return counterPartUser.getLastSeenTimestamp();
+        }
+        return null;
     }
 
     public void setExtraDetails(User user,ChatRoom chatRoom){
@@ -131,19 +133,7 @@ public class GroupService {
             Optional<ChatRoom> existingChatRoomOptional = chatRoomRepository.findIndividualChatRoomByUserIds(ChatRoomType.INDIVIDUAL,memberIds.get(0),memberIds.get(1));
             User counterpartUser = sharedService.getCounterpartUser(chatRoom,createdById);
             if(existingChatRoomOptional.isPresent()){
-                ChatRoom existingChatRoom = existingChatRoomOptional.get();
-                Set<String> deletedForUsers = existingChatRoom.getDeletedForUsers();
-                if(deletedForUsers.contains(createdById)) {
-                    userService.groupJoinedOrLeft(createdById,existingChatRoom.getId(),true);
-                    deletedForUsers.remove(createdById);
-                }
-                if(deletedForUsers.contains(counterpartUser)) {
-                    userService.groupJoinedOrLeft(counterpartUser,existingChatRoom.getId(),true);
-                    deletedForUsers.remove(counterpartUser.getUserId());
-                }
-                existingChatRoom.setDeletedForUsers(deletedForUsers);
-                chatRoomRepository.save(existingChatRoom);
-                return  new AbstractMap.SimpleEntry(existingChatRoom.getId(),true);
+                return  new AbstractMap.SimpleEntry(existingChatRoomOptional.get().getId(),true);
             }
             chatRoom.setRecipientUsername(counterpartUser.getUsername());
         }
@@ -160,12 +150,30 @@ public class GroupService {
         return  new AbstractMap.SimpleEntry(savedChatRoom.getId(),false);
     }
 
+    public void sendNewChatStatusToDeletedMembers(String chatRoomId){
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        Set<String> deletedForUsers = chatRoom.getDeletedForUsers();
+        for (String userId : chatRoom.getUserIds()) {
+            User user = sharedService.getUser(userId);
+            setExtraDetails(user,chatRoom);
+            if(deletedForUsers.contains(userId)) {
+                deletedForUsers.remove(userId);
+                chatRoom.setUnreadMessageCount(1);
+                chatRoom.setDeletedForUsers(deletedForUsers);
+                userService.groupJoinedOrLeft(user,chatRoomId,true);
+                webSocketMessageService.sendNewGroupStatusToMember(userId,chatRoom);
+            }
+        }
+        chatRoom.setDeletedForUsers(deletedForUsers);
+        chatRoomRepository.save(chatRoom);
+    }
+
+
     public void sendNewChatStatusToMember(String chatRoomId){
         ChatRoom chatRoom = getChatRoom(chatRoomId);
         for (String userId : chatRoom.getUserIds()) {
             User user = sharedService.getUser(userId);
             setExtraDetails(user,chatRoom);
-            chatRoom.setUnreadMessageCount(1);
             userService.groupJoinedOrLeft(user,chatRoomId,true);
             webSocketMessageService.sendNewGroupStatusToMember(userId,chatRoom);
         }

@@ -35,6 +35,7 @@ public class ChatRoomController {
             if(isAlreadyPresent) {
                 savedMessage = chatService.addMessage(createdChatRoomId, request.getLatestMessage(), false);
                 webSocketMessageService.sendMessage(createdChatRoomId,savedMessage);
+                groupService.sendNewChatStatusToDeletedMembers(createdChatRoomId);
             } else {
                 if(request.getChatRoomType()== ChatRoomType.INDIVIDUAL){
                     savedMessage = chatService.addMessage(createdChatRoomId, request.getLatestMessage(),true);

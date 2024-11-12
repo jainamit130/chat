@@ -45,7 +45,7 @@ public class ChatController {
         if(chatRoom.getChatRoomType()== ChatRoomType.INDIVIDUAL && chatRoom.getDeletedForUsers().contains(groupService.getCounterPartUser(chatRoom,chatMessage.getSenderId()).getUserId())){
             savedMessage = chatService.addMessage(chatRoomId, chatMessage,false);
             webSocketMessageService.sendMessage(chatRoomId,savedMessage);
-            groupService.sendNewChatStatusToMember(chatRoomId);
+            groupService.sendNewChatStatusToDeletedMembers(chatRoomId);
             return;
         } else {
             savedMessage = chatService.addMessage(chatRoomId, chatMessage, false);
