@@ -29,7 +29,6 @@ public class ChatController {
 
     private final ChatService chatService;
     private final GroupService groupService;
-    private final UserService userService;
     private final MarkMessageService markMessageService;
     private final WebSocketMessageService webSocketMessageService;
 
@@ -41,6 +40,10 @@ public class ChatController {
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
     public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage) throws InterruptedException {
         ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
+        // if member is not part of the group
+        if(chatRoom.isExitedMember(chatMessage.getSenderId())){
+            return;
+        }
         ChatMessage savedMessage = null;
         if(chatRoom.getChatRoomType()== ChatRoomType.INDIVIDUAL && chatRoom.getDeletedForUsers().contains(groupService.getCounterPartUser(chatRoom,chatMessage.getSenderId()).getUserId())){
             savedMessage = chatService.addMessage(chatRoomId, chatMessage,false);
