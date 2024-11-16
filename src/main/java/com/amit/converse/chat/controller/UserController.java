@@ -1,16 +1,14 @@
 package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.UserEventDTO;
-import com.amit.converse.chat.dto.UserResponseDto;
+import com.amit.converse.chat.dto.UserDetails;
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.UserService;
-import com.amit.converse.chat.service.UserServiceClient;
-import com.google.protobuf.Timestamp;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -21,12 +19,18 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/search")
-    public ResponseEntity<List<UserResponseDto>> searchUser(@RequestParam(name = "q") String searchQuery){
+    public ResponseEntity<List<UserDetails>> searchUser(@RequestParam(name = "q") String searchQuery){
         return new ResponseEntity(userService.searchUser(searchQuery), HttpStatus.OK);
     }
 
+    @GetMapping("/getUser/{userId}")
+    public ResponseEntity<UserDetails> getUserDetails(@PathVariable String userId, @RequestParam String loggedInUserId) {
+        return new ResponseEntity<UserDetails>(userService.getUserDetails(userId, loggedInUserId), HttpStatus.OK);
+    }
+
+
     @GetMapping("/getUsers")
-    public ResponseEntity<List<UserResponseDto>> getUsers(){
+    public ResponseEntity<List<UserDetails>> getUsers(){
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
     }
 

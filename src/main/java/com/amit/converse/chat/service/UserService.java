@@ -1,20 +1,18 @@
 package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.dto.UserEventDTO;
-import com.amit.converse.chat.dto.UserResponseDto;
+import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
+import com.amit.converse.chat.model.ChatRoom;
+import com.amit.converse.chat.model.OnlineStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
-import com.google.gson.Gson;
 import lombok.AllArgsConstructor;
 //import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +20,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final SharedService sharedService;
+    private final RedisService redisService;
     private final UserRepository userRepository;
 
 //    @KafkaListener(topics = "user-events", groupId = "group_id")
@@ -94,15 +93,15 @@ public class UserService {
         return;
     }
 
-    public List<UserResponseDto> getAllUsers(){
+    public List<UserDetails> getAllUsers(){
         return userRepository.findAll().stream().map(user -> {
-            return UserResponseDto.builder().username(user.getUsername()).id(user.getUserId()).build();
+            return UserDetails.builder().username(user.getUsername()).id(user.getUserId()).build();
         }).collect(Collectors.toList());
     }
 
-    public List<UserResponseDto> searchUser(String searchPrefix){
+    public List<UserDetails> searchUser(String searchPrefix){
         return userRepository.findAllByUsernameStartsWithIgnoreCase(searchPrefix).stream().map(user -> {
-            return UserResponseDto.builder().username(user.getUsername()).id(user.getUserId()).build();
+            return UserDetails.builder().username(user.getUsername()).id(user.getUserId()).build();
         }).collect(Collectors.toList());
     }
 
@@ -117,4 +116,20 @@ public class UserService {
         }
         return usernames;
     }
+
+    public UserDetails getUserDetails(String userId, String loggedInUserId) {
+        User user = getUser(userId);
+        User loggedInUser = getUser(loggedInUserId);
+        Optional<ChatRoom> individualChatRoom = sharedService.getIndividualChatIfPresent(userId,loggedInUserId);
+        Set<String> commonChatRoomIdsSet = sharedService.getCommonChatRooms(user.getChatRoomIds(),loggedInUser.getChatRoomIds());
+        OnlineStatus status = redisService.isUserOnline(userId)?OnlineStatus.ONLINE:OnlineStatus.OFFLINE;
+        UserDetails userDetails = UserDetails.builder().username(user.getUsername()).id(userId).userStatus(user.getStatus()).lastSeenTimestamp(user.getLastSeenTimestamp()).status(status).commonChatRoomIds(new ArrayList(commonChatRoomIdsSet)).build();
+        if(individualChatRoom.isPresent()){
+            userDetails.setCommonIndividualChatId(individualChatRoom.get().getId());
+            commonChatRoomIdsSet.remove(individualChatRoom.get().getId());
+        }
+        return userDetails;
+    }
+
+
 }

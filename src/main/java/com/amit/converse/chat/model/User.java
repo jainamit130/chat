@@ -25,7 +25,7 @@ public class User {
     private Set<String> chatRoomIds = new HashSet<>();
     private String username;
     private String password;
-    private OnlineStatus status;
+    private String status;
     private Instant lastSeenTimestamp;
     private Instant creationDate;
 

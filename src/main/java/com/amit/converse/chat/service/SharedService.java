@@ -26,11 +26,22 @@ public class SharedService {
     private final ChatRoomRepository chatRoomRepository;
     private final UserRepository userRepository;
 
+    public Optional<ChatRoom> getIndividualChatIfPresent(String userId1,String userId2) {
+        Optional<ChatRoom> chatRoom = chatRoomRepository.findIndividualChatRoomByUserIds(ChatRoomType.INDIVIDUAL,userId1,userId2);
+        return chatRoom;
+    }
+
+    public Set<String> getCommonChatRooms(Set<String> chatRoomIds1,Set<String> chatRoomIds2) {
+        // Common Ids
+        chatRoomIds1.retainAll(chatRoomIds2);
+        return chatRoomIds1;
+    }
+
     public ChatRoom getChatRoom(String chatRoomId){
         if(chatRoomId==null)
             System.out.println("The chatRoom is null!");
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+                .orElseThrow(() -> new ConverseException("Chat room not found"));
         return chatRoom;
     }
 
