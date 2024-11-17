@@ -17,4 +17,7 @@ public interface ChatRoomRepository extends MongoRepository<ChatRoom, String> {
 
     @Query("{ 'chatRoomType' : ?0, 'userIds' : { $all: [ ?1, ?2 ] } }")
     Optional<ChatRoom> findIndividualChatRoomByUserIds(ChatRoomType chatRoomType, String userId1, String userId2);
+
+    @Query("{ 'chatRoomType' : 'SELF', 'userIds' : { $all: [ ?0 ] } }")
+    ChatRoom findSelfChatRoomByUserIds(String userId);
 }

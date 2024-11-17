@@ -31,6 +31,10 @@ public class SharedService {
         return chatRoom;
     }
 
+    public ChatRoom getSelfChatRoom(String userId) {
+        return chatRoomRepository.findSelfChatRoomByUserIds(userId);
+    }
+
     public Set<String> getCommonChatRooms(Set<String> chatRoomIds1,Set<String> chatRoomIds2) {
         // Common Ids
         chatRoomIds1.retainAll(chatRoomIds2);

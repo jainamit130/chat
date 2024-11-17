@@ -44,7 +44,7 @@ public class GroupService {
 
     public void setExtraDetails(User user,ChatRoom chatRoom){
         Instant toTimestamp = Instant.now();
-        if(chatRoom.isExitedMember(user.getId())){
+        if(chatRoom.isExitedMember(user.getUserId())){
             toTimestamp=chatRoom.getExitedMembers().get(user.getUserId());
         }
         Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(user.getUserId(), chatRoom.getCreatedAt());
