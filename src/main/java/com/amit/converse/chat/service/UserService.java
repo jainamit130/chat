@@ -130,6 +130,9 @@ public class UserService {
             commonChatRoomIdsSet.remove(individualChatRoom.get().getId());
             commonChatRoomIdsSet.remove(selfChatRoom.getId());
         }
+        if(userId.equals(loggedInUserId)){
+            userDetails.setSelfChatId(selfChatRoom.getId());
+        }
         userDetails.setCommonChatRoomIds(new ArrayList(commonChatRoomIdsSet));
         return userDetails;
     }
