@@ -18,7 +18,6 @@ public class UserDetails {
     private String id;
     private String username;
     private String commonIndividualChatId;
-    private String selfChatId;
     private List<String> commonChatRoomIds;
     private String userStatus;
     private Instant lastSeenTimestamp;

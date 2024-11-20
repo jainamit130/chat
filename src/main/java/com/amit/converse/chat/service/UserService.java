@@ -120,18 +120,18 @@ public class UserService {
     public UserDetails getUserDetails(String userId, String loggedInUserId) {
         User user = getUser(userId);
         User loggedInUser = getUser(loggedInUserId);
-        Optional<ChatRoom> individualChatRoom = sharedService.getIndividualChatIfPresent(userId,loggedInUserId);
         ChatRoom selfChatRoom = sharedService.getSelfChatRoom(loggedInUserId);
         Set<String> commonChatRoomIdsSet = sharedService.getCommonChatRooms(user.getChatRoomIds(),loggedInUser.getChatRoomIds());
         OnlineStatus status = redisService.isUserOnline(userId)?OnlineStatus.ONLINE:OnlineStatus.OFFLINE;
         UserDetails userDetails = UserDetails.builder().username(user.getUsername()).id(userId).userStatus(user.getStatus()).lastSeenTimestamp(user.getLastSeenTimestamp()).status(status).build();
+        Optional<ChatRoom> individualChatRoom = sharedService.getIndividualChatIfPresent(userId,loggedInUserId);
         if(individualChatRoom.isPresent()){
             userDetails.setCommonIndividualChatId(individualChatRoom.get().getId());
             commonChatRoomIdsSet.remove(individualChatRoom.get().getId());
             commonChatRoomIdsSet.remove(selfChatRoom.getId());
         }
         if(userId.equals(loggedInUserId)){
-            userDetails.setSelfChatId(selfChatRoom.getId());
+            userDetails.setCommonIndividualChatId(selfChatRoom.getId());
         }
         userDetails.setCommonChatRoomIds(new ArrayList(commonChatRoomIdsSet));
         return userDetails;
