@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.ChatRoomType;
@@ -168,6 +169,11 @@ public class GroupService {
         chatRoomRepository.save(chatRoom);
     }
 
+    public GroupDetails getGroupDetails(String chatRoomId) {
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        GroupDetails groupDetails = GroupDetails.builder().chatRoomId(chatRoomId).members(userService.processIdsToUserDetails(chatRoom.getUserIds())).build();
+        return groupDetails;
+    }
 
     public void sendNewChatStatusToMember(String chatRoomId){
         ChatRoom chatRoom = getChatRoom(chatRoomId);

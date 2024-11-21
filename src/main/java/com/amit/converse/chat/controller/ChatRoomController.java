@@ -2,6 +2,7 @@ package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.CreateGroupRequest;
 import com.amit.converse.chat.dto.CreateGroupResponse;
+import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.ChatRoomType;
@@ -88,4 +89,11 @@ public class ChatRoomController {
         }
     }
 
+    @GetMapping("/groups/details/{chatRoomId}")
+    public ResponseEntity<GroupDetails> getGroupDetails(@PathVariable String chatRoomId) {
+        try {
+            return new ResponseEntity(groupService.getGroupDetails(chatRoomId),HttpStatus.OK);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }    }
 }

@@ -117,6 +117,19 @@ public class UserService {
         return usernames;
     }
 
+    public List<UserEventDTO> processIdsToUserDetails(List<String> userIds) {
+        List<UserEventDTO> userList = new ArrayList<>();
+
+        for (String userId : userIds) {
+            Optional<User> user = userRepository.findByUserId(userId);
+            if (user.isPresent()) {
+                UserEventDTO userEventDTO = UserEventDTO.builder().userId(userId).username(user.get().getUsername()).build();
+                userList.add(userEventDTO);
+            }
+        }
+        return userList;
+    }
+
     public UserDetails getUserDetails(String userId, String loggedInUserId) {
         User user = getUser(userId);
         User loggedInUser = getUser(loggedInUserId);
