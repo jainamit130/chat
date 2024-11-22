@@ -137,7 +137,10 @@ public class UserService {
         Set<String> commonChatRoomIdsSet = sharedService.getCommonChatRooms(user.getChatRoomIds(),loggedInUser.getChatRoomIds());
         OnlineStatus status = redisService.isUserOnline(userId)?OnlineStatus.ONLINE:OnlineStatus.OFFLINE;
         UserDetails userDetails = UserDetails.builder().username(user.getUsername()).id(userId).userStatus(user.getStatus()).lastSeenTimestamp(user.getLastSeenTimestamp()).status(status).build();
-        Optional<ChatRoom> individualChatRoom = sharedService.getIndividualChatIfPresent(userId,loggedInUserId);
+        Optional<ChatRoom> individualChatRoom = Optional.ofNullable(selfChatRoom);
+        if(!userId.equals(loggedInUserId)) {
+            individualChatRoom = sharedService.getIndividualChatIfPresent(userId,loggedInUserId);
+        }
         if(individualChatRoom.isPresent()){
             userDetails.setCommonIndividualChatId(individualChatRoom.get().getId());
             commonChatRoomIdsSet.remove(individualChatRoom.get().getId());
