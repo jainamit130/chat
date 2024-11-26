@@ -22,7 +22,7 @@ public class WebSocketMessageService {
     private final SimpMessagingTemplate messagingTemplate;
 
     public void sendTypingStatusToGroup(Set<String> typingUsers, String chatRoomId) {
-        messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, typingUsers);
+        messagingTemplate.convertAndSend("/topic/typing/" + chatRoomId, typingUsers);
     }
 
     public void sendNewGroupStatusToMember(String userId, ChatRoom savedChatRoom) {
