@@ -1,10 +1,7 @@
 package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.dto.GroupDetails;
-import com.amit.converse.chat.model.ChatMessage;
-import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.model.ChatRoomType;
-import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.model.*;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import lombok.RequiredArgsConstructor;
@@ -186,9 +183,7 @@ public class GroupService {
     }
 
     public ChatRoom addMembers(String chatRoomId, List<String> memberIds) {
-
-        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
-                .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
         List<User> userIds = sharedService.getAllUsers(memberIds);
         for(User user : userIds){
             userService.groupJoinedOrLeft(user,chatRoom.getId(),true);
@@ -197,8 +192,11 @@ public class GroupService {
         return chatRoomRepository.save(chatRoom);
     }
 
-    public Boolean removeMembers(String chatRoomId, List<String> memberIds) {
+    public Boolean removeMembers(String chatRoomId, List<String> memberIds, String removedById) {
         ChatRoom chatRoom = getChatRoom(chatRoomId);
+        if(chatRoom.isExitedMember(removedById)) {
+            return false;
+        }
         if(chatRoom.getChatRoomType()==ChatRoomType.INDIVIDUAL){
             return false;
         }
@@ -209,9 +207,13 @@ public class GroupService {
             return false;
         }
 
+        User removedByUser = sharedService.getUser(removedById);
+
         for (User user : users) {
             chatRoom.exitGroup(user.getUserId());
-            webSocketMessageService.sendExitMemberStatus(chatRoomId,user.getUserId());
+            // Notify exit message to group
+            notifyExitToGroup(chatRoom,user,removedByUser);
+            webSocketMessageService.sendExitMemberStatus(chatRoomId,user.getUserId(),user.getUsername(),removedByUser.getUsername());
         }
 
         boolean membersRemoved = chatRoom.getUserIds().removeAll(memberIds);
@@ -222,6 +224,18 @@ public class GroupService {
         } else {
             return false;
         }
+    }
+
+    private void notifyExitToGroup(ChatRoom chatRoom, User user, User removedByUser) {
+        String content;
+        if(user.getUserId()==removedByUser.getUserId()){
+            content = user.getUsername()+" exited group";
+        } else {
+            content = removedByUser.getUsername()+ " removed "+ user.getUsername();
+        }
+        ChatMessage message = ChatMessage.builder().content(content).type(MessageType.EXITED).chatRoomId(chatRoom.getId()).timestamp(Instant.now()).build();
+        ChatMessage savedMessage = chatMessageRepository.save(message);
+        webSocketMessageService.sendMessage(chatRoom.getId(),savedMessage);
     }
 
 

@@ -3,6 +3,7 @@ package com.amit.converse.chat.controller;
 import com.amit.converse.chat.dto.CreateGroupRequest;
 import com.amit.converse.chat.dto.CreateGroupResponse;
 import com.amit.converse.chat.dto.GroupDetails;
+import com.amit.converse.chat.dto.RemoveMembersRequest;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.ChatRoomType;
@@ -62,14 +63,19 @@ public class ChatRoomController {
     }
 
     @PostMapping("/groups/remove/{chatRoomId}")
-    public ResponseEntity<Boolean> removeMembersFromGroup(@PathVariable String chatRoomId,
-                                                           @RequestBody List<String> memberIds) {
+    public ResponseEntity<Boolean> removeMembersFromGroup(
+            @PathVariable String chatRoomId,
+            @RequestBody RemoveMembersRequest request) {
         try {
-            return new ResponseEntity(groupService.removeMembers(chatRoomId, memberIds),HttpStatus.OK);
+            return new ResponseEntity<>(
+                    groupService.removeMembers(chatRoomId, request.getMemberIds(), request.getRemovedBy()),
+                    HttpStatus.OK
+            );
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
 
     @PostMapping("/groups/delete/{chatRoomId}")
     public ResponseEntity<Boolean> deleteGroup(@PathVariable String chatRoomId, @RequestBody String userId) {

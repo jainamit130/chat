@@ -25,6 +25,7 @@ public class ChatMessage {
     private String id;
     private String senderId;
     private String chatRoomId;
+    private MessageType type;
     private Instant timestamp;
     private String content;
     private MessageStatus status;

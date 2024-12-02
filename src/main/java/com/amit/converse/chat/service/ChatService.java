@@ -2,10 +2,7 @@ package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.dto.MessageInfoDto;
 import com.amit.converse.chat.exceptions.ConverseException;
-import com.amit.converse.chat.model.ChatMessage;
-import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.model.MessageStatus;
-import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.model.*;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -32,6 +29,7 @@ public class ChatService {
         message.setTimestamp(Instant.now());
         message.setChatRoomId(chatRoomId);
         message.setUser(user);
+        message.setType(MessageType.MESSAGE);
         message.setMessageStatus(MessageStatus.PENDING);
         message.setDeletedForUsers(new HashSet<>());
         message.setDeliveredRecipients(new HashSet<>());

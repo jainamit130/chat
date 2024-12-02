@@ -19,6 +19,7 @@ type ChatMessage {
     timestamp: String!
     status: MessageStatus!
     content: String!
+    type: String
     isEncrypted: Boolean!
     user: User!
     deletedForEveryone: Boolean

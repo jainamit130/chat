@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class GroupStatusDto {
     ChatMessage message;
+    String username;
+    String moderatorName;
     String id;
     StatusType type;
 }
