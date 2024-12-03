@@ -210,9 +210,9 @@ public class GroupService {
         User removedByUser = sharedService.getUser(removedById);
 
         for (User user : users) {
-            chatRoom.exitGroup(user.getUserId());
             // Notify exit message to group
             notifyExitToGroup(chatRoom,user,removedByUser);
+            chatRoom.exitGroup(user.getUserId());
             webSocketMessageService.sendExitMemberStatus(chatRoomId,user.getUserId(),user.getUsername(),removedByUser.getUsername());
         }
 
@@ -226,14 +226,14 @@ public class GroupService {
         }
     }
 
-    private void notifyExitToGroup(ChatRoom chatRoom, User user, User removedByUser) {
-        String content;
-        if(user.getUserId()==removedByUser.getUserId()){
-            content = user.getUsername()+" exited group";
+    private void notifyExitToGroup(ChatRoom chatRoom, User removedUser, User removedByUser) {
+        StringBuilder content = new StringBuilder(removedByUser.getUsername());
+        if(removedUser.equals(removedByUser)){
+            content.append(" exited group");
         } else {
-            content = removedByUser.getUsername()+ " removed "+ user.getUsername();
+            content.append(" removed "+ removedUser.getUsername());
         }
-        ChatMessage message = ChatMessage.builder().content(content).type(MessageType.EXITED).chatRoomId(chatRoom.getId()).timestamp(Instant.now()).build();
+        ChatMessage message = ChatMessage.builder().senderId(removedByUser.getUserId()).user(removedByUser).status(MessageStatus.READ).content(content.toString()).type(MessageType.EXITED).chatRoomId(chatRoom.getId()).timestamp(Instant.now()).build();
         ChatMessage savedMessage = chatMessageRepository.save(message);
         webSocketMessageService.sendMessage(chatRoom.getId(),savedMessage);
     }
