@@ -42,12 +42,18 @@ public class GroupService {
 
     public void setExtraDetails(User user,ChatRoom chatRoom){
         Instant toTimestamp = Instant.now();
-        if(chatRoom.isExitedMember(user.getUserId())){
+        if(chatRoom.isExitedMember(user.getUserId()) ){
             toTimestamp=chatRoom.getExitedMembers().get(user.getUserId());
+            ChatMessage lastExitedMessage = chatMessageRepository.getLastExitedMessage(chatRoom.getId(),user.getUserId());
+            if(!lastExitedMessage.getReadRecipients().contains(user.getUserId()))
+                chatRoom.setUnreadMessageCount(sharedService.getUnreadMessageCountForExitedMembers(chatRoom, user.getUserId()));
+            else
+                chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(user.getUserId()));
+        } else {
+            chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(user.getUserId()));
         }
         Instant userFetchStartTimestamp = chatRoom.getUserFetchStartTimeMap().getOrDefault(user.getUserId(), chatRoom.getCreatedAt());
         ChatMessage latestMessage = sharedService.getLatestMessageOfGroup(chatRoom.getId(),toTimestamp,userFetchStartTimestamp,user.getUserId());
-        chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(user.getUserId()));
         if(chatRoom.getChatRoomType().equals(ChatRoomType.INDIVIDUAL)){
             chatRoom.setName(user.getUsername()==chatRoom.getCreatorUsername()?chatRoom.getRecipientUsername():chatRoom.getCreatorUsername());
         }
@@ -233,7 +239,8 @@ public class GroupService {
         } else {
             content.append(" removed "+ removedUser.getUsername());
         }
-        ChatMessage message = ChatMessage.builder().senderId(removedByUser.getUserId()).user(removedByUser).status(MessageStatus.READ).content(content.toString()).type(MessageType.EXITED).chatRoomId(chatRoom.getId()).timestamp(Instant.now()).build();
+        userService.saveUser(removedUser);
+        ChatMessage message = ChatMessage.builder().senderId(removedByUser.getUserId()).user(removedUser).status(MessageStatus.PENDING).deliveredRecipients(new HashSet<>()).readRecipients(new HashSet<>()).content(content.toString()).type(MessageType.EXITED).chatRoomId(chatRoom.getId()).timestamp(Instant.now()).build();
         ChatMessage savedMessage = chatMessageRepository.save(message);
         webSocketMessageService.sendMessage(chatRoom.getId(),savedMessage);
     }

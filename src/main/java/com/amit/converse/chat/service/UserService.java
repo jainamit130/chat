@@ -117,6 +117,18 @@ public class UserService {
         return usernames;
     }
 
+    public Set<UserDetails> processIdsToUserDetails(Set<String> userIds) {
+        Set<UserDetails> userDetails = new HashSet<>();
+
+        for (String userId : userIds) {
+            Optional<User> user = userRepository.findByUserId(userId);
+            if (user.isPresent()) {
+                userDetails.add(UserDetails.builder().username(user.get().getUsername()).id(userId).build());
+            }
+        }
+        return userDetails;
+    }
+
     public List<UserEventDTO> processIdsToUserDetails(List<String> userIds) {
         List<UserEventDTO> userList = new ArrayList<>();
 
@@ -142,8 +154,10 @@ public class UserService {
         } else {
             individualChatRoom = Optional.ofNullable(sharedService.getSelfChatRoom(loggedInUserId));
         }
-        userDetails.setCommonIndividualChatId(individualChatRoom.get().getId());
-        commonChatRoomIdsSet.remove(individualChatRoom.get().getId());
+        if(individualChatRoom.isPresent()){
+            userDetails.setCommonIndividualChatId(individualChatRoom.get().getId());
+            commonChatRoomIdsSet.remove(individualChatRoom.get().getId());
+        }
         userDetails.setCommonChatRoomIds(new ArrayList(commonChatRoomIdsSet));
         return userDetails;
     }

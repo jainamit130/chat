@@ -47,8 +47,15 @@ public class ChatRoom {
         readMessageCounts.put(userId, totalMessagesCount);
     }
 
+    public int getReadMessageCount(String userId) {
+        return readMessageCounts.getOrDefault(userId, 0);
+    }
+
     public int getUnreadMessageCount(String userId) {
-        return totalMessagesCount-readMessageCounts.getOrDefault(userId, 0);
+        if(isExitedMember(userId)){
+            return 0;
+        }
+        return totalMessagesCount-getReadMessageCount(userId);
     }
 
     public int  getUndeliveredMessageCount(String userId) {

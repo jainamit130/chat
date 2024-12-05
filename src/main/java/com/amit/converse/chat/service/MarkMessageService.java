@@ -28,6 +28,8 @@ public class MarkMessageService {
             if (chatRoomIds != null && !chatRoomIds.isEmpty()) {
                 for(String chatRoomId: chatRoomIds){
                     ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
+                    if(chatRoom.isExitedMember(userId))
+                        markLastExitedMessage(chatRoom,userId,true);
                     Integer toBeDeliveredMessagesCount=chatRoom.getUndeliveredMessageCount(userId);
                     if(toBeDeliveredMessagesCount>0)
                         markAllMessages(chatRoom, userId, true,toBeDeliveredMessagesCount);
@@ -40,9 +42,25 @@ public class MarkMessageService {
 
     public void markAllMessagesRead(String chatRoomId,String userId){
         ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
+        // if chatRoom is Exited then mark read the last exited message
+        if(chatRoom.isExitedMember(userId))
+            markLastExitedMessage(chatRoom,userId,false);
         Integer toBeMarkedMessagesCount=chatRoom.getUnreadMessageCount(userId);
         if(toBeMarkedMessagesCount>0)
             markAllMessages(chatRoom,userId,false,toBeMarkedMessagesCount);
+    }
+
+    private void markLastExitedMessage(ChatRoom chatRoom,String userId,Boolean isDelivered) {
+        ChatMessage lastExitedMessage = chatMessageRepository.getLastExitedMessage(chatRoom.getId(),userId);
+        boolean isMarked = isDelivered? lastExitedMessage.getDeliveredRecipients().contains(userId):lastExitedMessage.getReadRecipients().contains(userId);
+        if(!isMarked) {
+            if(isDelivered) {
+                lastExitedMessage.setDeliveredRecipients(new HashSet<>(Collections.singleton(userId)));
+            } else {
+                lastExitedMessage.setReadRecipients(new HashSet<>(Collections.singleton(userId)));
+            }
+            chatMessageRepository.save(lastExitedMessage);
+        }
     }
 
     @Transactional

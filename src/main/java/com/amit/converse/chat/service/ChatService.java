@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.dto.MessageInfoDto;
+import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.*;
 import com.amit.converse.chat.repository.ChatMessageRepository;
@@ -50,8 +51,8 @@ public class ChatService {
         ChatMessage message = chatMessageRepository.findById(messageId)
                 .orElseThrow(() -> new ConverseException("message no longer exists"));
 
-        Map<String, Set<String>> deliveryReceiptsByTime = convertMapIdsToMapName(message.getDeliveryReceiptsByTime());
-        Map<String, Set<String>> readReceiptsByTime = convertMapIdsToMapName(message.getReadReceiptsByTime());
+        Map<String, Set<UserDetails>> deliveryReceiptsByTime = convertMapIdsToMapName(message.getDeliveryReceiptsByTime());
+        Map<String, Set<UserDetails>> readReceiptsByTime = convertMapIdsToMapName(message.getReadReceiptsByTime());
 
         return MessageInfoDto.builder()
                 .deliveryReceiptsByTime(deliveryReceiptsByTime)
@@ -59,13 +60,13 @@ public class ChatService {
                 .build();
     }
 
-    private Map<String, Set<String>> convertMapIdsToMapName(Map<String, Set<String>> receiptIdsByTime) {
-        Map<String, Set<String>> updatedMap = new HashMap<>();
+    private Map<String, Set<UserDetails>> convertMapIdsToMapName(Map<String, Set<String>> receiptIdsByTime) {
+        Map<String, Set<UserDetails>> updatedMap = new HashMap<>();
 
         for (Map.Entry<String, Set<String>> entry : receiptIdsByTime.entrySet()) {
             String timestamp = entry.getKey();
-            Set<String> usernames = userService.processIdsToName(entry.getValue());
-            updatedMap.put(timestamp, usernames);
+            Set<UserDetails> userDetails = userService.processIdsToUserDetails(entry.getValue());
+            updatedMap.put(timestamp, userDetails);
         }
 
         return updatedMap;

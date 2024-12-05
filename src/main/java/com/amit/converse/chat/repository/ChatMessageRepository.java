@@ -28,7 +28,13 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage,Strin
 
 
     @Query(value = "{ 'chatRoomId': ?0,'timestamp': { $gt: ?1, $lt: ?2 },'deletedForUsers': { $nin: [?3] } }", count = true)
-    Integer countMessagesByChatRoomIdAndNotDeletedForUser(String chatRoomId, Instant fetchFromTimestamp, Instant toTimestamp, String userId);
+    Integer countByChatRoomIdAndNotDeletedForUser(String chatRoomId, Instant fetchFromTimestamp, Instant toTimestamp, String userId);
+
+    @Query(value = "{ 'chatRoomId': ?0,'type':'MESSAGE','timestamp': { $lt: ?1 } }", count = true)
+    Integer countMessagesOfChatRoomIdToTimestamp(String chatRoomId, Instant toTimestamp);
 
     List<ChatMessage> findByTimestampBetween(Instant start, Instant end);
+
+    @Query(value = "{ 'chatRoomId': ?0, 'type': 'EXITED', 'user.userId': ?1 }", sort = "{ 'timestamp': -1 }")
+    ChatMessage getLastExitedMessage(String chatRoomId, String userId);
 }

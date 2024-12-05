@@ -31,6 +31,12 @@ public class SharedService {
         return chatRoom;
     }
 
+    public int getUnreadMessageCountForExitedMembers(ChatRoom chatRoom, String userId) {
+        Instant exitedTimeStamp = chatRoom.getExitedMembers().get(userId);
+        Integer totalMessageCountForUser = chatMessageRepository.countMessagesOfChatRoomIdToTimestamp(chatRoom.getId(),exitedTimeStamp);
+        return totalMessageCountForUser - chatRoom.getReadMessageCount(userId);
+    }
+
     public ChatRoom getSelfChatRoom(String userId) {
         return chatRoomRepository.findSelfChatRoomByUserIds(userId);
     }
@@ -61,7 +67,7 @@ public class SharedService {
     }
 
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId,Instant toTimestamp,String userId, Instant userFetchStartTimestamp, Integer startIndex, Integer pageSize) {
-        long totalMessages = chatMessageRepository.countMessagesByChatRoomIdAndNotDeletedForUser(chatRoomId,userFetchStartTimestamp,toTimestamp,userId);
+        long totalMessages = chatMessageRepository.countByChatRoomIdAndNotDeletedForUser(chatRoomId,userFetchStartTimestamp,toTimestamp,userId);
         int offset = Math.min(startIndex, (int) totalMessages);
         int remainingMessages = (int) totalMessages - offset;
 

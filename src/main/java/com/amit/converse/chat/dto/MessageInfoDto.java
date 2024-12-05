@@ -13,6 +13,6 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class MessageInfoDto {
-    private Map<String, Set<String>> deliveryReceiptsByTime;
-    private Map<String, Set<String>> readReceiptsByTime;
+    private Map<String, Set<UserDetails>> deliveryReceiptsByTime;
+    private Map<String, Set<UserDetails>> readReceiptsByTime;
 }
