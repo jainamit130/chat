@@ -3,9 +3,8 @@ package com.amit.converse.chat.controller;
 import com.amit.converse.chat.dto.CreateGroupRequest;
 import com.amit.converse.chat.dto.CreateGroupResponse;
 import com.amit.converse.chat.dto.GroupDetails;
-import com.amit.converse.chat.dto.RemoveMembersRequest;
+import com.amit.converse.chat.dto.GroupMembersRequest;
 import com.amit.converse.chat.model.ChatMessage;
-import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.ChatRoomType;
 import com.amit.converse.chat.service.ChatService;
 import com.amit.converse.chat.service.GroupService;
@@ -52,11 +51,9 @@ public class ChatRoomController {
     }
 
     @PostMapping("/groups/add/{chatRoomId}")
-    public ResponseEntity<ChatRoom> addMembersToGroup(@PathVariable String chatRoomId,
-                                                      @RequestBody List<String> memberIds) {
+    public ResponseEntity<Boolean> addMembersToGroup(@PathVariable String chatRoomId, @RequestBody GroupMembersRequest request) {
         try {
-            ChatRoom chatRoom = groupService.addMembers(chatRoomId, memberIds);
-            return ResponseEntity.ok(chatRoom);
+            return ResponseEntity.ok(groupService.addMembers(chatRoomId, request.getActionedBy(), request.getMemberIds()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -65,10 +62,10 @@ public class ChatRoomController {
     @PostMapping("/groups/remove/{chatRoomId}")
     public ResponseEntity<Boolean> removeMembersFromGroup(
             @PathVariable String chatRoomId,
-            @RequestBody RemoveMembersRequest request) {
+            @RequestBody GroupMembersRequest request) {
         try {
             return new ResponseEntity<>(
-                    groupService.removeMembers(chatRoomId, request.getMemberIds(), request.getRemovedBy()),
+                    groupService.removeMembers(chatRoomId, request.getActionedBy(), request.getMemberIds()),
                     HttpStatus.OK
             );
         } catch (IllegalArgumentException e) {

@@ -28,7 +28,6 @@ public class UserController {
         return new ResponseEntity<UserDetails>(userService.getUserDetails(userId, loggedInUserId), HttpStatus.OK);
     }
 
-
     @GetMapping("/getUsers")
     public ResponseEntity<List<UserDetails>> getUsers(){
         return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);

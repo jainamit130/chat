@@ -11,7 +11,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RemoveMembersRequest {
+public class GroupMembersRequest {
     private List<String> memberIds;
-    private String removedBy;
+    private String actionedBy;
 }

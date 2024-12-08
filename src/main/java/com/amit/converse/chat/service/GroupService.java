@@ -45,7 +45,7 @@ public class GroupService {
         if(chatRoom.isExitedMember(user.getUserId()) ){
             toTimestamp=chatRoom.getExitedMembers().get(user.getUserId());
             ChatMessage lastExitedMessage = chatMessageRepository.getLastExitedMessage(chatRoom.getId(),user.getUserId());
-            if(!lastExitedMessage.getReadRecipients().contains(user.getUserId()))
+            if(lastExitedMessage!=null && !lastExitedMessage.getReadRecipients().contains(user.getUserId()))
                 chatRoom.setUnreadMessageCount(sharedService.getUnreadMessageCountForExitedMembers(chatRoom, user.getUserId()));
             else
                 chatRoom.setUnreadMessageCount(chatRoom.getUnreadMessageCount(user.getUserId()));
@@ -188,17 +188,35 @@ public class GroupService {
         }
     }
 
-    public ChatRoom addMembers(String chatRoomId, List<String> memberIds) {
+    public Boolean addMembers(String chatRoomId, String addedByUserId, List<String> memberIds) {
         ChatRoom chatRoom = getChatRoom(chatRoomId);
-        List<User> userIds = sharedService.getAllUsers(memberIds);
-        for(User user : userIds){
-            userService.groupJoinedOrLeft(user,chatRoom.getId(),true);
+        List<User> users = sharedService.getAllUsers(memberIds);
+
+
+        if (users.size() != memberIds.size()) {
+            return false;
         }
-        chatRoom.getUserIds().addAll(memberIds);
-        return chatRoomRepository.save(chatRoom);
+
+        User addedByUser = sharedService.getUser(addedByUserId);
+
+        Instant timeAdded = Instant.now();
+        for(User user : users){
+            notifyGroupAboutMember(chatRoom,user,addedByUser,true);
+            chatRoom.addToGroup(user.getUserId(),timeAdded);
+            userService.groupJoinedOrLeft(user,chatRoom.getId(),true);
+            webSocketMessageService.sendNewGroupStatusToMember(user.getUserId(),chatRoom);
+        }
+
+        boolean membersAdded = chatRoom.getUserIds().addAll(memberIds);
+        if (membersAdded) {
+            chatRoomRepository.save(chatRoom);
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public Boolean removeMembers(String chatRoomId, List<String> memberIds, String removedById) {
+    public Boolean removeMembers(String chatRoomId, String removedById, List<String> memberIds) {
         ChatRoom chatRoom = getChatRoom(chatRoomId);
         if(chatRoom.isExitedMember(removedById)) {
             return false;
@@ -217,7 +235,7 @@ public class GroupService {
 
         for (User user : users) {
             // Notify exit message to group
-            notifyExitToGroup(chatRoom,user,removedByUser);
+            notifyGroupAboutMember(chatRoom,user,removedByUser,false);
             chatRoom.exitGroup(user.getUserId());
             webSocketMessageService.sendExitMemberStatus(chatRoomId,user.getUserId(),user.getUsername(),removedByUser.getUsername());
         }
@@ -232,12 +250,20 @@ public class GroupService {
         }
     }
 
-    private void notifyExitToGroup(ChatRoom chatRoom, User removedUser, User removedByUser) {
+    private void notifyGroupAboutMember(ChatRoom chatRoom, User removedUser, User removedByUser,Boolean isAdded) {
         StringBuilder content = new StringBuilder(removedByUser.getUsername());
-        if(removedUser.equals(removedByUser)){
-            content.append(" exited group");
+        if(!isAdded) {
+            if(removedUser.equals(removedByUser)){
+                content.append(" exited group");
+            } else {
+                content.append(" removed "+ removedUser.getUsername());
+            }
         } else {
-            content.append(" removed "+ removedUser.getUsername());
+            if(removedUser.equals(removedByUser)){
+                content.append(" joined");
+            } else {
+                content.append(" added "+ removedUser.getUsername());
+            }
         }
         userService.saveUser(removedUser);
         ChatMessage message = ChatMessage.builder().senderId(removedByUser.getUserId()).user(removedUser).status(MessageStatus.PENDING).deliveredRecipients(new HashSet<>()).readRecipients(new HashSet<>()).content(content.toString()).type(MessageType.EXITED).chatRoomId(chatRoom.getId()).timestamp(Instant.now()).build();

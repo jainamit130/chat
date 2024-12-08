@@ -35,6 +35,10 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage,Strin
 
     List<ChatMessage> findByTimestampBetween(Instant start, Instant end);
 
-    @Query(value = "{ 'chatRoomId': ?0, 'type': 'EXITED', 'user.userId': ?1 }", sort = "{ 'timestamp': -1 }")
+    @Aggregation(pipeline = {
+            "{ '$match': { 'chatRoomId': ?0, 'type': 'EXITED', 'user.userId': ?1 } }",
+            "{ '$sort': { 'timestamp': -1 } }",
+            "{ '$limit': 1 }"
+    })
     ChatMessage getLastExitedMessage(String chatRoomId, String userId);
 }

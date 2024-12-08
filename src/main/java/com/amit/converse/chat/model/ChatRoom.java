@@ -76,6 +76,14 @@ public class ChatRoom {
         exitedMembers.put(userId,Instant.now());
     }
 
+    public void addToGroup(String userId, Instant timeAdded) {
+        if(userFetchStartTimeMap==null) {
+            userFetchStartTimeMap = new HashMap<>();
+        }
+        userFetchStartTimeMap.put(userId,timeAdded);
+        exitedMembers.remove(userId);
+    }
+
     public boolean isExitedMember(String userId) {
         if(exitedMembers==null){
             exitedMembers=new HashMap<>();

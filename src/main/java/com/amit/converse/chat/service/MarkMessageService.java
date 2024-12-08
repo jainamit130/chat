@@ -52,6 +52,9 @@ public class MarkMessageService {
 
     private void markLastExitedMessage(ChatRoom chatRoom,String userId,Boolean isDelivered) {
         ChatMessage lastExitedMessage = chatMessageRepository.getLastExitedMessage(chatRoom.getId(),userId);
+        if(lastExitedMessage==null){
+            return;
+        }
         boolean isMarked = isDelivered? lastExitedMessage.getDeliveredRecipients().contains(userId):lastExitedMessage.getReadRecipients().contains(userId);
         if(!isMarked) {
             if(isDelivered) {
