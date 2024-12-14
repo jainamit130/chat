@@ -1,42 +1,22 @@
 package com.amit.converse.chat.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.amit.converse.chat.model.MetaData.ChatMessageMetaData;
+import com.amit.converse.chat.model.MetaData.MessageMetaData;
+import lombok.*;
 
-import java.time.Instant;
 import java.util.*;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "chatMessages")
-@JsonIgnoreProperties(ignoreUnknown = true)
-@CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
-public class ChatMessage {
-
-    @Id
-    private String id;
-    private String senderId;
-    private String chatRoomId;
-    private MessageType type;
-    private Instant timestamp;
-    private String content;
+@EqualsAndHashCode(callSuper = true)
+public class ChatMessage extends Message {
     private MessageStatus status;
-    private boolean isEncrypted;
-    private User user;
-    private Set<String> deliveredRecipients;
-    private Set<String> readRecipients;
-    private Set<String> deletedForUsers;
-    private Boolean deletedForEveryone;
-    private Map<String, Set<String>> deliveryReceiptsByTime = new TreeMap<>();
-    private Map<String, Set<String>> readReceiptsByTime = new TreeMap<>();
+    private User user; // Remove
+
+    @Builder.Default
+    private MessageMetaData messageMetaData = new ChatMessageMetaData();
 
     public void addUserToReadReceipt(String timestamp,String userId){
         if(!readRecipients.contains(userId)){
@@ -60,12 +40,5 @@ public class ChatMessage {
 
     public void setMessageStatus(MessageStatus newStatus) {
         status = newStatus;
-    }
-
-    public void addUserToDeletedForUsers(String userId) {
-        if(deletedForUsers==null){
-            deletedForUsers=new HashSet<>();
-        }
-        deletedForUsers.add(userId);
     }
 }
