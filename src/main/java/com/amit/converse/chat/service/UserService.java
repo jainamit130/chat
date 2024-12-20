@@ -4,7 +4,7 @@ import com.amit.converse.chat.dto.UserEventDTO;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.model.OnlineStatus;
+import com.amit.converse.chat.model.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -146,7 +146,7 @@ public class UserService {
         User user = getUser(userId);
         User loggedInUser = getUser(loggedInUserId);
         Set<String> commonChatRoomIdsSet = sharedService.getCommonChatRooms(user.getChatRoomIds(),loggedInUser.getChatRoomIds());
-        OnlineStatus status = redisService.isUserOnline(userId)?OnlineStatus.ONLINE:OnlineStatus.OFFLINE;
+        ConnectionStatus status = redisService.isUserOnline(userId)? ConnectionStatus.ONLINE: ConnectionStatus.OFFLINE;
         UserDetails userDetails = UserDetails.builder().username(user.getUsername()).id(userId).userStatus(user.getStatus()).lastSeenTimestamp(user.getLastSeenTimestamp()).status(status).build();
         Optional<ChatRoom> individualChatRoom;
         if(!userId.equals(loggedInUserId)) {

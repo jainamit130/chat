@@ -18,4 +18,10 @@ public abstract class MessageMetaData {
 
     @Builder.Default
     private Set<String> deletedForUsers = new HashSet<>();
+
+    public abstract void readMessage
+
+    public void addUserToDeletedForUsers(String userId) {
+        deletedForUsers.add(userId);
+    }
 }

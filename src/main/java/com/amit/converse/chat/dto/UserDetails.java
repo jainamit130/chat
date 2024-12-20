@@ -1,6 +1,6 @@
 package com.amit.converse.chat.dto;
 
-import com.amit.converse.chat.model.OnlineStatus;
+import com.amit.converse.chat.model.ConnectionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -21,5 +20,5 @@ public class UserDetails {
     private List<String> commonChatRoomIds;
     private String userStatus;
     private Instant lastSeenTimestamp;
-    private OnlineStatus status;
+    private ConnectionStatus status;
 }

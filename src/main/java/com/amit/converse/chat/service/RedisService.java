@@ -19,16 +19,6 @@ public class RedisService {
         redisTemplate.opsForValue().set("user:" + userId,"");
     }
 
-//    public Instant getUserTimestamp(String userId) {
-//        String timestampString = (String) redisTemplate.opsForValue().get("user:" + userId + ":timestamp");
-//
-//        if (timestampString == null) {
-//            return null;
-//        }
-//
-//        return Instant.parse(timestampString);
-//    }
-
     public void removeUser(String userId) {
         String key = "user:" + userId;
         try {
@@ -77,3 +67,18 @@ public class RedisService {
         }
     }
 }
+
+
+// User came online
+// update redis
+// deliver messages
+// new message -> check if chatRoom active and then read message if active
+
+// user enters chatRoom
+// update redis remove any previous active chatRoom and making this one active
+// Read Messages
+// new message -> check redis if chatRoom active and then read message if active
+
+// User went offline
+// update redis marking any active chatRoom inactive and update redis marking itself offline
+// tell all chat Rooms that user went offline

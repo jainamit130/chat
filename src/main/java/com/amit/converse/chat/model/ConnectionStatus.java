@@ -1,6 +1,6 @@
 package com.amit.converse.chat.model;
 
-public enum OnlineStatus {
+public enum ConnectionStatus {
     ONLINE,
     OFFLINE
 }

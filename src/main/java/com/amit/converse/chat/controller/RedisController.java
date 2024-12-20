@@ -4,7 +4,7 @@ import com.amit.converse.chat.dto.OnlineUsersDto;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.ChatRoomType;
-import com.amit.converse.chat.model.OnlineStatus;
+import com.amit.converse.chat.model.ConnectionStatus;
 import com.amit.converse.chat.service.*;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,7 @@ public class RedisController {
             redisService.addUserIdToChatRoom(prevChatRoomId,userId);
         }
         redisService.setUser(userId);
-        messageProcessingService.sendOnlineStatusToAllChatRooms(userId, OnlineStatus.ONLINE);
+        messageProcessingService.sendOnlineStatusToAllChatRooms(userId, ConnectionStatus.ONLINE);
         return;
     }
 
@@ -47,7 +47,7 @@ public class RedisController {
             redisService.removeUserFromChatRoom(prevChatRoomId,userId);
         }
         redisService.removeUser(userId);
-        messageProcessingService.sendOnlineStatusToAllChatRooms(userId, OnlineStatus.OFFLINE);
+        messageProcessingService.sendOnlineStatusToAllChatRooms(userId, ConnectionStatus.OFFLINE);
         return "User marked as offline";
     }
 
@@ -65,11 +65,6 @@ public class RedisController {
             lastSeenTimstamp=groupService.getLastSeenTimeStampOfCouterPartUser(chatRoom,userId);
         OnlineUsersDto response = OnlineUsersDto.builder().onlineUsers(onlineUsers).lastSeenTimestamp(lastSeenTimstamp).build();
         return new ResponseEntity<OnlineUsersDto>(response, HttpStatus.OK);
-    }
-
-    @GetMapping("/get/activeChatRoom/{chatRoomId}")
-    public Boolean isChatRoomActive(@PathVariable String userId, @PathVariable String chatRoomId) {
-        return redisService.isUserInChatRoom(userId,chatRoomId);
     }
 
     @PostMapping("/update/activeChatRoom/{chatRoomId}/{userId}")

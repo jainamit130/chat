@@ -3,7 +3,6 @@ package com.amit.converse.chat.service;
 import com.amit.converse.chat.dto.OnlineStatusDto;
 import com.amit.converse.chat.model.*;
 import com.amit.converse.chat.repository.ChatRoomRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 //import org.springframework.kafka.annotation.KafkaListener;
@@ -11,7 +10,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.Set;
 
 @Service
@@ -88,8 +86,7 @@ public class MessageProcessingService {
     }
 
     @Async
-    public void sendOnlineStatusToAllChatRooms(String userId, OnlineStatus status){
-        User user = userService.getUser(userId);
+    public void sendOnlineStatusToAllChatRooms(ConnectionStatus status){
         OnlineStatusDto onlineStatusDto = OnlineStatusDto.builder().status(status).username(user.getUsername()).build();
         for(String chatRoomId: user.getChatRoomIds()){
             webSocketMessageService.sendOnlineStatusToGroup(chatRoomId,onlineStatusDto);

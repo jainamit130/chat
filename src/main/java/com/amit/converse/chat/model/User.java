@@ -1,5 +1,7 @@
 package com.amit.converse.chat.model;
 
+import com.amit.converse.chat.dto.OnlineStatusDto;
+import com.amit.converse.chat.service.WebSocketMessageService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +16,6 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @Builder
 @Document(collection = "user")
 public class User {
@@ -28,7 +29,7 @@ public class User {
     private String status;
     private Instant lastSeenTimestamp;
     private Instant creationDate;
-
+    private final WebSocketMessageService webSocketService;
     public void addChatRoom(String chatRoomId){
         chatRoomIds.add(chatRoomId);
     }
@@ -37,5 +38,13 @@ public class User {
         if (chatRoomIds.contains(chatRoomId)) {
             chatRoomIds.remove(chatRoomId);
         }
+    }
+
+    public void notifyStatus(ConnectionStatus status) {
+        OnlineStatusDto onlineStatusDto = OnlineStatusDto.builder().status(status).username(username).build();
+        for(String chatRoomId: chatRoomIds){
+            webSocketService.sendOnlineStatusToGroup(chatRoomId,onlineStatusDto);
+        }
+        return;
     }
 }

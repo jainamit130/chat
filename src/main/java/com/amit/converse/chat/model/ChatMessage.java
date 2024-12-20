@@ -13,10 +13,19 @@ import java.util.*;
 @EqualsAndHashCode(callSuper = true)
 public class ChatMessage extends Message {
     private MessageStatus status;
-    private User user; // Remove
 
     @Builder.Default
     private MessageMetaData messageMetaData = new ChatMessageMetaData();
+
+    public void readMessage(String userId){
+        messageMetaData.addUserToReadReceipt
+        return;
+    }
+
+    @Override
+    public void deliverMessage(String userId) {
+
+    }
 
     public void addUserToReadReceipt(String timestamp,String userId){
         if(!readRecipients.contains(userId)){

@@ -29,7 +29,20 @@ public abstract class Message {
     private Instant timestamp;
     private MessageMetaData metaData;
 
-    public void addUserToDeletedForUsers(String userId) {
-        deletedForUsers.add(userId);
+    public void deleteMessage(String userId) {
+        metaData.addUserToDeletedForUsers(userId);
     }
+
+    public abstract void readMessage(String userId);
+    public abstract void deliverMessage(String userId);
 }
+
+
+
+/*
+* Message is processed
+*
+*
+*
+*
+* */

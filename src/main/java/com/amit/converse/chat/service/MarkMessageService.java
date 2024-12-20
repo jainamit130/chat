@@ -69,7 +69,6 @@ public class MarkMessageService {
     @Transactional
     public void markAllMessages(ChatRoom chatRoom,String userId, Boolean isDelivered, Integer toBeMarkedMessagesCount) {
         List<ChatMessage> messagesToBeMarked = groupService.getMessagesToBeMarked(chatRoom.getId(), userId, toBeMarkedMessagesCount);
-        String timestampStr = Instant.now().toString();
         Map<String, List<String>> messageIdsToBeMarked = new HashMap<>();
 
         for (ChatMessage messageToBeMarked : messagesToBeMarked) {
@@ -83,7 +82,7 @@ public class MarkMessageService {
                     messageIdsToBeMarked.put(messageToBeMarked.getSenderId(), senderIdMessageIdsToBeMarked);
                 }
             } else {
-                messageToBeMarked.addUserToReadReceipt(timestampStr, userId);
+                messageToBeMarked.addUserToReadReceipt(userId);
 
                 if (messageToBeMarked.getReadReceiptsByTime().size() == chatRoom.getUserIds().size()) {
                     messageToBeMarked.setMessageStatus(MessageStatus.READ);
