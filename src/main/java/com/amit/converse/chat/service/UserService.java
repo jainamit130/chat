@@ -55,11 +55,10 @@ public class UserService {
         }
     }
 
-    public void updateUserLastSeen(String userId, Instant timestamp) {
+    public void updateUserLastSeen(String userId) {
         User user = getUser(userId);
-        user.setLastSeenTimestamp(timestamp);
+        user.updateLastSeenToNow();
         saveUser(user);
-        return;
     }
 
     public void saveUser(User user) {
@@ -162,5 +161,8 @@ public class UserService {
         return userDetails;
     }
 
-
+    public void notifyStatus(String userId, ConnectionStatus status) {
+        User user = getUser(userId);
+        user.notifyStatus(status);
+    }
 }

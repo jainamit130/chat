@@ -34,7 +34,8 @@ public class RedisService {
     }
 
     public void addUserIdToChatRoom(String chatRoomId, String userId) {
-        redisTemplate.opsForSet().add("chatRoom:" + chatRoomId + ":userIds", userId);
+        if(chatRoomId!=null)
+            redisTemplate.opsForSet().add("chatRoom:" + chatRoomId + ":userIds", userId);
     }
 
     public Boolean isUserOnline(String userId) {
@@ -56,6 +57,9 @@ public class RedisService {
 
 
     public void removeUserFromChatRoom(String chatRoomId, String userId) {
+        if(chatRoomId==null) {
+            return;
+        }
         String chatRoomKey = "chatRoom:" + chatRoomId + ":userIds";
 
         redisTemplate.opsForSet().remove(chatRoomKey, userId);

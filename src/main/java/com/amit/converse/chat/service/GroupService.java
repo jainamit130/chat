@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.dto.GroupDetails;
+import com.amit.converse.chat.dto.OnlineUsersDto;
 import com.amit.converse.chat.model.*;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;
@@ -338,5 +339,16 @@ public class GroupService {
             return true;
         }
         return false;
+    }
+
+    public OnlineUsersDto getOnlineUsers(String chatRoomId, String userId) {
+        ChatRoom chatRoom = getChatRoom(chatRoomId);
+        Set<String> onlineUsers = getOnlineUsersOfGroup(chatRoom);
+        Instant lastSeenTimstamp = null;
+        // If ChatRoom is Individual get Last Seen
+        if(chatRoom.getChatRoomType()== ChatRoomType.INDIVIDUAL)
+            lastSeenTimstamp=getLastSeenTimeStampOfCouterPartUser(chatRoom,userId);
+        OnlineUsersDto response = OnlineUsersDto.builder().onlineUsers(onlineUsers).lastSeenTimestamp(lastSeenTimstamp).build();
+        return response;
     }
 }

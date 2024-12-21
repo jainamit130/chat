@@ -47,4 +47,8 @@ public class User {
         }
         return;
     }
+
+    public void updateLastSeenToNow() {
+        lastSeenTimestamp = Instant.now();
+    }
 }
