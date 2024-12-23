@@ -7,6 +7,7 @@ import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
+import com.amit.converse.chat.service.Redis.RedisReadService;
 import lombok.AllArgsConstructor;
 //import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final SharedService sharedService;
-    private final RedisService redisService;
+    private final RedisReadService redisService;
     private final UserRepository userRepository;
 
 //    @KafkaListener(topics = "user-events", groupId = "group_id")

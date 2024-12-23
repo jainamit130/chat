@@ -5,6 +5,9 @@ import com.amit.converse.chat.dto.OnlineUsersDto;
 import com.amit.converse.chat.model.*;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;
+import com.amit.converse.chat.service.Redis.RedisChatRoomService;
+import com.amit.converse.chat.service.Redis.RedisReadService;
+import com.amit.converse.chat.service.Redis.RedisWriteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +24,8 @@ public class GroupService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final UserService userService;
-    private final RedisService redisService;
+    private final RedisReadService redisReadService;
+    private final RedisChatRoomService redisChatRoomService;
     private final SharedService sharedService;
     private final WebSocketMessageService webSocketMessageService;
 
@@ -73,7 +77,7 @@ public class GroupService {
     }
 
     public Set<String> getOnlineUsersOfGroup(ChatRoom chatRoom){
-        Set<String> onlineUserIds = redisService.filterOnlineUsers(chatRoom.getUserIds());
+        Set<String> onlineUserIds = redisReadService.filterOnlineUsers(chatRoom.getUserIds());
         return userService.processIdsToName(onlineUserIds);
     }
 
@@ -322,7 +326,7 @@ public class GroupService {
                 chatRoomRepository.save(chatRoom);
             }
         }
-        redisService.removeUserFromChatRoom(chatRoom.getId(),userId);
+        redisChatRoomService.removeUserFromChatRoom(chatRoom.getId(),userId);
         return true;
     }
 
@@ -335,7 +339,7 @@ public class GroupService {
                 chatRoomRepository.save(chatRoom);
             }
             clearChat(chatRoom, userId);
-            redisService.removeUserFromChatRoom(chatRoom.getId(),userId);
+            redisChatRoomService.removeUserFromChatRoom(chatRoom.getId(),userId);
             return true;
         }
         return false;

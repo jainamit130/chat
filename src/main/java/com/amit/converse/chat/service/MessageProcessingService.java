@@ -1,8 +1,8 @@
 package com.amit.converse.chat.service;
 
-import com.amit.converse.chat.dto.OnlineStatusDto;
 import com.amit.converse.chat.model.*;
 import com.amit.converse.chat.repository.ChatRoomRepository;
+import com.amit.converse.chat.service.Redis.RedisReadService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 //import org.springframework.kafka.annotation.KafkaListener;
@@ -17,7 +17,7 @@ import java.util.Set;
 public class MessageProcessingService {
 
     private final ChatRoomRepository chatRoomRepository;
-    private final RedisService redisService;
+    private final RedisReadService redisService;
     private final UserService userService;
     private final SharedService sharedService;
     private final WebSocketMessageService webSocketMessageService;
@@ -83,14 +83,5 @@ public class MessageProcessingService {
                 .orElseThrow(() -> new IllegalArgumentException("Chat room not found"));
 
         return chatRoom;
-    }
-
-    @Async
-    public void sendOnlineStatusToAllChatRooms(ConnectionStatus status){
-        OnlineStatusDto onlineStatusDto = OnlineStatusDto.builder().status(status).username(user.getUsername()).build();
-        for(String chatRoomId: user.getChatRoomIds()){
-            webSocketMessageService.sendOnlineStatusToGroup(chatRoomId,onlineStatusDto);
-        }
-        return;
     }
 }

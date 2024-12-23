@@ -11,12 +11,12 @@ public class OnlineRedisSessionTransition extends RedisSessionTransition {
     // Save ChatRoom-User Id key from Redis
     @Override
     public void alterUserToChatRoom() {
-        redisService.addUserIdToChatRoom(prevChatRoomId,userId);
+        redisWriteService.addUserIdToChatRoom(prevChatRoomId,userId);
     }
 
     // Save User Id Key from Redis
     @Override
     public void alterUser() {
-        redisService.setUser(userId);
+        redisWriteService.setUser(userId);
     }
 }
