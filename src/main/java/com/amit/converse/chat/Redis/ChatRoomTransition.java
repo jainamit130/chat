@@ -4,7 +4,6 @@ import com.amit.converse.chat.dto.OnlineUsersDto;
 import com.amit.converse.chat.service.GroupService;
 import com.amit.converse.chat.service.Redis.RedisChatRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 
 public class ChatRoomTransition extends RedisSession implements Transition{
     @Autowired

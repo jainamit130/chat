@@ -1,5 +1,7 @@
 package com.amit.converse.chat.model;
 
+import com.amit.converse.chat.Redis.RedisSessionTransition;
+import com.amit.converse.chat.State.State;
 import com.amit.converse.chat.dto.OnlineStatusDto;
 import com.amit.converse.chat.service.WebSocketMessageService;
 import lombok.AllArgsConstructor;
@@ -26,10 +28,11 @@ public class User {
     private Set<String> chatRoomIds = new HashSet<>();
     private String username;
     private String password;
-    private String status;
+    private State state;
     private Instant lastSeenTimestamp;
     private Instant creationDate;
     private final WebSocketMessageService webSocketService;
+    private final RedisSessionTransition redisSessionTransition;
     public void addChatRoom(String chatRoomId){
         chatRoomIds.add(chatRoomId);
     }
@@ -50,5 +53,9 @@ public class User {
 
     public void updateLastSeenToNow() {
         lastSeenTimestamp = Instant.now();
+    }
+
+    public void transit() {
+        redisSessionTransition.transit();
     }
 }

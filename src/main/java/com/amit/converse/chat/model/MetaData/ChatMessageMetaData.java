@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,4 +32,24 @@ public class ChatMessageMetaData extends MessageMetaData {
     private Map<String, Set<String>> readReceiptsByTime = new HashMap<>();
 
 
+    @Override
+    public void readMessage(String timestamp,String userId) {
+        if(!readRecipients.contains(userId)){
+            readRecipients.add(userId);
+            Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
+            userIds.add(userId);
+            readReceiptsByTime.put(timestamp,userIds);
+        }
+    }
+
+    @Override
+    public void deliverMessage(String timestamp, String userId) {
+        if(!deliveredRecipients.contains(userId)) {
+            deliveredRecipients.add(userId);
+            Set<String> userIds = deliveryReceiptsByTime.getOrDefault(timestamp, new HashSet());
+            userIds.add(userId);
+            deliveryReceiptsByTime.put(timestamp, userIds);
+        }
+        return;
+    }
 }

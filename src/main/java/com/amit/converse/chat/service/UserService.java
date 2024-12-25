@@ -1,5 +1,8 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.State.Offline;
+import com.amit.converse.chat.State.Online;
+import com.amit.converse.chat.State.State;
 import com.amit.converse.chat.dto.UserEventDTO;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
@@ -69,7 +72,15 @@ public class UserService {
     public User getUser(String userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new ConverseException("User not found!!"));
+        user.setState(getStateFromRedis(user));
         return user;
+    }
+
+    State getStateFromRedis(User user) {
+        if(redisService.isUserOnline(user.getUserId())){
+            return new Online(user);
+        }
+        return new Offline(user);
     }
 
     public void groupJoinedOrLeft(String userId,String chatRoomId,Boolean isJoined) {

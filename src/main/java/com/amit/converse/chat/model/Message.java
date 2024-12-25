@@ -33,8 +33,8 @@ public abstract class Message {
         metaData.addUserToDeletedForUsers(userId);
     }
 
-    public abstract void readMessage(String userId);
-    public abstract void deliverMessage(String userId);
+    public abstract void readMessage(String timestamp,String userId);
+    public abstract void deliverMessage(String timestamp,String userId);
 }
 
 

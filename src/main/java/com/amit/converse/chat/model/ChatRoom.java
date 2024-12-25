@@ -26,7 +26,6 @@ public class ChatRoom {
     private String recipientUsername;
     private transient ChatMessage latestMessage;
     private transient Integer unreadMessageCount;
-    private transient Boolean isExited;
     private Set<String> deletedForUsers;
     private Integer totalMessagesCount;
     private Map<String, Integer> readMessageCounts;
@@ -35,6 +34,7 @@ public class ChatRoom {
     private Map<String, Instant> userFetchStartTimeMap;
     // Exit Group Feature Only For Groups
     private Map<String,Instant> exitedMembers;
+    private transient Boolean isExited;
 
     public void incrementTotalMessagesCount() {
         if(totalMessagesCount==null){
