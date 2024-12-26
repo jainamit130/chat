@@ -14,13 +14,12 @@ public class RedisReadService implements IRedisReadService {
 
     protected final RedisTemplate<String, Object> redisTemplate;
 
-    public boolean isUserInChatRoom(String chatRoomId, String userId) {
-        return redisTemplate.opsForSet().isMember("chatRoom:" + chatRoomId + ":userIds", userId);
+    public Boolean isUserInChatRoom(String chatRoomId, String userId) {
+        return redisTemplate.hasKey(userId.toString() + " : " + chatRoomId.toString());
     }
 
     public Boolean isUserOnline(String userId) {
-        String redisKey = "user:" + userId;
-        return redisTemplate.hasKey(redisKey);
+        return redisTemplate.hasKey(userId.toString());
     }
 
     public Set<String> filterOnlineUsers(List<String> userIds) {

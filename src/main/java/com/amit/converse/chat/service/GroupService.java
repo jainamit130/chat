@@ -326,7 +326,7 @@ public class GroupService {
                 chatRoomRepository.save(chatRoom);
             }
         }
-        redisChatRoomService.removeUserFromChatRoom(chatRoom.getId(),userId);
+        redisChatRoomService.removeUserFromChatRoom(userId);
         return true;
     }
 
@@ -339,7 +339,7 @@ public class GroupService {
                 chatRoomRepository.save(chatRoom);
             }
             clearChat(chatRoom, userId);
-            redisChatRoomService.removeUserFromChatRoom(chatRoom.getId(),userId);
+            redisChatRoomService.removeUserFromChatRoom(userId);
             return true;
         }
         return false;

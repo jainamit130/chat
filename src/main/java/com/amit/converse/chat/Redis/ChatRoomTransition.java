@@ -13,8 +13,8 @@ public class ChatRoomTransition extends RedisSession implements Transition{
     // current opened chatRoom's ID
     private String chatRoomId;
 
-    public ChatRoomTransition(String userId, String chatRoomId, String prevChatRoomId) {
-        super(userId, prevChatRoomId);
+    public ChatRoomTransition(String userId, String chatRoomId) {
+        super(userId);
         this.chatRoomId = chatRoomId;
     }
 
@@ -25,7 +25,7 @@ public class ChatRoomTransition extends RedisSession implements Transition{
 
     @Override
     public void transit() {
-        redisChatRoomService.removeUserFromChatRoom(prevChatRoomId,userId);
+        redisChatRoomService.removeUserFromChatRoom(userId);
         redisChatRoomService.addUserIdToChatRoom(chatRoomId,userId);
     }
 }

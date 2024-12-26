@@ -11,12 +11,12 @@ public class RedisWriteService implements IRedisUserService,IRedisChatroomServic
 
     @Override
     public void addUserIdToChatRoom(String chatRoomId, String userId) {
-        redisChatRoomService.addUserIdToChatRoom(chatRoomId,userId);
+        redisChatRoomService.addUserIdToChatRoom(userId,chatRoomId);
     }
 
     @Override
-    public void removeUserFromChatRoom(String chatRoomId, String userId) {
-        redisChatRoomService.removeUserFromChatRoom(chatRoomId,userId);
+    public void removeUserFromChatRoom(String userId) {
+        redisChatRoomService.removeUserFromChatRoom(userId);
     }
 
     @Override

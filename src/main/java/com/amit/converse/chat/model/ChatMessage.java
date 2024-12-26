@@ -3,11 +3,13 @@ package com.amit.converse.chat.model;
 import com.amit.converse.chat.model.MetaData.ChatMessageMetaData;
 import com.amit.converse.chat.model.MetaData.MessageMetaData;
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Document(collection = "chatMessages")
 @EqualsAndHashCode(callSuper = true)
 public class ChatMessage extends Message {
     private MessageStatus status;

@@ -1,15 +1,17 @@
 package com.amit.converse.chat.State;
 
-import com.amit.converse.chat.model.User;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Offline extends State {
-    public Offline(User user) {
-        super(user);
+
+    public Offline() {
+        user.setRedisSessionTransition(redisSessionTransitionFactory.getOnlineRedisSessionTransition());
     }
 
     @Override
     public void transit() {
-        user.setState(new Online(user));
+        user.setState(new Online());
         user.transit();
     }
 }

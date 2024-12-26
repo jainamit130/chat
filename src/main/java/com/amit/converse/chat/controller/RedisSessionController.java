@@ -4,6 +4,7 @@ import com.amit.converse.chat.Redis.ChatRoomTransition;
 import com.amit.converse.chat.Redis.OfflineRedisSessionTransition;
 import com.amit.converse.chat.Redis.OnlineRedisSessionTransition;
 import com.amit.converse.chat.dto.OnlineUsersDto;
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,15 +17,15 @@ import org.springframework.web.bind.annotation.*;
 public class RedisSessionController {
     private final UserService userService;
 
-    @PostMapping("/save/lastSeen")
-    public ResponseEntity saveLastSeen(@ModelAttribute OnlineRedisSessionTransition onlineSession) {
-        onlineSession.transit();
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
+    private void transit(String userId) {
+        User user = userService.getUser(userId);
+        user.transit();
+        userService.saveUser(user);
     }
 
-    @PostMapping("/update/lastSeen")
-    public ResponseEntity updateLastSeen(@ModelAttribute OfflineRedisSessionTransition offlineSession) {
-        offlineSession.transit();
+    @PostMapping("/state/transit/{userId}")
+    public ResponseEntity transitState(@PathVariable String userId) {
+        transitState(userId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 

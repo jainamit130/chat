@@ -13,19 +13,16 @@ public abstract class RedisSessionTransition extends RedisSession implements Tra
     protected RedisWriteService redisWriteService;
     private final ConnectionStatus status;
 
-    RedisSessionTransition(ConnectionStatus status, String userId, String prevChatRoomId) {
-        super(userId,prevChatRoomId);
+    RedisSessionTransition(ConnectionStatus status, String userId) {
+        super(userId);
         this.status = status;
     }
 
     public final void transit() {
-        userService.updateUserLastSeen(userId);
-        alterUserToChatRoom();
         alterUser();
         notifyStatusToChatRooms();
     }
 
-    public abstract void alterUserToChatRoom();
     public abstract void alterUser();
 
     @Async

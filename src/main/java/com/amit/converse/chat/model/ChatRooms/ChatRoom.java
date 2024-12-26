@@ -3,11 +3,19 @@ package com.amit.converse.chat.model.ChatRooms;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoomType;
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.*;
 
+@Data
+@Builder
+@AllArgsConstructor
+@Document(collection = "chatRooms")
 public abstract class ChatRoom {
     @Id
     protected String id;
@@ -16,12 +24,22 @@ public abstract class ChatRoom {
     protected transient Integer unreadMessageCount;
     @NotBlank
     private ChatRoomType chatRoomType;
+
     // Clear Chat Feature
-    private Map<String, Instant> userFetchStartTimeMap;
-    private Set<String> deletedForUsers;
-    private Integer totalMessagesCount;
-    private Map<String, Integer> readMessageCounts;
-    private Map<String, Integer> deliveredMessageCounts;
+    @Builder.Default
+    private Map<String, Instant> userFetchStartTimeMap = new HashMap<>();
+
+    @Builder.Default
+    private Set<String> deletedForUsers = new HashSet<>();
+
+    @Builder.Default
+    private Integer totalMessageCount = 0;
+
+    @Builder.Default
+    private Map<String, Integer> readMessageCount = new HashMap<>();
+
+    @Builder.Default
+    private Map<String, Integer> deliveredMessageCount = new HashMap<>();
 
     public Boolean deleteChat(String userId) {
         if(deletedForUsers==null){
@@ -29,5 +47,13 @@ public abstract class ChatRoom {
         }
         deletedForUsers.add(userId);
         return true;
+    }
+
+    public void deliverMessages(String userId) {
+        deliveredMessageCount.put(userId,totalMessageCount);
+    }
+
+    public void readMessages(String userId) {
+        readMessageCount.put(userId,totalMessageCount);
     }
 }

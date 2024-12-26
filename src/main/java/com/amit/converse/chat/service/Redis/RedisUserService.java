@@ -11,15 +11,14 @@ public class RedisUserService implements IRedisUserService{
     protected final RedisTemplate<String, Object> redisTemplate;
 
     public void setUser(String userId) {
-        redisTemplate.opsForValue().set("user:" + userId,"");
+        redisTemplate.opsForValue().set(userId,null);
     }
 
     public void removeUser(String userId) {
-        String key = "user:" + userId;
         try {
-            redisTemplate.delete(key);
+            redisTemplate.delete(userId);
         } catch (Exception e) {
-            System.err.println("Error deleting key: " + key + " for user: " + userId);
+            System.err.println("Error deleting key: " + userId + " in redis");
             e.printStackTrace();
         }
     }

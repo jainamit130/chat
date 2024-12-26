@@ -8,25 +8,16 @@ import org.springframework.stereotype.Service;
 public class RedisChatRoomService implements IRedisChatroomService{
 
     @Autowired
-    protected RedisTemplate<String, Object> redisTemplate;
+    protected RedisTemplate<String, String> redisTemplate;
 
     public void addUserIdToChatRoom(String chatRoomId, String userId) {
         if(chatRoomId!=null)
-            redisTemplate.opsForSet().add("chatRoom:" + chatRoomId + ":userIds", userId);
+            redisTemplate.opsForValue().set(userId,chatRoomId);
     }
 
-    public void removeUserFromChatRoom(String chatRoomId, String userId) {
-        if(chatRoomId==null) {
-            return;
-        }
-        String chatRoomKey = "chatRoom:" + chatRoomId + ":userIds";
-
-        redisTemplate.opsForSet().remove(chatRoomKey, userId);
-
-        Long size = redisTemplate.opsForSet().size(chatRoomKey);
-
-        if (size != null && size == 0) {
-            redisTemplate.delete(chatRoomKey);
+    public void removeUserFromChatRoom(String userId) {
+        if(redisTemplate.hasKey(userId)) {
+            redisTemplate.opsForValue().set(userId,null);
         }
     }
 }

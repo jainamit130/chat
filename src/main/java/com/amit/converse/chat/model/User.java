@@ -25,14 +25,17 @@ public class User {
     @Id
     private String id;
     private String userId;
+
+    @Builder.Default
     private Set<String> chatRoomIds = new HashSet<>();
+
     private String username;
     private String password;
     private State state;
+    private RedisSessionTransition redisSessionTransition;
     private Instant lastSeenTimestamp;
     private Instant creationDate;
     private final WebSocketMessageService webSocketService;
-    private final RedisSessionTransition redisSessionTransition;
     public void addChatRoom(String chatRoomId){
         chatRoomIds.add(chatRoomId);
     }

@@ -11,7 +11,7 @@ public class OfflineRedisSessionTransition extends RedisSessionTransition {
     // Remove ChatRoom-User Id key from Redis
     @Override
     public void alterUserToChatRoom() {
-        redisWriteService.removeUserFromChatRoom(userId,prevChatRoomId);
+        redisWriteService.removeUserFromChatRoom(userId);
     }
 
     // Remove User Id Key from Redis

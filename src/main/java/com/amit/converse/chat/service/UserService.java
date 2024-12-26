@@ -10,6 +10,7 @@ import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
+import com.amit.converse.chat.service.Redis.Factory.RedisSessionTransitionFactory;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import lombok.AllArgsConstructor;
 //import org.springframework.kafka.annotation.KafkaListener;
@@ -73,14 +74,15 @@ public class UserService {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new ConverseException("User not found!!"));
         user.setState(getStateFromRedis(user));
+        user.updateLastSeenToNow();
         return user;
     }
 
     State getStateFromRedis(User user) {
         if(redisService.isUserOnline(user.getUserId())){
-            return new Online(user);
+            return new Online();
         }
-        return new Offline(user);
+        return new Offline();
     }
 
     public void groupJoinedOrLeft(String userId,String chatRoomId,Boolean isJoined) {
@@ -95,13 +97,6 @@ public class UserService {
             user.removeChatRoom(chatRoomId);
         }
         saveUser(user);
-    }
-
-    public void updateLastSeenOfUser(String userId,Instant timestamp){
-        User user = getUser(userId);
-        user.setLastSeenTimestamp(timestamp);
-        userRepository.save(user);
-        return;
     }
 
     public List<UserDetails> getAllUsers(){

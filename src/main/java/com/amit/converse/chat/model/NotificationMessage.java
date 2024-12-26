@@ -1,11 +1,13 @@
 package com.amit.converse.chat.model;
 
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Document(collection = "chatMessages")
 @EqualsAndHashCode(callSuper = true)
 public class NotificationMessage extends Message {
 
