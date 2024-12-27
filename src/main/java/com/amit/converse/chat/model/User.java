@@ -1,19 +1,17 @@
 package com.amit.converse.chat.model;
 
-import com.amit.converse.chat.Redis.RedisSessionTransition;
+import com.amit.converse.chat.Redis.RedisSessionITransition;
 import com.amit.converse.chat.State.State;
 import com.amit.converse.chat.dto.OnlineStatusDto;
 import com.amit.converse.chat.service.WebSocketMessageService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data
@@ -32,7 +30,7 @@ public class User {
     private String username;
     private String password;
     private State state;
-    private RedisSessionTransition redisSessionTransition;
+    private RedisSessionITransition redisSessionTransition;
     private Instant lastSeenTimestamp;
     private Instant creationDate;
     private final WebSocketMessageService webSocketService;

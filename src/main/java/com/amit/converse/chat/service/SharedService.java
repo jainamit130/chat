@@ -27,7 +27,7 @@ public class SharedService {
     private final UserRepository userRepository;
 
     public Optional<ChatRoom> getIndividualChatIfPresent(String userId1,String userId2) {
-        Optional<ChatRoom> chatRoom = chatRoomRepository.findIndividualChatRoomByUserIds(ChatRoomType.INDIVIDUAL,userId1,userId2);
+        Optional<ChatRoom> chatRoom = chatRoomRepository.findIndividualChatRoomByUserIds(ChatRoomType.DIRECT,userId1,userId2);
         return chatRoom;
     }
 

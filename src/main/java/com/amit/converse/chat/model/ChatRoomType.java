@@ -1,7 +1,7 @@
 package com.amit.converse.chat.model;
 
 public enum ChatRoomType {
-    INDIVIDUAL,
+    DIRECT,
     GROUP,
     SELF
 }

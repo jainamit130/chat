@@ -1,19 +1,19 @@
 package com.amit.converse.chat.service.Redis.Factory;
 
-import com.amit.converse.chat.Redis.OfflineRedisSessionTransition;
-import com.amit.converse.chat.Redis.OnlineRedisSessionTransition;
+import com.amit.converse.chat.Redis.OfflineRedisSessionITransition;
+import com.amit.converse.chat.Redis.OnlineRedisSessionITransition;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class RedisSessionTransitionFactory {
-    private final OnlineRedisSessionTransition onlineRedisSessionTransition;
-    private final OfflineRedisSessionTransition offlineRedisSessionTransition;
+    private final OnlineRedisSessionITransition onlineRedisSessionTransition;
+    private final OfflineRedisSessionITransition offlineRedisSessionTransition;
 
-    public OnlineRedisSessionTransition getOnlineRedisSessionTransition() {
+    public OnlineRedisSessionITransition getOnlineRedisSessionTransition() {
         return onlineRedisSessionTransition;
     }
 
-    public OfflineRedisSessionTransition getOfflineRedisSessionTransition() {
+    public OfflineRedisSessionITransition getOfflineRedisSessionTransition() {
         return offlineRedisSessionTransition;
     }
 }

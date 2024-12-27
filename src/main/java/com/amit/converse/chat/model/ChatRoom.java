@@ -112,16 +112,15 @@ public class ChatRoom {
         return exitedMembers;
     }
 
-    public Boolean deleteChat(String userId) {
+    public void deleteChat(String userId) {
         if(deletedForUsers==null){
             deletedForUsers=new HashSet<>();
         }
         deletedForUsers.add(userId);
-        return true;
     }
 
     public void undoDeleteChat(String userId) {
-        if(chatRoomType==ChatRoomType.INDIVIDUAL) {
+        if(chatRoomType==ChatRoomType.DIRECT) {
             if(deletedForUsers==null){
                 deletedForUsers=new HashSet<>();
             } else {

@@ -1,8 +1,6 @@
 package com.amit.converse.chat.controller;
 
-import com.amit.converse.chat.Redis.ChatRoomTransition;
-import com.amit.converse.chat.Redis.OfflineRedisSessionTransition;
-import com.amit.converse.chat.Redis.OnlineRedisSessionTransition;
+import com.amit.converse.chat.Redis.ChatRoomRedisITransition;
 import com.amit.converse.chat.dto.OnlineUsersDto;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.UserService;
@@ -25,13 +23,13 @@ public class RedisSessionController {
 
     @PostMapping("/state/transit/{userId}")
     public ResponseEntity transitState(@PathVariable String userId) {
-        transitState(userId);
+        transit(userId);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/save/activeChatRoom")
-    public ResponseEntity<OnlineUsersDto> saveActiveChatRoom(@ModelAttribute ChatRoomTransition chatRoomTransition) {
-        return new ResponseEntity<OnlineUsersDto>(chatRoomTransition.transitAndGetOnlineUsers(), HttpStatus.OK);
+    public ResponseEntity<OnlineUsersDto> saveActiveChatRoom(@ModelAttribute ChatRoomRedisITransition chatRoomRedisTransition) {
+        return new ResponseEntity<OnlineUsersDto>(chatRoomRedisTransition.transitAndGetOnlineUsers(), HttpStatus.OK);
     }
 
 }

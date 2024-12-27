@@ -2,9 +2,9 @@ package com.amit.converse.chat.Redis;
 
 import com.amit.converse.chat.model.ConnectionStatus;
 
-public class OfflineRedisSessionTransition extends RedisSessionTransition {
+public class OfflineRedisSessionITransition extends RedisSessionITransition {
 
-    public OfflineRedisSessionTransition(String userId, String prevChatRoomId) {
+    public OfflineRedisSessionITransition(String userId, String prevChatRoomId) {
         super(ConnectionStatus.OFFLINE, userId, prevChatRoomId);
     }
 

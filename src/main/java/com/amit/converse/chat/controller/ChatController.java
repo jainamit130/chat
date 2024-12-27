@@ -4,7 +4,6 @@ import com.amit.converse.chat.dto.MessageInfoDto;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.ChatRoomType;
-import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -14,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,7 +43,7 @@ public class ChatController {
             return;
         }
         ChatMessage savedMessage = null;
-        if(chatRoom.getChatRoomType()== ChatRoomType.INDIVIDUAL && chatRoom.getDeletedForUsers().contains(groupService.getCounterPartUser(chatRoom,chatMessage.getSenderId()).getUserId())){
+        if(chatRoom.getChatRoomType()== ChatRoomType.DIRECT && chatRoom.getDeletedForUsers().contains(groupService.getCounterPartUser(chatRoom,chatMessage.getSenderId()).getUserId())){
             savedMessage = chatService.addMessage(chatRoomId, chatMessage,false);
             webSocketMessageService.sendMessage(chatRoomId,savedMessage);
             groupService.sendNewChatStatusToDeletedMembers(chatRoomId);

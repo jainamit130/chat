@@ -2,9 +2,9 @@ package com.amit.converse.chat.Redis;
 
 import com.amit.converse.chat.model.ConnectionStatus;
 
-public class OnlineRedisSessionTransition extends RedisSessionTransition {
+public class OnlineRedisSessionITransition extends RedisSessionITransition {
 
-    public OnlineRedisSessionTransition(String userId) {
+    public OnlineRedisSessionITransition(String userId) {
         super(ConnectionStatus.ONLINE, userId);
     }
 

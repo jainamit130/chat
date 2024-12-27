@@ -14,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -38,7 +37,7 @@ public class ChatRoomController {
                 webSocketMessageService.sendMessage(createdChatRoomId,savedMessage);
                 groupService.sendNewChatStatusToDeletedMembers(createdChatRoomId);
             } else {
-                if(request.getChatRoomType()== ChatRoomType.INDIVIDUAL){
+                if(request.getChatRoomType()== ChatRoomType.DIRECT){
                     savedMessage = chatService.addMessage(createdChatRoomId, request.getLatestMessage(),true);
                     groupService.sendNewChatStatusToMember(createdChatRoomId);
                 }

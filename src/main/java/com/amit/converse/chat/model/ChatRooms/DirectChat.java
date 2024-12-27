@@ -1,15 +1,22 @@
 package com.amit.converse.chat.model.ChatRooms;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Data
 @Builder
 @EqualsAndHashCode(callSuper = true)
 public class DirectChat extends ChatRoom {
-    private transient String user;
-    private transient String counterPartUser;
-
-    public DirectChat(String user) {
-
-    }
+    @NotBlank
+    private transient String username;
+    @NotBlank
+    private transient String counterPartUsername;
 }
+
+
+/*
+*
+* User1
+* User2
+*
+* */
