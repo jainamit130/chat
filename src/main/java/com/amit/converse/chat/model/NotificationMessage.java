@@ -1,6 +1,7 @@
 package com.amit.converse.chat.model;
 
 import lombok.*;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -8,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Builder
 @Document(collection = "chatMessages")
+@CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
 @EqualsAndHashCode(callSuper = true)
 public class NotificationMessage extends Message {
 

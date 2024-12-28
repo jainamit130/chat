@@ -25,14 +25,14 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ChatController {
 
-    private final ChatService chatService;
+    private final ChatMessageService chatMessageService;
     private final GroupService groupService;
     private final MarkMessageService markMessageService;
     private final WebSocketMessageService webSocketMessageService;
 
     @GetMapping("/chat/message/info/{chatMessageId}")
     public ResponseEntity<MessageInfoDto> getMessageInfo(@PathVariable String chatMessageId) {
-        return new ResponseEntity<MessageInfoDto>(chatService.getMessageInfo(chatMessageId), HttpStatus.OK);
+        return new ResponseEntity<MessageInfoDto>(chatMessageService.getMessageInfo(chatMessageId), HttpStatus.OK);
     }
 
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
@@ -44,12 +44,12 @@ public class ChatController {
         }
         ChatMessage savedMessage = null;
         if(chatRoom.getChatRoomType()== ChatRoomType.DIRECT && chatRoom.getDeletedForUsers().contains(groupService.getCounterPartUser(chatRoom,chatMessage.getSenderId()).getUserId())){
-            savedMessage = chatService.addMessage(chatRoomId, chatMessage,false);
+            savedMessage = chatMessageService.addMessage(chatRoomId, chatMessage,false);
             webSocketMessageService.sendMessage(chatRoomId,savedMessage);
             groupService.sendNewChatStatusToDeletedMembers(chatRoomId);
             return;
         } else {
-            savedMessage = chatService.addMessage(chatRoomId, chatMessage, false);
+            savedMessage = chatMessageService.addMessage(chatRoomId, chatMessage, false);
         }
         webSocketMessageService.sendMessage(chatRoomId,savedMessage);
     }
@@ -80,12 +80,12 @@ public class ChatController {
 
     @PostMapping("/chat/message/deleteForMe/{messageId}")
     public ResponseEntity<Boolean> deleteForMe(@PathVariable String messageId, @RequestBody String userId){
-        return new ResponseEntity(chatService.deleteForMe(messageId,userId),HttpStatus.OK);
+        return new ResponseEntity(chatMessageService.deleteForMe(messageId,userId),HttpStatus.OK);
     }
 
     @PostMapping("/chat/message/deleteForEveryone/{messageId}")
     public ResponseEntity<Boolean> deleteMessageForEveryone(@PathVariable String messageId, @RequestBody String userId){
-        return new ResponseEntity(chatService.deleteForEveryone(messageId,userId),HttpStatus.OK);
+        return new ResponseEntity(chatMessageService.deleteForEveryone(messageId,userId),HttpStatus.OK);
     }
 
 //    @PostMapping("/test/grpc-call")

@@ -99,10 +99,7 @@ public class GroupService {
     public Boolean clearChat(ChatRoom chatRoom, String userId) {
         try {
             Map<String, Instant> userFetchStartTimeMap = chatRoom.getUserFetchStartTimeMap();
-            Instant lastClearedTimestamp = chatRoom.getCreatedAt();
-            if(userFetchStartTimeMap.containsKey(userId)){
-                lastClearedTimestamp=userFetchStartTimeMap.get(userId);
-            }
+            Instant lastClearedTimestamp = userFetchStartTimeMap.getOrDefault(userId,chatRoom.getCreatedAt());
             // Delete for this user from the last cleared instant to the current instant
             sharedService.deleteMessagesFromToInstant(lastClearedTimestamp,userId,chatRoom.getUserIds().size()+chatRoom.getExitedMembers().size());
             userFetchStartTimeMap.put(userId, Instant.now());

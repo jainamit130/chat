@@ -49,6 +49,14 @@ public abstract class ChatRoom {
         return true;
     }
 
+    public Integer getMemberCount() {
+        return userIds.size();
+    }
+
+    public Integer getTotalMemberCount() {
+        return getMemberCount();
+    }
+
     public void deliverMessages(String userId) {
         deliveredMessageCount.put(userId,totalMessageCount);
     }

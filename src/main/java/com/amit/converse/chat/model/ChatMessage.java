@@ -3,6 +3,7 @@ package com.amit.converse.chat.model;
 import com.amit.converse.chat.model.MetaData.ChatMessageMetaData;
 import com.amit.converse.chat.model.MetaData.MessageMetaData;
 import lombok.*;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -10,8 +11,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Builder
 @Document(collection = "chatMessages")
+@CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
 @EqualsAndHashCode(callSuper = true)
 public class ChatMessage extends Message {
+    private String senderId;
     private MessageStatus status;
 
     @Builder.Default

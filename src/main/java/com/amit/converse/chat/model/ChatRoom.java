@@ -34,6 +34,7 @@ public class ChatRoom {
     private Map<String, Instant> userFetchStartTimeMap;
     // Exit Group Feature Only For Groups
     private Map<String,Instant> exitedMembers;
+    private Map<String,Instant> unreadMessageCountForExitedMembers;
     private transient Boolean isExited;
 
     public void incrementTotalMessagesCount() {

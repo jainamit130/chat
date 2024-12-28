@@ -6,7 +6,7 @@ import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.dto.GroupMembersRequest;
 import com.amit.converse.chat.model.ChatMessage;
 import com.amit.converse.chat.model.ChatRoomType;
-import com.amit.converse.chat.service.ChatService;
+import com.amit.converse.chat.service.ChatMessageService;
 import com.amit.converse.chat.service.GroupService;
 import com.amit.converse.chat.service.WebSocketMessageService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class ChatRoomController {
 
     private final GroupService groupService;
-    private final ChatService chatService;
+    private final ChatMessageService chatMessageService;
     private final WebSocketMessageService webSocketMessageService;
 
     @PostMapping("/groups/create")
@@ -33,12 +33,12 @@ public class ChatRoomController {
             boolean isAlreadyPresent = result.getValue();
             ChatMessage savedMessage = null;
             if(isAlreadyPresent) {
-                savedMessage = chatService.addMessage(createdChatRoomId, request.getLatestMessage(), false);
+                savedMessage = chatMessageService.addMessage(createdChatRoomId, request.getLatestMessage(), false);
                 webSocketMessageService.sendMessage(createdChatRoomId,savedMessage);
                 groupService.sendNewChatStatusToDeletedMembers(createdChatRoomId);
             } else {
                 if(request.getChatRoomType()== ChatRoomType.DIRECT){
-                    savedMessage = chatService.addMessage(createdChatRoomId, request.getLatestMessage(),true);
+                    savedMessage = chatMessageService.addMessage(createdChatRoomId, request.getLatestMessage(),true);
                     groupService.sendNewChatStatusToMember(createdChatRoomId);
                 }
             }

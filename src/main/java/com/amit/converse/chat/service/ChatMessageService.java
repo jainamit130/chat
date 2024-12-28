@@ -14,7 +14,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class ChatService {
+public class ChatMessageService {
 
     private static final Duration DELETE_FOR_EVERYONE_LIMIT = Duration.ofMinutes(15);
     private final MessageProcessingService messageProcessingService;

@@ -32,4 +32,9 @@ public class GroupChat extends ChatRoom {
             this.userIds.removeAll(userIds);
         }
     }
+
+    @Override
+    public Integer getTotalMemberCount() {
+        return super.getTotalMemberCount() + exitedMembers.size();
+    }
 }
