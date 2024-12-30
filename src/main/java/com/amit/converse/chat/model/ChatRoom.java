@@ -1,5 +1,6 @@
 package com.amit.converse.chat.model;
 
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;

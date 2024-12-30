@@ -16,7 +16,6 @@ public class GroupChat extends ChatRoom {
     @NotBlank
     private String name;
     private String createdBy;
-    private Instant createdAt;
     // Exit Group Feature Only For Groups
     private transient Boolean isExited;
     private Map<String,Instant> exitedMembers;
@@ -33,8 +32,17 @@ public class GroupChat extends ChatRoom {
         }
     }
 
+    public Integer getExitedMemberCount() {
+        return exitedMembers.size();
+    }
+
+    @Override
+    public Boolean isDeletable() {
+        return getExitedMemberCount()==super.getDeletedForUsersCount();
+    }
+
     @Override
     public Integer getTotalMemberCount() {
-        return super.getTotalMemberCount() + exitedMembers.size();
+        return super.getTotalMemberCount() + getExitedMemberCount();
     }
 }

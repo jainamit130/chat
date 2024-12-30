@@ -1,7 +1,6 @@
 package com.amit.converse.chat.repository.Message;
 
-import com.amit.converse.chat.model.ChatMessage;
-import com.amit.converse.chat.model.Message;
+import com.amit.converse.chat.model.Messages.Message;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

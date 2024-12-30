@@ -26,4 +26,8 @@ public abstract class MessageMetaData {
     public void addUserToDeletedForUsers(String userId) {
         deletedForUsers.add(userId);
     }
+
+    public Integer getDeletedForUsersCount() {
+        return deletedForUsers.size();
+    }
 }

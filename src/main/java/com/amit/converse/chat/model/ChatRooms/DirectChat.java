@@ -15,6 +15,11 @@ public class DirectChat extends ChatRoom {
     private List<String> userIds;
     @NotBlank
     private transient String counterPartUsername;
+
+    @Override
+    public Boolean isDeletable() {
+        return super.getTotalMemberCount()==super.getDeletedForUsersCount();
+    }
 }
 
 

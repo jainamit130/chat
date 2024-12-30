@@ -1,6 +1,6 @@
 package com.amit.converse.chat.model.ChatRooms;
 
-import com.amit.converse.chat.model.ChatMessage;
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.ChatRoomType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -20,6 +20,7 @@ public abstract class ChatRoom {
     @Id
     protected String id;
     protected List<String> userIds;
+    protected Instant createdAt;
     protected transient ChatMessage latestMessage;
     protected transient Integer unreadMessageCount;
     @NotBlank
@@ -49,6 +50,12 @@ public abstract class ChatRoom {
         return true;
     }
 
+    public Integer getDeletedForUsersCount() {
+        return getDeletedForUsers().size();
+    }
+
+    public abstract Boolean isDeletable();
+
     public Integer getMemberCount() {
         return userIds.size();
     }
@@ -64,4 +71,5 @@ public abstract class ChatRoom {
     public void readMessages(String userId) {
         readMessageCount.put(userId,totalMessageCount);
     }
+
 }

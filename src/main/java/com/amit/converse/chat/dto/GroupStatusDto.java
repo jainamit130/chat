@@ -1,6 +1,6 @@
 package com.amit.converse.chat.dto;
 
-import com.amit.converse.chat.model.ChatMessage;
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.StatusType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

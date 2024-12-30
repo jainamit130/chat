@@ -3,6 +3,7 @@ package com.amit.converse.chat.service;
 import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.dto.OnlineUsersDto;
 import com.amit.converse.chat.model.*;
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;
 import com.amit.converse.chat.service.Redis.RedisChatRoomService;
@@ -298,7 +299,6 @@ public class GroupService {
         }
     }
 
-
     public Boolean deleteChat(String chatRoomId, String userId) {
         ChatRoom chatRoom = getChatRoom(chatRoomId);
         userService.groupJoinedOrLeft(userId,chatRoom.getId(),false);
@@ -307,7 +307,6 @@ public class GroupService {
         redisChatRoomService.removeUserFromChatRoom(userId);
         return true;
     }
-
 
     public OnlineUsersDto getOnlineUsers(String chatRoomId, String userId) {
         ChatRoom chatRoom = getChatRoom(chatRoomId);

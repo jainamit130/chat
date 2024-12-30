@@ -1,6 +1,6 @@
 package com.amit.converse.chat.service;
 
-import com.amit.converse.chat.model.ChatMessage;
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.MessageStatus;
 import com.amit.converse.chat.model.User;
@@ -9,7 +9,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
 import java.util.*;
 
 @Service

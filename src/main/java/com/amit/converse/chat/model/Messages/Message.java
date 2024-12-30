@@ -1,4 +1,4 @@
-package com.amit.converse.chat.model;
+package com.amit.converse.chat.model.Messages;
 
 import com.amit.converse.chat.model.MetaData.MessageMetaData;
 import lombok.AllArgsConstructor;
@@ -27,6 +27,10 @@ public abstract class Message {
 
     public abstract void readMessage(String timestamp,String userId);
     public abstract void deliverMessage(String timestamp,String userId);
+
+    public Integer getDeletedForMembersCount() {
+        return metaData.getDeletedForUsersCount();
+    }
 }
 
 

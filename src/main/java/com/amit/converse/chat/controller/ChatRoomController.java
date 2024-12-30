@@ -4,7 +4,7 @@ import com.amit.converse.chat.dto.CreateGroupRequest;
 import com.amit.converse.chat.dto.CreateGroupResponse;
 import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.dto.GroupMembersRequest;
-import com.amit.converse.chat.model.ChatMessage;
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.ChatRoomType;
 import com.amit.converse.chat.service.ChatMessageService;
 import com.amit.converse.chat.service.GroupService;

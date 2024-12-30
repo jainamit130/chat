@@ -3,7 +3,7 @@ package com.amit.converse.chat.service;
 import com.amit.converse.chat.dto.GroupStatusDto;
 import com.amit.converse.chat.dto.MessageStatusDto;
 import com.amit.converse.chat.dto.OnlineStatusDto;
-import com.amit.converse.chat.model.ChatMessage;
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.StatusType;
 import lombok.AllArgsConstructor;

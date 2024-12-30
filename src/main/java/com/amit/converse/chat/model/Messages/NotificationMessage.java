@@ -1,4 +1,4 @@
-package com.amit.converse.chat.model;
+package com.amit.converse.chat.model.Messages;
 
 import lombok.*;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
