@@ -28,6 +28,10 @@ public class UserService {
     private final RedisReadService redisService;
     private final UserRepository userRepository;
 
+    // consume User
+    // joinGroup
+    // exitGroup
+
 //    @KafkaListener(topics = "user-events", groupId = "group_id")
 //    public User consume(String userEvent) {
 //        User user = new Gson().fromJson(userEvent, User.class);
@@ -83,6 +87,10 @@ public class UserService {
             return new Online();
         }
         return new Offline();
+    }
+
+    public void deleteChat(String userId, String chatRoomId) {
+        groupJoinedOrLeft(userId,chatRoomId,false);
     }
 
     public void groupJoinedOrLeft(String userId,String chatRoomId,Boolean isJoined) {

@@ -2,22 +2,19 @@ package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.service.Redis.RedisChatRoomService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@AllArgsConstructor
 public class DeleteChatService {
-    @Autowired
-    private ClearChatService clearChatService;
-    private final ChatRoom chatRoom;
-    private final String userId;
+    private final ClearChatService clearChatService;
+    private final UserService userService;
+    private final RedisChatRoomService redisChatRoomService;
 
-    public DeleteChatService(ChatRoom chatRoom, String userId) {
-        this.chatRoom = chatRoom;
-        this.userId = userId;
-    }
-
-    public void deleteChat() {
-        clearChatService.clearChat();
+    public void deleteChat(ChatRoom chatRoom, String userId) {
+        userService.groupJoinedOrLeft(userId,chatRoom.getId(),false);
+        clearChatService.clearChat(chatRoom,userId);
+        redisChatRoomService.removeUserFromChatRoom(userId);
     }
 }

@@ -34,6 +34,15 @@ public class User {
     private Instant lastSeenTimestamp;
     private Instant creationDate;
     private final WebSocketMessageService webSocketService;
+
+    public void exitChatRoom(String chatRoomId) {
+        chatRoomIds.remove(chatRoomId);
+    }
+
+    public void joinChatRoom(String chatRoomId) {
+        chatRoomIds.add(chatRoomId);
+    }
+
     public void addChatRoom(String chatRoomId){
         chatRoomIds.add(chatRoomId);
     }

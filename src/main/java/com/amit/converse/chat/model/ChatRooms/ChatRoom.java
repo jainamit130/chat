@@ -64,6 +64,12 @@ public abstract class ChatRoom {
         return getMemberCount();
     }
 
+    public void clearChat(String userId) {
+        Map<String,Instant> userFetchStartTimeMap = getUserFetchStartTimeMap();
+        userFetchStartTimeMap.put(userId,Instant.now());
+        setUserFetchStartTimeMap(userFetchStartTimeMap);
+    }
+
     public void deliverMessages(String userId) {
         deliveredMessageCount.put(userId,totalMessageCount);
     }

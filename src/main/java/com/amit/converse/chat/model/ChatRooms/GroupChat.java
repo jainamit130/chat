@@ -1,39 +1,44 @@
 package com.amit.converse.chat.model.ChatRooms;
 
+import com.amit.converse.chat.Interface.ITransactable;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Data
 @Builder
 @Document(collection = "chatRooms")
 @EqualsAndHashCode(callSuper = true)
-public class GroupChat extends ChatRoom {
+    public class GroupChat extends ChatRoom implements ITransactable {
     @NotBlank
     private String name;
     private String createdBy;
     // Exit Group Feature Only For Groups
     private transient Boolean isExited;
-    private Map<String,Instant> exitedMembers;
 
-    public void addMembers(List<String> userIds) {
-        if(!userIds.isEmpty()) {
-            this.userIds.addAll(userIds);
-        }
-    }
+    @Builder.Default
+    private Map<String,Instant> exitedMembers = new HashMap<>();
 
-    public void removeMembers(List<String> userIds) {
-        if(!userIds.isEmpty()) {
-            this.userIds.removeAll(userIds);
-        }
-    }
+    @Builder.Default
+    private Map<String,Instant> blindPeriod = new HashMap<>();
 
     public Integer getExitedMemberCount() {
         return exitedMembers.size();
+    }
+
+    public void clearBlindPeriod(String userId) {
+        Map<String,Instant> blindPeriod = getBlindPeriod();
+        blindPeriod.remove(userId);
+        setBlindPeriod(blindPeriod);
+    }
+
+    @Override
+    public void clearChat(String userId) {
+        clearBlindPeriod(userId);
+        super.clearChat(userId);
     }
 
     @Override
@@ -44,5 +49,25 @@ public class GroupChat extends ChatRoom {
     @Override
     public Integer getTotalMemberCount() {
         return super.getTotalMemberCount() + getExitedMemberCount();
+    }
+
+    @Override
+    public void join(List<String> userIds) {
+        unExit(userIds);
+        HashSet<String> userIdsSet = new HashSet(this.userIds);
+        userIdsSet.addAll(userIds);
+        setUserIds(new ArrayList<>(userIdsSet));
+    }
+
+    @Override
+    public void exit(List<String> userIds) {
+        userIds.forEach((userId) -> {
+                if(!exitedMembers.containsKey(userId))
+                    exitedMembers.put(userId,Instant.now());
+        });
+    }
+
+    public void unExit(List<String> userIds) {
+        userIds.forEach(exitedMembers::remove);
     }
 }

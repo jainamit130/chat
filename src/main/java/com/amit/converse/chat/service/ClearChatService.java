@@ -2,25 +2,18 @@ package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.Map;
 
 @Service
+@AllArgsConstructor
 public class ClearChatService {
-    private final ChatRoom chatRoom;
-    private final String userId;
-    @Autowired
-    private DeleteMessageService deleteMessageService;
+    private final DeleteMessageService deleteMessageService;
 
-    public ClearChatService(ChatRoom chatRoom, String userId) {
-        this.chatRoom = chatRoom;
-        this.userId = userId;
-    }
-
-    public void clearChat() {
+    public void clearChat(ChatRoom chatRoom, String userId) {
         Map<String, Instant> userFetchStartTimeMap = chatRoom.getUserFetchStartTimeMap();
         Instant lastClearedTimestamp = userFetchStartTimeMap.getOrDefault(userId,chatRoom.getCreatedAt());
         deleteMessageService.deleteMessagesForUserFromTillNow(lastClearedTimestamp,userId);

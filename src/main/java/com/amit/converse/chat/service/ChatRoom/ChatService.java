@@ -1,10 +1,10 @@
 package com.amit.converse.chat.service.ChatRoom;
 
+import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
 import com.amit.converse.chat.service.ClearChatService;
 import com.amit.converse.chat.service.DeleteChatService;
-import com.amit.converse.chat.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,13 +15,28 @@ public class ChatService {
     private final ClearChatService clearChatService;
     private final DeleteChatService deleteChatService;
 
+    public ChatRoom getChatRoomById(String chatRoomId) {
+        return chatRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new ConverseChatRoomNotFoundException(chatRoomId));
+    }
+
     public void processChatRoomToDB(ChatRoom chatRoom) {
-        if(chatRoom.isDeletable()) {
+        if (chatRoom.isDeletable()) {
             chatRoomRepository.deleteById(chatRoom.getId());
         } else {
             chatRoomRepository.save(chatRoom);
         }
     }
+
+    public void clearChat(ChatRoom chatRoom, String userId) {
+        clearChatService.clearChat(chatRoom, userId);
+    }
+
+    public void deleteChat(ChatRoom chatRoom, String userId) {
+        deleteChatService.deleteChat(chatRoom, userId);
+    }
+
+    public void joinChat()
 
 //    clearChat(ChatRoom,UserId) => Clear Chat uses chatRoom field updates it and saves it, it does not notify
 //    deleteChat(ChatRoom,User)
