@@ -3,7 +3,7 @@ package com.amit.converse.chat.service;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.model.ChatRoomType;
+import com.amit.converse.chat.model.Enums.ChatRoomType;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;

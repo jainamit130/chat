@@ -7,16 +7,16 @@ import com.amit.converse.chat.dto.UserEventDTO;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.model.ConnectionStatus;
+import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
-import com.amit.converse.chat.service.Redis.Factory.RedisSessionTransitionFactory;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import lombok.AllArgsConstructor;
 //import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserService {
 
+    private final AuthService authService;
     private final SharedService sharedService;
     private final RedisReadService redisService;
     private final UserRepository userRepository;
@@ -31,6 +32,23 @@ public class UserService {
     // consume User
     // joinGroup
     // exitGroup
+
+    public User getUser() {
+        String userId = authService.getLoggedInUserId();
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new ConverseException("User with id : "+ userId + " not found!"));
+        return user;
+    }
+
+
+
+    public void joinChatRoom(User user,String chatRoomId) {
+        user.joinChatRoom(chatRoomId);
+    }
+
+    public void exitChatRoom(User user,String chatRoomId) {
+        user.exitChatRoom(chatRoomId);
+    }
 
 //    @KafkaListener(topics = "user-events", groupId = "group_id")
 //    public User consume(String userEvent) {

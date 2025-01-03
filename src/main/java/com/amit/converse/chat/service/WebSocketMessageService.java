@@ -5,7 +5,7 @@ import com.amit.converse.chat.dto.MessageStatusDto;
 import com.amit.converse.chat.dto.OnlineStatusDto;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.model.StatusType;
+import com.amit.converse.chat.model.Enums.StatusType;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,10 @@ import java.util.Set;
 public class WebSocketMessageService {
 
     private final SimpMessagingTemplate messagingTemplate;
+
+    public void sendJoinNotification(List<String> joinNotifications,String chatRoomId) {
+        messagingTemplate.convertAndSend("/topic/chat/" + chatRoomId, joinNotifications);
+    }
 
     public void sendTypingStatusToGroup(Set<String> typingUsers, String chatRoomId) {
         messagingTemplate.convertAndSend("/topic/typing/" + chatRoomId, typingUsers);

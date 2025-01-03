@@ -1,4 +1,4 @@
-package com.amit.converse.chat.config;
+package com.amit.converse.chat.config.filter;
 
 import com.amit.converse.chat.service.JwtService;
 import jakarta.servlet.FilterChain;
@@ -32,16 +32,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String jwt = authHeader.substring(7);
-        String username = jwtService.extractUsername(jwt);
+        String userId = jwtService.extractUserId(jwt);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             // Validate token without loading UserDetails
             if (jwtService.isTokenValid(jwt)) {
                 // Create Authentication object without UserDetails
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        username, // Use username directly
-                        null, // No password needed
-                        Collections.emptyList() // No authorities needed
+                        userId,
+                        null,
+                        Collections.emptyList()
                 );
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);

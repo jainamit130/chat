@@ -3,6 +3,9 @@ package com.amit.converse.chat.service;
 import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.dto.OnlineUsersDto;
 import com.amit.converse.chat.model.*;
+import com.amit.converse.chat.model.Enums.ChatRoomType;
+import com.amit.converse.chat.model.Enums.MessageStatus;
+import com.amit.converse.chat.model.Enums.MessageType;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import com.amit.converse.chat.repository.ChatRoomRepository;
@@ -38,7 +41,7 @@ public class GroupService {
     }
 
     public Instant getLastSeenTimeStampOfCouterPartUser(ChatRoom chatRoom, String userId) {
-        if(chatRoom.getChatRoomType()==ChatRoomType.DIRECT){
+        if(chatRoom.getChatRoomType()== ChatRoomType.DIRECT){
             User counterPartUser = sharedService.getCounterpartUser(chatRoom,userId);
             return counterPartUser.getLastSeenTimestamp();
         }

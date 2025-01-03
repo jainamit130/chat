@@ -4,6 +4,8 @@ import com.amit.converse.chat.dto.MessageInfoDto;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.*;
+import com.amit.converse.chat.model.Enums.MessageStatus;
+import com.amit.converse.chat.model.Enums.MessageType;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import lombok.RequiredArgsConstructor;

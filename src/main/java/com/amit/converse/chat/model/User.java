@@ -3,6 +3,7 @@ package com.amit.converse.chat.model;
 import com.amit.converse.chat.Redis.RedisSessionITransition;
 import com.amit.converse.chat.State.State;
 import com.amit.converse.chat.dto.OnlineStatusDto;
+import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.service.WebSocketMessageService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,9 @@ public class User {
 
     @Builder.Default
     private Set<String> chatRoomIds = new HashSet<>();
+
+    @Builder.Default
+    private Set<String> adminRoleChatRoomIds = new HashSet<>();
 
     private String username;
     private String password;

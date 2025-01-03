@@ -26,15 +26,15 @@ public class JwtService {
     private Long expiration;
 
     public boolean isTokenValid(String token) {
-        final String username = extractUsername(token);
-        return (username != null && !isTokenExpired(token));
+        final String userId = extractUserId(token);
+        return (userId != null && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
 
-    public String extractUsername(String token) {
+    public String extractUserId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 

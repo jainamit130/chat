@@ -1,9 +1,8 @@
 package com.amit.converse.chat.model.Messages;
 
-import com.amit.converse.chat.model.MessageStatus;
+import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.MetaData.ChatMessageMetaData;
 import com.amit.converse.chat.model.MetaData.MessageMetaData;
-import com.amit.converse.chat.repository.Message.IChatMessageRepository;
 import lombok.*;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;

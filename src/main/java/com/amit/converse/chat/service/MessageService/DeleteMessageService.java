@@ -13,10 +13,9 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class DeleteMessageService {
-    private final ChatRoom chatRoom;
     private final IMessageRepository messageRepository;
 
-    public void deleteMessagesForUserFromTillNow(Instant from,String userId) {
+    public void deleteMessagesForUserFromTillNow(ChatRoom chatRoom,Instant from,String userId) {
         List<Message> messages = messageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(), userId, from);
         List<Message> messagesToSave = new ArrayList<>();
 

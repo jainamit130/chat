@@ -1,6 +1,6 @@
 package com.amit.converse.chat.dto;
 
-import com.amit.converse.chat.model.ConnectionStatus;
+import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -1,5 +1,7 @@
 package com.amit.converse.chat.config;
 
+import com.amit.converse.chat.config.filter.JwtAuthenticationFilter;
+import com.amit.converse.chat.model.Enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,14 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final AuthenticationProvider authenticationProvider;
     private final JwtAuthenticationFilter jwtAuthFilter;
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws  Exception{
-        return authenticationConfiguration.getAuthenticationManager();
-    }
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -32,10 +27,10 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorization -> authorization
 //                        .requestMatchers("/ws/**").permitAll()
-                        .anyRequest().permitAll()
+//                        .requestMatchers("/chatRoom/admin/**").hasRole(Role.ADMIN.toString())
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }

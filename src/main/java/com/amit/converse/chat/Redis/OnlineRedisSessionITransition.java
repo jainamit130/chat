@@ -1,6 +1,6 @@
 package com.amit.converse.chat.Redis;
 
-import com.amit.converse.chat.model.ConnectionStatus;
+import com.amit.converse.chat.model.Enums.ConnectionStatus;
 
 public class OnlineRedisSessionITransition extends RedisSessionITransition {
 

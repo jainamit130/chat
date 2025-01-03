@@ -1,4 +1,4 @@
-package com.amit.converse.chat.model;
+package com.amit.converse.chat.model.Enums;
 
 public enum StatusType {
     MESSAGE,

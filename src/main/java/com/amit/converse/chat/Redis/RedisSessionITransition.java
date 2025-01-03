@@ -1,7 +1,7 @@
 package com.amit.converse.chat.Redis;
 
 import com.amit.converse.chat.Interface.ITransition;
-import com.amit.converse.chat.model.ConnectionStatus;
+import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.service.Redis.RedisWriteService;
 import com.amit.converse.chat.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;

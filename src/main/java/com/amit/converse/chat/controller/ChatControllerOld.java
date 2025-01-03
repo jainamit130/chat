@@ -3,7 +3,7 @@ package com.amit.converse.chat.controller;
 import com.amit.converse.chat.dto.MessageInfoDto;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.model.ChatRoomType;
+import com.amit.converse.chat.model.Enums.ChatRoomType;
 import com.amit.converse.chat.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;

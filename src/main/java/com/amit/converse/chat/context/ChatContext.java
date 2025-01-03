@@ -1,11 +1,13 @@
 package com.amit.converse.chat.context;
 
-import lombok.AllArgsConstructor;
+import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.model.User;
+import lombok.Data;
 import org.springframework.stereotype.Component;
 
 @Component
-@AllArgsConstructor
+@Data
 public class ChatContext {
-    private String chatRoomId;
-    private String userId;
+    private IChatRoom chatRoom;
+    private User user;
 }

@@ -2,7 +2,7 @@ package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.ChatRoom;
-import com.amit.converse.chat.model.MessageStatus;
+import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatMessageRepository;
 import lombok.AllArgsConstructor;

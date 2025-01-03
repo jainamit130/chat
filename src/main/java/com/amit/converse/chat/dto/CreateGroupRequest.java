@@ -1,7 +1,7 @@
 package com.amit.converse.chat.dto;
 
 import com.amit.converse.chat.model.Messages.ChatMessage;
-import com.amit.converse.chat.model.ChatRoomType;
+import com.amit.converse.chat.model.Enums.ChatRoomType;
 import lombok.*;
 
 import java.util.List;

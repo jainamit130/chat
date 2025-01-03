@@ -1,7 +1,8 @@
 package com.amit.converse.chat.model.ChatRooms;
 
+import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
-import com.amit.converse.chat.model.ChatRoomType;
+import com.amit.converse.chat.model.Enums.ChatRoomType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +17,7 @@ import java.util.*;
 @Builder
 @AllArgsConstructor
 @Document(collection = "chatRooms")
-public abstract class ChatRoom {
+public abstract class ChatRoom implements IChatRoom {
     @Id
     protected String id;
     protected List<String> userIds;
