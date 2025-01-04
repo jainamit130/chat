@@ -6,6 +6,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,13 +20,13 @@ public class ActivityController {
     @MessageMapping("/typing/{chatRoomId}")
     public void handleTypingEvent(String username, @DestinationVariable String chatRoomId) {
         typingUsers.add(username);
-        webSocketMessageService.sendTypingStatusToGroup(typingUsers,chatRoomId);
+        webSocketMessageService.sendTypingStatusToGroup(new ArrayList<>(typingUsers),chatRoomId);
     }
 
     @MessageMapping("/stopTyping/{chatRoomId}")
     public void handleStopTypingEvent(String username, @DestinationVariable String chatRoomId) {
         typingUsers.remove(username);
-        webSocketMessageService.sendTypingStatusToGroup(typingUsers,chatRoomId);
+        webSocketMessageService.sendTypingStatusToGroup(new ArrayList<>(typingUsers),chatRoomId);
     }
 
 }

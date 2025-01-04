@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.MessageService;
 
+import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.repository.Message.IMessageRepository;
@@ -15,7 +16,7 @@ import java.util.List;
 public class DeleteMessageService {
     private final IMessageRepository messageRepository;
 
-    public void deleteMessagesForUserFromTillNow(ChatRoom chatRoom,Instant from,String userId) {
+    public void deleteMessagesForUserFromTillNow(IChatRoom chatRoom, Instant from, String userId) {
         List<Message> messages = messageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(), userId, from);
         List<Message> messagesToSave = new ArrayList<>();
 

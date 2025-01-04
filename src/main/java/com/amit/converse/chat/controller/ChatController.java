@@ -18,6 +18,7 @@ public class ChatController {
     private final ChatContext chatContext;
     private final ChatService chatService;
     private final UserService userService;
+    private final JoinService joinService;
 
     @ModelAttribute
     public void populateChatContext(@RequestParam String userId, @RequestParam String chatRoomId) {
@@ -26,9 +27,10 @@ public class ChatController {
     }
 
     @PostMapping("/groups/clearChat/{chatRoomId}")
-    public ResponseEntity<> clearChat(@ModelAttribute ChatContext chatContext) {
+    public ResponseEntity clearChat(@ModelAttribute ChatContext chatContext) {
         try {
-            return new ResponseEntity(chatService.clearChat(););
+            chatService.clearChat();
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -37,6 +39,8 @@ public class ChatController {
     @PostMapping("/groups/deleteChat/{chatRoomId}")
     public ResponseEntity<Boolean> deleteChat(@ModelAttribute ChatContext chatContext) {
         try {
+            chatService.deleteChat();
+            return new ResponseEntity(HttpStatus.NO_CONTENT)
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -45,6 +49,7 @@ public class ChatController {
     @PostMapping("/groups/joinChat/{chatRoomId}")
     public ResponseEntity<Boolean> joinChat(@ModelAttribute ChatContext chatContext) {
         try {
+
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }

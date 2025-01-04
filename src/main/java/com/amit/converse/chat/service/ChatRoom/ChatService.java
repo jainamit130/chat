@@ -2,6 +2,7 @@ package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.Interface.ITransactable;
+import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
@@ -15,6 +16,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class ChatService {
+    private final ChatContext context;
     private final IChatRoomRepository chatRoomRepository;
     private final ClearChatService clearChatService;
     private final DeleteChatService deleteChatService;
@@ -42,12 +44,12 @@ public class ChatService {
         }
     }
 
-    public void clearChat(ChatRoom chatRoom, String userId) {
-        clearChatService.clearChat(chatRoom, userId);
+    public void clearChat() {
+        clearChatService.clearChat(context.getChatRoom(), context.getUser().getUserId());
     }
 
-    public void deleteChat(ChatRoom chatRoom, String userId) {
-        deleteChatService.deleteChat(chatRoom, userId);
+    public void deleteChat() {
+        deleteChatService.deleteChat(context.getChatRoom(), context.getUser().getUserId());
     }
 
 //    clearChat(ChatRoom,UserId) => Clear Chat uses chatRoom field updates it and saves it, it does not notify

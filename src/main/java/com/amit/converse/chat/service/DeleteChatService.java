@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.service.Redis.RedisChatRoomService;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ public class DeleteChatService {
     private final UserService userService;
     private final RedisChatRoomService redisChatRoomService;
 
-    public void deleteChat(ChatRoom chatRoom, String userId) {
+    public void deleteChat(IChatRoom chatRoom, String userId) {
         userService.groupJoinedOrLeft(userId,chatRoom.getId(),false);
         clearChatService.clearChat(chatRoom,userId);
         redisChatRoomService.removeUserFromChatRoom(userId);
