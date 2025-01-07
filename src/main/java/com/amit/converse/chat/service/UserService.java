@@ -1,8 +1,11 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.State.Offline;
 import com.amit.converse.chat.State.Online;
 import com.amit.converse.chat.State.State;
+import com.amit.converse.chat.context.ChatContext;
+import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.UserEventDTO;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
@@ -10,11 +13,10 @@ import com.amit.converse.chat.model.ChatRoom;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
+import com.amit.converse.chat.service.Notification.UserNotificationService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import lombok.AllArgsConstructor;
 //import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -24,30 +26,40 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserService {
 
+    private final ChatContext chatContext;
     private final AuthService authService;
     private final SharedService sharedService;
     private final RedisReadService redisService;
+    private final UserNotificationService userNotificationService;
     private final UserRepository userRepository;
 
     // consume User
     // joinGroup
     // exitGroup
 
-    public User getUser() {
+    public User getLoggedInUser() {
         String userId = authService.getLoggedInUserId();
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new ConverseException("User with id : "+ userId + " not found!"));
         return user;
     }
 
-
-
-    public void joinChatRoom(User user,String chatRoomId) {
-        user.joinChatRoom(chatRoomId);
+    public List<User> getUsersFromRepo(List<String> userIds) {
+        List<User> users = userRepository.findAllByUserIdIn(userIds);
+        return users;
     }
 
-    public void exitChatRoom(User user,String chatRoomId) {
-        user.exitChatRoom(chatRoomId);
+    public void joinChatRoom() {
+        User user = chatContext.getUser();
+        IChatRoom chatRoom = chatContext.getChatRoom();
+        user.joinChatRoom(chatRoom.getId());
+        userNotificationService.sendNotification(user.getUserId(),new NewChatNotification(chatRoom));
+    }
+
+    public void exitChatRoom() {
+        User user = chatContext.getUser();
+        IChatRoom chatRoom = chatContext.getChatRoom();
+        user.exitChatRoom(chatRoom.getId());
     }
 
 //    @KafkaListener(topics = "user-events", groupId = "group_id")

@@ -35,7 +35,7 @@ public class ChatRoomRoleFilter extends OncePerRequestFilter {
         if(chatRoomId!=null && AuthService.isAuthenticated()) {
             String userId = authService.getLoggedInUserId();
             if(userId!=null) {
-                User user = userService.getUser();
+                User user = userService.getLoggedInUser();
                 Set<String> adminChatRooms = user.getAdminRoleChatRoomIds();
                 boolean isAdmin = adminChatRooms.contains(chatRoomId);
                 Collection<GrantedAuthority> authorities = isAdmin

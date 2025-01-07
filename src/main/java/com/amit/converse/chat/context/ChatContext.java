@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Data
-public class ChatContext {
-    private IChatRoom chatRoom;
-    private User user;
+public class ChatContext<T extends IChatRoom> {
+    protected T chatRoom;
+    protected User user;
 }

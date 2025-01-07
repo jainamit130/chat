@@ -1,34 +1,27 @@
 package com.amit.converse.chat.service.Notification;
 
-import com.amit.converse.chat.dto.Notification.ChatTransactionNotification;
-import com.amit.converse.chat.dto.Notification.INotification;
+import com.amit.converse.chat.dto.Notification.IChatNotification;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ChatNotificationService extends NotificationService {
+
     public ChatNotificationService(WebSocketMessageService webSocketMessageService) {
         super(webSocketMessageService);
     }
 
     @Override
-    protected String getBaseAddress() {
+    protected final String getBaseAddress() {
         return "/chat";
     }
 
-    @Override
-    protected INotification getNotification() {
-        ChatTransactionNotification notification = ChatTransactionNotification.builder(transactionNotifications).build();
-        return notification;
+    public void sendNotification(String chatRoomId,IChatNotification notification) {
+        webSocketMessageService.sendNotification(getAddress(chatRoomId),notification);
     }
 
+    // ChatTransaction Notification
+    // Message Delete Notification
+    // Message Notification
+    // Message Marked Notification
 
-    public void notifyChatTransaction(String chatRoomId, List<String> transactionNotifications) {
-        webSocketMessageService.sendNotification(getAddress(chatRoomId),getNotification());
-    }
-
-    public void notifyChatMessageDeletion(String chatRoomId, List<String> messageDeletions) {
-        webSocketMessageService.sendNotification(getAddress(chatRoomId),getNotification());
-    }
 }
