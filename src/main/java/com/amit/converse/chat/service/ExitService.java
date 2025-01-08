@@ -15,7 +15,7 @@ public class ExitService {
     private final UserService userService;
     private final NotifyGroupExitService exitNotificationService;
 
-    public void join(List<String> userIds) {
+    public void leave(List<String> userIds) {
         groupService.leaveChatRoom(userIds);
         userService.exitChatRoom();
         exitNotificationService.notifyGroup(userService.getUsersFromRepo(userIds));

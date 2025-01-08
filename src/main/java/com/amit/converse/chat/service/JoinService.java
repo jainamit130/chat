@@ -1,8 +1,6 @@
 package com.amit.converse.chat.service;
 
-import com.amit.converse.chat.service.ChatRoom.ChatService;
 import com.amit.converse.chat.service.ChatRoom.GroupService;
-import com.amit.converse.chat.service.Notification.NotificationService;
 import com.amit.converse.chat.service.Notification.NotifyGroupJoinService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

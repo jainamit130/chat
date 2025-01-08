@@ -17,7 +17,7 @@ public class UserService {
         return getUserById(authService.getLoggedInUserId());
     }
 
-    private User getUserById(String userId) {
+    public User getUserById(String userId) {
         return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new ConverseException("User not found!"));
     }

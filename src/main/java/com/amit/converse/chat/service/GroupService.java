@@ -118,6 +118,18 @@ public class GroupService {
     public User getCounterPartUser(ChatRoom chatRoom,String userId) {
         return sharedService.getCounterpartUser(chatRoom,userId);
     }
+    /*
+    * Create Chat Service
+    *
+    * Group Chat -:
+    * list should not be empty
+    * Always create new group
+    *
+    * Direct Chat
+    * should have a list of exactly 2 users
+    * Check if already exists - if exists then don't create use that
+    *
+    * */
 
 
     public Map.Entry<String, Boolean> createGroup(String groupName, ChatRoomType chatRoomType, String createdById, List<String> memberIds) {

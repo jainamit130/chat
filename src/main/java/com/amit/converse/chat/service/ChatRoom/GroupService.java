@@ -1,10 +1,9 @@
 package com.amit.converse.chat.service.ChatRoom;
 
-import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.context.ChatContext;
-import com.amit.converse.chat.context.GroupContext;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.repository.ChatRoom.IGroupRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ import java.util.List;
 public class GroupService {
     private final ChatContext<ITransactable> context;
     private final IGroupRepository groupRepository;
+
 
     public ITransactable getGroupById(String groupId) {
         return groupRepository.findById(groupId)
@@ -40,5 +40,8 @@ public class GroupService {
         } else {
             groupRepository.save(transactableRoom);
         }
+    }
+
+    public void sendMessage(ChatMessage chatMessage) {
     }
 }

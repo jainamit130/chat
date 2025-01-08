@@ -25,8 +25,14 @@ import java.util.*;
     @Builder.Default
     private Map<String,Instant> blindPeriod = new HashMap<>();
 
+    @Override
     public Integer getExitedMemberCount() {
         return exitedMembers.size();
+    }
+
+    @Override
+    public Boolean isExited(String userId) {
+        return exitedMembers.containsKey(userId);
     }
 
     public void clearBlindPeriod(String userId) {
@@ -67,7 +73,7 @@ import java.util.*;
         });
     }
 
-    public void unExit(List<String> userIds) {
+    private void unExit(List<String> userIds) {
         userIds.forEach(exitedMembers::remove);
     }
 }

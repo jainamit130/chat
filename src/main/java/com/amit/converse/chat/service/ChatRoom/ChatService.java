@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class ChatService {
-    private final ChatContext<IChatRoom> context;
-    private final IChatRoomRepository chatRoomRepository;
-    private final ClearChatService clearChatService;
-    private final DeleteChatService deleteChatService;
+    protected final ChatContext<IChatRoom> context;
+    protected final IChatRoomRepository chatRoomRepository;
+    protected final ClearChatService clearChatService;
+    protected final DeleteChatService deleteChatService;
 
     public IChatRoom getChatRoomById(String chatRoomId) {
         return chatRoomRepository.findById(chatRoomId)
