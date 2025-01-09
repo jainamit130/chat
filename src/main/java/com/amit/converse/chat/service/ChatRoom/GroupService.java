@@ -3,19 +3,27 @@ package com.amit.converse.chat.service.ChatRoom;
 import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
+import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.Messages.ChatMessage;
+import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
 import com.amit.converse.chat.repository.ChatRoom.IGroupRepository;
-import lombok.AllArgsConstructor;
+import com.amit.converse.chat.service.ClearChatService;
+import com.amit.converse.chat.service.DeleteChatService;
+import com.amit.converse.chat.service.User.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-@AllArgsConstructor
-public class GroupService {
-    private final ChatContext<ITransactable> context;
+public class GroupService extends ChatService<ChatContext<ITransactable>> {
     private final IGroupRepository groupRepository;
+    private final CreateGroupChatService createGroupChatService;
 
+    public GroupService(ChatContext<ITransactable> context, IChatRoomRepository chatRoomRepository, ClearChatService clearChatService, DeleteChatService deleteChatService, IGroupRepository groupRepository, CreateGroupChatService createGroupChatService) {
+        super(context, chatRoomRepository, clearChatService, deleteChatService);
+        this.groupRepository = groupRepository;
+        this.createGroupChatService = createGroupChatService;
+    }
 
     public ITransactable getGroupById(String groupId) {
         return groupRepository.findById(groupId)
@@ -42,6 +50,16 @@ public class GroupService {
         }
     }
 
+    public GroupChat saveGroupChatToDB(GroupChat groupChat) {
+        return groupRepository.save(groupChat);
+    }
+
     public void sendMessage(ChatMessage chatMessage) {
+    }
+
+    public String createChat(List<String> userIds) {
+        GroupChat savedGroupChat = saveGroupChatToDB(createGroupChatService.create(userIds));
+        updateChatRoomContext(savedGroupChat);
+        return savedGroupChat.getId();
     }
 }

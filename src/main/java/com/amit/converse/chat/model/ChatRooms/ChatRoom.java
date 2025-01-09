@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,6 +16,7 @@ import java.util.*;
 
 @Data
 @Builder
+@SuperBuilder
 @AllArgsConstructor
 @Document(collection = "chatRooms")
 public abstract class ChatRoom implements IChatRoom {
@@ -25,7 +27,7 @@ public abstract class ChatRoom implements IChatRoom {
     protected transient ChatMessage latestMessage;
     protected transient Integer unreadMessageCount;
     @NotBlank
-    private ChatRoomType chatRoomType;
+    protected ChatRoomType chatRoomType;
 
     // Clear Chat Feature
     @Builder.Default
