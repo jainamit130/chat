@@ -5,6 +5,7 @@ import com.amit.converse.chat.State.Offline;
 import com.amit.converse.chat.State.Online;
 import com.amit.converse.chat.State.State;
 import com.amit.converse.chat.context.ChatContext;
+import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.UserEventDTO;
 import com.amit.converse.chat.dto.UserDetails;
@@ -17,6 +18,7 @@ import com.amit.converse.chat.service.Notification.UserNotificationService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import lombok.AllArgsConstructor;
 //import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -26,12 +28,20 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class UserService {
 
-    private final ChatContext chatContext;
-    private final AuthService authService;
-    private final SharedService sharedService;
-    private final RedisReadService redisService;
-    private final UserNotificationService userNotificationService;
-    private final UserRepository userRepository;
+    @Autowired
+    private ChatContext chatContext;
+    @Autowired
+    private UserContext userContext;
+    @Autowired
+    private AuthService authService;
+    @Autowired
+    private SharedService sharedService;
+    @Autowired
+    private RedisReadService redisService;
+    @Autowired
+    private UserNotificationService userNotificationService;
+    @Autowired
+    private UserRepository userRepository;
 
     // consume User
     // joinGroup
@@ -50,14 +60,14 @@ public class UserService {
     }
 
     public void joinChatRoom() {
-        User user = chatContext.getUser();
+        User user = userContext.getUser();
         IChatRoom chatRoom = chatContext.getChatRoom();
         user.joinChatRoom(chatRoom.getId());
         userNotificationService.sendNotification(user.getUserId(),new NewChatNotification(chatRoom));
     }
 
     public void exitChatRoom() {
-        User user = chatContext.getUser();
+        User user = userContext.getUser();
         IChatRoom chatRoom = chatContext.getChatRoom();
         user.exitChatRoom(chatRoom.getId());
     }

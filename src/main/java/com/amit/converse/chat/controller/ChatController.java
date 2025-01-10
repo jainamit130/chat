@@ -1,6 +1,7 @@
 package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.context.ChatContext;
+import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
 import com.amit.converse.chat.service.User.UserService;
@@ -12,16 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class ChatController {
-
-    private final ChatContext chatContext;
     private final ChatService chatService;
-    private final UserService userService;
-
-    @ModelAttribute
-    public void populateChatContext(@RequestParam String chatRoomId) {
-        chatContext.setChatRoom(chatService.getChatRoomById(chatRoomId));
-        chatContext.setUser(userService.getLoggedInUser());
-    }
 
     @PostMapping("/chat/clearChat/{chatRoomId}")
     public ResponseEntity clearChat(@RequestParam String chatRoomId) {

@@ -1,29 +1,24 @@
 package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.Interface.ITransactable;
-import com.amit.converse.chat.context.ChatContext;
+import com.amit.converse.chat.dto.CreateGroupRequest;
+import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.Messages.ChatMessage;
-import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
 import com.amit.converse.chat.repository.ChatRoom.IGroupRepository;
-import com.amit.converse.chat.service.ClearChatService;
-import com.amit.converse.chat.service.DeleteChatService;
-import com.amit.converse.chat.service.User.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class GroupService extends ChatService<ChatContext<ITransactable>> {
-    private final IGroupRepository groupRepository;
-    private final CreateGroupChatService createGroupChatService;
+public class GroupService extends ChatService<GroupChat> {
+    @Autowired
+    private IGroupRepository groupRepository;
+    @Autowired
+    private CreateGroupChatService createGroupChatService;
 
-    public GroupService(ChatContext<ITransactable> context, IChatRoomRepository chatRoomRepository, ClearChatService clearChatService, DeleteChatService deleteChatService, IGroupRepository groupRepository, CreateGroupChatService createGroupChatService) {
-        super(context, chatRoomRepository, clearChatService, deleteChatService);
-        this.groupRepository = groupRepository;
-        this.createGroupChatService = createGroupChatService;
-    }
 
     public ITransactable getGroupById(String groupId) {
         return groupRepository.findById(groupId)
@@ -57,9 +52,16 @@ public class GroupService extends ChatService<ChatContext<ITransactable>> {
     public void sendMessage(ChatMessage chatMessage) {
     }
 
-    public String createChat(List<String> userIds) {
-        GroupChat savedGroupChat = saveGroupChatToDB(createGroupChatService.create(userIds));
+    public GroupChat createChat(CreateGroupRequest createGroupRequest) {
+        GroupChat savedGroupChat = saveGroupChatToDB(createGroupChatService.create(createGroupRequest.getGroupName(),createGroupRequest.getUserIds()));
         updateChatRoomContext(savedGroupChat);
-        return savedGroupChat.getId();
+        return savedGroupChat;
+    }
+
+    public void notifyChatToUsers(GroupChat groupChat) {
+        NewChatNotification newChatNotification = NewChatNotification.builder().chatRoom(groupChat).build();
+        for(String userId:groupChat.getUserIds()) {
+            super.notifyChatToUser(userId,groupChat);
+        }
     }
 }

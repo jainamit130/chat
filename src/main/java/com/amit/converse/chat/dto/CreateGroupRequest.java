@@ -1,14 +1,13 @@
 package com.amit.converse.chat.dto;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@Data
 public class CreateGroupRequest {
     private String groupName;
-    private List<String> members;
+    private List<String> userIds;
 }

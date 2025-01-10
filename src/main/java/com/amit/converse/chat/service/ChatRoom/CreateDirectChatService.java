@@ -2,7 +2,6 @@ package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.model.ChatRooms.DirectChat;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
-import com.amit.converse.chat.repository.ChatRoom.IDirectChatRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

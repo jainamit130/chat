@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.ChatRoom;
 
+import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.dto.Notification.MessageNotification;
 import com.amit.converse.chat.exceptions.ConverseException;
@@ -7,17 +8,20 @@ import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.service.MessageProcessingService;
 import com.amit.converse.chat.service.MessageService.SaveMessageService;
 import com.amit.converse.chat.service.Notification.ChatNotificationService;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
-public abstract class SendMessageService {
-    private final ChatContext chatContext;
-    protected final MessageProcessingService messageProcessingService;
-    protected final SaveMessageService saveMessageService;
-    protected final ChatService chatService;
-    protected final ChatNotificationService notificationService;
+public abstract class MessageService<T extends IChatRoom> {
+
+    @Autowired
+    protected ChatContext<T> chatContext;
+    @Autowired
+    protected MessageProcessingService messageProcessingService;
+    @Autowired
+    protected SaveMessageService saveMessageService;
+    @Autowired
+    protected ChatNotificationService notificationService;
 
     protected abstract void authoriseSender() throws ConverseException;
 

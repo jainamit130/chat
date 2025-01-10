@@ -16,6 +16,8 @@ import java.util.*;
     @NotBlank
     private String name;
     private String createdBy;
+    // Admin UserIds for Group only
+    private List<String> adminUserIds;
     // Exit Group Feature Only For Groups
     private transient Boolean isExited;
 

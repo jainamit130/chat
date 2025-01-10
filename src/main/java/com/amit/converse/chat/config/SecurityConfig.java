@@ -1,13 +1,13 @@
 package com.amit.converse.chat.config;
 
+import com.amit.converse.chat.config.filter.DirectChatFilter;
+import com.amit.converse.chat.config.filter.GroupChatFilter;
 import com.amit.converse.chat.config.filter.JwtAuthenticationFilter;
+import com.amit.converse.chat.config.filter.UserContextFilter;
 import com.amit.converse.chat.model.Enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,6 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
+    private final GroupChatFilter groupChatFilter;
+    private final DirectChatFilter directChatFilter;
+    private final UserContextFilter userContextFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -27,11 +30,14 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(authorization -> authorization
 //                        .requestMatchers("/ws/**").permitAll()
-//                        .requestMatchers("/chatRoom/admin/**").hasRole(Role.ADMIN.toString())
+                        .requestMatchers("/chatRoom/admin/**").hasRole(Role.ADMIN.toString())
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // First
+                .addFilterAfter(userContextFilter, JwtAuthenticationFilter.class)           // Second
+                .addFilterAfter(groupChatFilter, UserContextFilter.class)
+                .addFilterAfter(directChatFilter, UserContextFilter.class);
         return http.build();
     }
 }

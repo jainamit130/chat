@@ -2,24 +2,40 @@ package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.context.ChatContext;
+import com.amit.converse.chat.context.UserContext;
+import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
 import com.amit.converse.chat.service.ClearChatService;
 import com.amit.converse.chat.service.DeleteChatService;
-import lombok.AllArgsConstructor;
+import com.amit.converse.chat.service.Notification.UserNotificationService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 @Service
-@AllArgsConstructor
 public class ChatService<T extends IChatRoom> {
-    protected final ChatContext<T> context;
-    protected final IChatRoomRepository chatRoomRepository;
-    protected final ClearChatService clearChatService;
-    protected final DeleteChatService deleteChatService;
+    @Autowired
+    protected ChatContext<T> context;
+    @Autowired
+    protected UserContext userContext;
+    @Autowired
+    protected MessageService messageService;
+    @Autowired
+    private UserNotificationService userNotificationService;
+    @Autowired
+    protected IChatRoomRepository chatRoomRepository;
+    @Autowired
+    protected ClearChatService clearChatService;
+    @Autowired
+    protected DeleteChatService deleteChatService;
 
     public void updateChatRoomContext(T chatRoom) {
         context.setChatRoom(chatRoom);
+    }
+
+    public void sendMessage(ChatMessage message) throws InterruptedException {
+        messageService.sendMessage(message);
     }
 
     public IChatRoom getChatRoomById(String chatRoomId) {
@@ -36,13 +52,18 @@ public class ChatService<T extends IChatRoom> {
     }
 
     public void clearChat() {
-        clearChatService.clearChat(context.getChatRoom(), context.getUser().getUserId());
+        clearChatService.clearChat(context.getChatRoom(), userContext.getUser().getUserId());
         processChatRoomToDB(context.getChatRoom());
     }
 
     public void deleteChat() {
-        deleteChatService.deleteChat(context.getChatRoom(), context.getUser().getUserId());
+        deleteChatService.deleteChat(context.getChatRoom(), userContext.getUser().getUserId());
         processChatRoomToDB(context.getChatRoom());
+    }
+
+    public void notifyChatToUser(String userId,IChatRoom chatRoom) {
+        NewChatNotification newChatNotification = NewChatNotification.builder().chatRoom(chatRoom).build();
+        userNotificationService.sendNotification(userId,newChatNotification);
     }
 
 //    clearChat(ChatRoom,UserId) => Clear Chat uses chatRoom field updates it and saves it, it does not notify

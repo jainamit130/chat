@@ -17,23 +17,22 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class GroupController {
+@RequestMapping("/converse/chat/group/")
+public class GroupChatController {
 
     private final ChatContext<ITransactable> groupContext;
     private final GroupService groupService;
     private final GroupMessageService groupMessageService;
-    private final UserService userService;
     private final JoinService joinService;
     private final ExitService exitService;
 
     @ModelAttribute
     public void populateChatContext(@RequestParam String groupId) {
         groupContext.setChatRoom(groupService.getGroupById(groupId));
-        groupContext.setUser(userService.getLoggedInUser());
     }
 
-    @PostMapping("/chat/group/sendMessage/{chatRoomId}")
-    public ResponseEntity sendGroupMessage(@RequestParam String chatRoomId, @RequestBody ChatMessage chatMessage) {
+    @PostMapping("/send/message/{chatRoomId}")
+    public ResponseEntity sendMessage(@RequestParam String chatRoomId, @RequestBody ChatMessage chatMessage) {
         try{
             groupMessageService.sendMessage(chatMessage);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -42,7 +41,7 @@ public class GroupController {
         }
     }
 
-    @PostMapping("/groups/joinChat/{chatRoomId}")
+    @PostMapping("/add/users/{chatRoomId}")
     public ResponseEntity joinChat(@RequestParam String chatRoomId, @RequestBody List<String> userIds) {
         try {
             joinService.join(userIds);
@@ -52,7 +51,7 @@ public class GroupController {
         }
     }
 
-    @PostMapping("/groups/exitChat/{chatRoomId}")
+    @PostMapping("/remove/users/{chatRoomId}")
     public ResponseEntity<Boolean> exitChat(@RequestParam String chatRoomId, @RequestBody List<String> userIds) {
         try {
             exitService.leave(userIds);
