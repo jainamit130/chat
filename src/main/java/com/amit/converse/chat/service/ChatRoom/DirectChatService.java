@@ -16,17 +16,23 @@ public class DirectChatService extends ChatService<DirectChat> {
     private CreateDirectChatService createDirectChatService;
 
     public DirectChat saveDirectChatToDB(DirectChat directChat) {
-        return directChatRepository.save(directChat);
+        DirectChat savedDirectChat = directChatRepository.save(directChat);
+        updateChatRoomContext(savedDirectChat);
+        return savedDirectChat;
+    }
+
+    Optional<DirectChat> getChatIfAlreadyExisting(String primaryUserId, String counterPartUserId) {
+        return directChatRepository.findDirectChat(primaryUserId,counterPartUserId);
     }
 
     public DirectChat createChat(CreateDirectChatRequest directChatRequest) {
         String primaryUserId = directChatRequest.getPrimaryUserId();
-        String userId = directChatRequest.getUserId();
-        Optional<DirectChat> directChat = directChatRepository.findDirectChat(primaryUserId,userId);
-        if(directChat.isPresent()) {
-            directChat.get();
+        String counterPartUserId = directChatRequest.getUserId();
+        Optional<DirectChat> alreadyExistingDirectChat = getChatIfAlreadyExisting(primaryUserId,counterPartUserId);
+        if(alreadyExistingDirectChat.isPresent()) {
+            return alreadyExistingDirectChat.get();
         }
-        DirectChat savedDirectChat = saveDirectChatToDB(createDirectChatService.create(primaryUserId,userId));
+        DirectChat savedDirectChat = saveDirectChatToDB(createDirectChatService.create(primaryUserId,counterPartUserId));
         updateChatRoomContext(savedDirectChat);
         return savedDirectChat;
     }

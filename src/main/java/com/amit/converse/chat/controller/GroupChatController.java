@@ -4,10 +4,9 @@ import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.service.ChatRoom.GroupMessageService;
-import com.amit.converse.chat.service.ChatRoom.GroupService;
+import com.amit.converse.chat.service.ChatRoom.GroupChatService;
 import com.amit.converse.chat.service.ExitService;
 import com.amit.converse.chat.service.JoinService;
-import com.amit.converse.chat.service.User.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,14 +20,14 @@ import java.util.List;
 public class GroupChatController {
 
     private final ChatContext<ITransactable> groupContext;
-    private final GroupService groupService;
+    private final GroupChatService groupChatService;
     private final GroupMessageService groupMessageService;
     private final JoinService joinService;
     private final ExitService exitService;
 
     @ModelAttribute
     public void populateChatContext(@RequestParam String groupId) {
-        groupContext.setChatRoom(groupService.getGroupById(groupId));
+        groupContext.setChatRoom(groupChatService.getGroupById(groupId));
     }
 
     @PostMapping("/send/message/{chatRoomId}")
@@ -61,3 +60,22 @@ public class GroupChatController {
         }
     }
 }
+
+/*
+*
+* create direct chat
+* create group chat
+* send message
+* add member
+* remove member
+* exit group
+* get Group Details
+* get message details
+* det user details
+* clear chat
+* delete chat
+* delete message
+*
+*
+*
+* */

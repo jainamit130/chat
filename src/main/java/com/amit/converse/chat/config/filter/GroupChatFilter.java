@@ -2,10 +2,9 @@ package com.amit.converse.chat.config.filter;
 
 import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.context.ChatContext;
-import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.Enums.Role;
 import com.amit.converse.chat.service.AuthService;
-import com.amit.converse.chat.service.ChatRoom.GroupService;
+import com.amit.converse.chat.service.ChatRoom.GroupChatService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,14 +28,14 @@ import java.util.Set;
 public class GroupChatFilter extends OncePerRequestFilter {
     private final AuthService authService;
     private final ChatContext chatContext;
-    private final GroupService groupService;
+    private final GroupChatService groupChatService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
         if (path.startsWith("/converse/chat/group/")) {
             String groupChatId = request.getParameter("chatRoomId");
-            ITransactable groupChat = groupService.getGroupById(groupChatId);
+            ITransactable groupChat = groupChatService.getGroupById(groupChatId);
             if(groupChat!=null) {
                 chatContext.setChatRoom(groupChat);
                 Set<String> adminUserIds = new HashSet<>(groupChat.getAdminUserIds());

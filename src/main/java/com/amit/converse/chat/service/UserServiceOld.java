@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class UserService {
+public class UserServiceOld {
 
     @Autowired
     private ChatContext chatContext;
@@ -59,18 +59,7 @@ public class UserService {
         return users;
     }
 
-    public void joinChatRoom() {
-        User user = userContext.getUser();
-        IChatRoom chatRoom = chatContext.getChatRoom();
-        user.joinChatRoom(chatRoom.getId());
-        userNotificationService.sendNotification(user.getUserId(),new NewChatNotification(chatRoom));
-    }
 
-    public void exitChatRoom() {
-        User user = userContext.getUser();
-        IChatRoom chatRoom = chatContext.getChatRoom();
-        user.exitChatRoom(chatRoom.getId());
-    }
 
 //    @KafkaListener(topics = "user-events", groupId = "group_id")
 //    public User consume(String userEvent) {
@@ -214,10 +203,5 @@ public class UserService {
         }
         userDetails.setCommonChatRoomIds(new ArrayList(commonChatRoomIdsSet));
         return userDetails;
-    }
-
-    public void notifyStatus(String userId, ConnectionStatus status) {
-        User user = getUser(userId);
-        user.notifyStatus(status);
     }
 }

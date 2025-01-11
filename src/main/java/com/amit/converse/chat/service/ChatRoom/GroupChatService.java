@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class GroupService extends ChatService<GroupChat> {
+public class GroupChatService extends ChatService<GroupChat> {
     @Autowired
     private IGroupRepository groupRepository;
     @Autowired

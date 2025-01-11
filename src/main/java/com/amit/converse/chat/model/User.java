@@ -2,10 +2,6 @@ package com.amit.converse.chat.model;
 
 import com.amit.converse.chat.Redis.RedisSessionITransition;
 import com.amit.converse.chat.State.State;
-import com.amit.converse.chat.dto.OnlineStatusDto;
-import com.amit.converse.chat.model.Enums.ConnectionStatus;
-import com.amit.converse.chat.service.Notification.WebSocketMessageService;
-import com.amit.converse.chat.service.WebSocketMessageService;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -38,7 +34,6 @@ public class User {
     private RedisSessionITransition redisSessionTransition;
     private Instant lastSeenTimestamp;
     private Instant creationDate;
-    private final WebSocketMessageService webSocketService;
 
     public void exitChatRoom(String chatRoomId) {
         chatRoomIds.remove(chatRoomId);
@@ -56,14 +51,6 @@ public class User {
         if (chatRoomIds.contains(chatRoomId)) {
             chatRoomIds.remove(chatRoomId);
         }
-    }
-
-    public void notifyStatus(ConnectionStatus status) {
-        OnlineStatusDto onlineStatusDto = OnlineStatusDto.builder().status(status).username(username).build();
-        for(String chatRoomId: chatRoomIds){
-            webSocketService.sendOnlineStatusToGroup(chatRoomId,onlineStatusDto);
-        }
-        return;
     }
 
     public void updateLastSeenToNow() {

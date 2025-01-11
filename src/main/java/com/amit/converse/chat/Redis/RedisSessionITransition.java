@@ -3,7 +3,7 @@ package com.amit.converse.chat.Redis;
 import com.amit.converse.chat.Interface.ITransition;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.service.Redis.RedisWriteService;
-import com.amit.converse.chat.service.UserService;
+import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 
@@ -28,6 +28,6 @@ public abstract class RedisSessionITransition extends RedisSession implements IT
 
     @Async
     public void notifyStatusToChatRooms() {
-        userService.notifyStatus(userId,status);
+        userService.notifyStatus(status);
     }
 }

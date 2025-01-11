@@ -3,8 +3,7 @@ package com.amit.converse.chat.config.filter;
 
 import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.model.User;
-import com.amit.converse.chat.service.AuthService;
-import com.amit.converse.chat.service.UserService;
+import com.amit.converse.chat.service.User.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
