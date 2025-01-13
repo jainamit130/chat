@@ -2,7 +2,6 @@ package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.dto.CreateGroupRequest;
-import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.Messages.ChatMessage;
@@ -16,9 +15,6 @@ import java.util.List;
 public class GroupChatService extends ChatService<GroupChat> {
     @Autowired
     private IGroupRepository groupRepository;
-    @Autowired
-    private CreateGroupChatService createGroupChatService;
-
 
     public ITransactable getGroupById(String groupId) {
         return groupRepository.findById(groupId)
@@ -31,7 +27,7 @@ public class GroupChatService extends ChatService<GroupChat> {
         processChatRoomToDB(transactableRoom);
     }
 
-    public void leaveChatRoom(List<String> userIds) {
+    public void exitChatRoom(List<String> userIds) {
         ITransactable transactableRoom = context.getChatRoom();
         transactableRoom.exit(userIds);
         processChatRoomToDB(transactableRoom);
@@ -46,22 +42,17 @@ public class GroupChatService extends ChatService<GroupChat> {
     }
 
     public GroupChat saveGroupChatToDB(GroupChat groupChat) {
-        return groupRepository.save(groupChat);
-    }
-
-    public void sendMessage(ChatMessage chatMessage) {
-    }
-
-    public GroupChat createChat(CreateGroupRequest createGroupRequest) {
-        GroupChat savedGroupChat = saveGroupChatToDB(createGroupChatService.create(createGroupRequest.getGroupName(),createGroupRequest.getUserIds()));
+        GroupChat savedGroupChat = groupRepository.save(groupChat);
         updateChatRoomContext(savedGroupChat);
         return savedGroupChat;
     }
 
-    public void notifyChatToUsers(GroupChat groupChat) {
-        NewChatNotification newChatNotification = NewChatNotification.builder().chatRoom(groupChat).build();
-        for(String userId:groupChat.getUserIds()) {
-            super.notifyChatToUser(userId,groupChat);
-        }
+    public void sendMessage(ChatMessage chatMessage) {
+
     }
+
+    public void processCreation(CreateGroupRequest createGroupRequest) {
+        saveGroupChatToDB(CreateGroupChatService.getGroupChat(createGroupRequest.getGroupName(),createGroupRequest.getUserIds()));
+    }
+
 }

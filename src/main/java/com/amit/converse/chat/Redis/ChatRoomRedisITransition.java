@@ -2,13 +2,12 @@ package com.amit.converse.chat.Redis;
 
 import com.amit.converse.chat.Interface.ITransition;
 import com.amit.converse.chat.dto.OnlineUsersDto;
-import com.amit.converse.chat.service.GroupService;
 import com.amit.converse.chat.service.Redis.RedisChatRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class ChatRoomRedisITransition extends RedisSession implements ITransition {
     @Autowired
-    private GroupService groupService;
+    private GroupService groupServiceOld;
     @Autowired
     private RedisChatRoomService redisChatRoomService;
     // current opened chatRoom's ID
@@ -21,7 +20,7 @@ public class ChatRoomRedisITransition extends RedisSession implements ITransitio
 
     public OnlineUsersDto transitAndGetOnlineUsers() {
         transit();
-        return groupService.getOnlineUsers(chatRoomId,userId);
+        return groupServiceOld.getOnlineUsers(chatRoomId,userId);
     }
 
     @Override

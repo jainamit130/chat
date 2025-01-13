@@ -11,6 +11,7 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import javax.print.attribute.HashPrintServiceAttributeSet;
 import java.time.Instant;
 import java.util.*;
 
@@ -51,6 +52,11 @@ public abstract class ChatRoom implements IChatRoom {
         }
         deletedForUsers.add(userId);
         return true;
+    }
+
+    public void setUserIds(List<String> userIds) {
+        Set<String> userIdsSet = Set.copyOf(userIds);
+        this.userIds = new ArrayList<>(userIdsSet);
     }
 
     public Integer getDeletedForUsersCount() {

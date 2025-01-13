@@ -26,9 +26,8 @@ import java.util.List;
 public class ChatControllerOld {
 
     private final ChatMessageService chatMessageService;
-    private final GroupService groupService;
+    private final GroupServiceOld groupServiceOld;
     private final MarkMessageService markMessageService;
-    private final WebSocketMessageService webSocketMessageService;
 
     @MutationMapping
     public Boolean markAllMessagesRead(@Argument String chatRoomId, @Argument String userId) {
@@ -43,16 +42,16 @@ public class ChatControllerOld {
 
     @MessageMapping("/chat/sendMessage/{chatRoomId}")
     public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage chatMessage) throws InterruptedException {
-        ChatRoom chatRoom = groupService.getChatRoom(chatRoomId);
+        ChatRoom chatRoom = groupServiceOld.getChatRoom(chatRoomId);
         // if member is not part of the group
         if(chatRoom.isExitedMember(chatMessage.getSenderId())){
             return;
         }
         ChatMessage savedMessage = null;
-        if(chatRoom.getChatRoomType()== ChatRoomType.DIRECT && chatRoom.getDeletedForUsers().contains(groupService.getCounterPartUser(chatRoom,chatMessage.getSenderId()).getUserId())){
+        if(chatRoom.getChatRoomType()== ChatRoomType.DIRECT && chatRoom.getDeletedForUsers().contains(groupServiceOld.getCounterPartUser(chatRoom,chatMessage.getSenderId()).getUserId())){
             savedMessage = chatMessageService.addMessage(chatRoomId, chatMessage,false);
             webSocketMessageService.sendMessage(chatRoomId,savedMessage);
-            groupService.sendNewChatStatusToDeletedMembers(chatRoomId);
+            groupServiceOld.sendNewChatStatusToDeletedMembers(chatRoomId);
             return;
         } else {
             savedMessage = chatMessageService.addMessage(chatRoomId, chatMessage, false);
@@ -68,13 +67,13 @@ public class ChatControllerOld {
 
     @QueryMapping
     public List<ChatRoom> getChatRoomsOfUser(@Argument String userId) {
-        List<ChatRoom> chatRooms=groupService.getChatRoomsOfUser(userId);
+        List<ChatRoom> chatRooms= groupServiceOld.getChatRoomsOfUser(userId);
         return chatRooms;
     }
 
     @QueryMapping
     public List<ChatMessage> getMessagesOfChatRoom(@Argument String chatRoomId, @Argument String userId ,@Argument Integer fromCount){
-        List<ChatMessage> chatMessages=groupService.getMessagesOfChatRoom(chatRoomId,userId,fromCount);
+        List<ChatMessage> chatMessages= groupServiceOld.getMessagesOfChatRoom(chatRoomId,userId,fromCount);
         return chatMessages;
     }
 

@@ -7,7 +7,7 @@ import com.amit.converse.chat.dto.GroupMembersRequest;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
 import com.amit.converse.chat.service.ChatMessageService;
-import com.amit.converse.chat.service.GroupService;
+import com.amit.converse.chat.service.GroupServiceOld;
 import com.amit.converse.chat.service.WebSocketMessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,25 +21,25 @@ import java.util.Map;
 @RequestMapping("/chat")
 public class ChatRoomController {
 
-    private final GroupService groupService;
+    private final GroupServiceOld groupServiceOld;
     private final ChatMessageService chatMessageService;
     private final WebSocketMessageService webSocketMessageService;
 
     @PostMapping("/groups/create")
     public ResponseEntity<CreateGroupResponse> createGroup(@RequestBody CreateGroupRequest request) {
         try {
-            Map.Entry<String, Boolean> result = groupService.createGroup(request.getGroupName(), request.getChatRoomType(), request.getCreatedById(), request.getMembers());
+            Map.Entry<String, Boolean> result = groupServiceOld.createGroup(request.getGroupName(), request.getChatRoomType(), request.getCreatedById(), request.getMembers());
             String createdChatRoomId = result.getKey();
             boolean isAlreadyPresent = result.getValue();
             ChatMessage savedMessage = null;
             if(isAlreadyPresent) {
                 savedMessage = chatMessageService.addMessage(createdChatRoomId, request.getLatestMessage(), false);
                 webSocketMessageService.sendMessage(createdChatRoomId,savedMessage);
-                groupService.sendNewChatStatusToDeletedMembers(createdChatRoomId);
+                groupServiceOld.sendNewChatStatusToDeletedMembers(createdChatRoomId);
             } else {
                 if(request.getChatRoomType()== ChatRoomType.DIRECT){
                     savedMessage = chatMessageService.addMessage(createdChatRoomId, request.getLatestMessage(),true);
-                    groupService.sendNewChatStatusToMember(createdChatRoomId);
+                    groupServiceOld.sendNewChatStatusToMember(createdChatRoomId);
                 }
             }
             CreateGroupResponse groupResponse = CreateGroupResponse.builder().chatRoomId(createdChatRoomId).build();
@@ -52,7 +52,7 @@ public class ChatRoomController {
     @PostMapping("/groups/add/{chatRoomId}")
     public ResponseEntity<Boolean> addMembersToGroup(@PathVariable String chatRoomId, @RequestBody GroupMembersRequest request) {
         try {
-            return ResponseEntity.ok(groupService.addMembers(chatRoomId, request.getActionedBy(), request.getMemberIds()));
+            return ResponseEntity.ok(groupServiceOld.addMembers(chatRoomId, request.getActionedBy(), request.getMemberIds()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -64,7 +64,7 @@ public class ChatRoomController {
             @RequestBody GroupMembersRequest request) {
         try {
             return new ResponseEntity<>(
-                    groupService.removeMembers(chatRoomId, request.getActionedBy(), request.getMemberIds()),
+                    groupServiceOld.removeMembers(chatRoomId, request.getActionedBy(), request.getMemberIds()),
                     HttpStatus.OK
             );
         } catch (IllegalArgumentException e) {
@@ -76,7 +76,7 @@ public class ChatRoomController {
     @PostMapping("/groups/delete/{chatRoomId}")
     public ResponseEntity<Boolean> deleteGroup(@PathVariable String chatRoomId, @RequestBody String userId) {
         try {
-            return new ResponseEntity(groupService.deleteChat(chatRoomId, userId),HttpStatus.OK);
+            return new ResponseEntity(groupServiceOld.deleteChat(chatRoomId, userId),HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -85,7 +85,7 @@ public class ChatRoomController {
     @PostMapping("/groups/clearChat/{chatRoomId}")
     public ResponseEntity<Boolean> clearChat(@PathVariable String chatRoomId, @RequestBody String userId) {
         try {
-            return new ResponseEntity(groupService.clearChat(chatRoomId,userId),HttpStatus.OK);
+            return new ResponseEntity(groupServiceOld.clearChat(chatRoomId,userId),HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
@@ -94,7 +94,7 @@ public class ChatRoomController {
     @GetMapping("/groups/details/{chatRoomId}")
     public ResponseEntity<GroupDetails> getGroupDetails(@PathVariable String chatRoomId) {
         try {
-            return new ResponseEntity(groupService.getGroupDetails(chatRoomId),HttpStatus.OK);
+            return new ResponseEntity(groupServiceOld.getGroupDetails(chatRoomId),HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }    }

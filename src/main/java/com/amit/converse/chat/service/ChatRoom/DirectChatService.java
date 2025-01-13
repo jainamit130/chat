@@ -12,8 +12,6 @@ import java.util.Optional;
 public class DirectChatService extends ChatService<DirectChat> {
     @Autowired
     private IDirectChatRepository directChatRepository;
-    @Autowired
-    private CreateDirectChatService createDirectChatService;
 
     public DirectChat saveDirectChatToDB(DirectChat directChat) {
         DirectChat savedDirectChat = directChatRepository.save(directChat);
@@ -21,20 +19,26 @@ public class DirectChatService extends ChatService<DirectChat> {
         return savedDirectChat;
     }
 
+    DirectChat getChat(String primaryUserId, String counterPartUserId) {
+        Optional<DirectChat> alreadyExistingDirectChat = getChatIfAlreadyExisting(primaryUserId,counterPartUserId);
+        if(alreadyExistingDirectChat.isPresent()) {
+            updateChatRoomContext(alreadyExistingDirectChat.get());
+            return alreadyExistingDirectChat.get();
+        } else {
+            return saveDirectChatToDB(CreateDirectChatService.getNewDirectChat(primaryUserId, counterPartUserId));
+        }
+    }
+
     Optional<DirectChat> getChatIfAlreadyExisting(String primaryUserId, String counterPartUserId) {
         return directChatRepository.findDirectChat(primaryUserId,counterPartUserId);
     }
 
-    public DirectChat createChat(CreateDirectChatRequest directChatRequest) {
+    public void processCreation(CreateDirectChatRequest directChatRequest) throws InterruptedException {
         String primaryUserId = directChatRequest.getPrimaryUserId();
         String counterPartUserId = directChatRequest.getUserId();
-        Optional<DirectChat> alreadyExistingDirectChat = getChatIfAlreadyExisting(primaryUserId,counterPartUserId);
-        if(alreadyExistingDirectChat.isPresent()) {
-            return alreadyExistingDirectChat.get();
-        }
-        DirectChat savedDirectChat = saveDirectChatToDB(createDirectChatService.create(primaryUserId,counterPartUserId));
-        updateChatRoomContext(savedDirectChat);
-        return savedDirectChat;
+        getChat(primaryUserId,counterPartUserId);
+        sendMessage(directChatRequest.getMessage());
+        return;
     }
 
 }

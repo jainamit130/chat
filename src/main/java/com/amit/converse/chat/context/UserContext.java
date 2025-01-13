@@ -7,5 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class UserContext {
+    protected String userId;
     protected User user;
 }

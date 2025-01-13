@@ -17,7 +17,7 @@ public class JoinService {
 
     public void join(List<String> userIds) {
         groupChatService.joinChatRoom(userIds);
-        groupChatUserService.joinChat(userIds);
+        groupChatUserService.join(userIds);
         joinNotificationService.notifyGroup(groupChatUserService.getUsersFromRepo(userIds));
     }
 }

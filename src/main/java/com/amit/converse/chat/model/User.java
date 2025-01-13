@@ -35,22 +35,16 @@ public class User {
     private Instant lastSeenTimestamp;
     private Instant creationDate;
 
-    public void exitChatRoom(String chatRoomId) {
+    public void disconnectChat(String chatRoomId) {
         chatRoomIds.remove(chatRoomId);
     }
 
-    public void joinChatRoom(String chatRoomId) {
+    public void connectChat(String chatRoomId) {
         chatRoomIds.add(chatRoomId);
     }
 
     public void addChatRoom(String chatRoomId){
         chatRoomIds.add(chatRoomId);
-    }
-
-    public void removeChatRoom(String chatRoomId) {
-        if (chatRoomIds.contains(chatRoomId)) {
-            chatRoomIds.remove(chatRoomId);
-        }
     }
 
     public void updateLastSeenToNow() {

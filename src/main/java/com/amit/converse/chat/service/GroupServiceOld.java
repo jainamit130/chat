@@ -22,7 +22,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class GroupService {
+public class GroupServiceOld {
 
     private final ChatRoomRepository chatRoomRepository;
     private final ChatMessageRepository chatMessageRepository;

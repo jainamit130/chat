@@ -18,11 +18,7 @@ public class ChatService<T extends IChatRoom> {
     @Autowired
     protected ChatContext<T> context;
     @Autowired
-    protected UserContext userContext;
-    @Autowired
     protected MessageService messageService;
-    @Autowired
-    private UserNotificationService userNotificationService;
     @Autowired
     protected IChatRoomRepository chatRoomRepository;
     @Autowired
@@ -52,18 +48,13 @@ public class ChatService<T extends IChatRoom> {
     }
 
     public void clearChat() {
-        clearChatService.clearChat(context.getChatRoom(), userContext.getUser().getUserId());
+        clearChatService.clearChat(context.getChatRoom());
         processChatRoomToDB(context.getChatRoom());
     }
 
     public void deleteChat() {
-        deleteChatService.deleteChat(context.getChatRoom(), userContext.getUser().getUserId());
+        deleteChatService.deleteChat(context.getChatRoom());
         processChatRoomToDB(context.getChatRoom());
-    }
-
-    public void notifyChatToUser(String userId,IChatRoom chatRoom) {
-        NewChatNotification newChatNotification = NewChatNotification.builder().chatRoom(chatRoom).build();
-        userNotificationService.sendNotification(userId,newChatNotification);
     }
 
 //    clearChat(ChatRoom,UserId) => Clear Chat uses chatRoom field updates it and saves it, it does not notify

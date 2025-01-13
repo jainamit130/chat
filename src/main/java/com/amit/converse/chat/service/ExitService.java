@@ -16,8 +16,8 @@ public class ExitService {
     private final NotifyGroupExitService exitNotificationService;
 
     public void leave(List<String> userIds) {
-        groupChatService.leaveChatRoom(userIds);
+        groupChatService.exitChatRoom(userIds);
         exitNotificationService.notifyGroup(groupChatUserService.getUsersFromRepo(userIds));
-        groupChatUserService.exitChatRoom();
+        groupChatUserService.exit(userIds);
     }
 }

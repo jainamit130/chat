@@ -16,7 +16,7 @@ public class GroupMessageService extends MessageService<ITransactable> {
     @Override
     protected void authoriseSender() {
         ITransactable chatRoom = chatContext.getChatRoom();
-        if(chatRoom.isExited(userContext.getUser().getUserId()))
+        if(chatRoom.isExited(userContext.getUserId()))
             throw new ConverseException("User is not part of the group!");
     }
 }
