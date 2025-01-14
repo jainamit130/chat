@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserChatService<T extends IChatRoom> {
+public abstract class UserChatService<T extends IChatRoom> {
     @Autowired
     private UserService userService;
     @Autowired
@@ -80,7 +80,10 @@ public class UserChatService<T extends IChatRoom> {
         return;
     }
 
+    public abstract IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat);
+
     public IOnlineUsersDTO getOnlineUsersOfChat(){
         return getOnlineUsersDTO(chatService.getOnlineUserIdsOfChat());
     }
+
 }

@@ -1,7 +1,6 @@
 package com.amit.converse.chat.config;
 
-import com.amit.converse.chat.config.filter.DirectChatFilter;
-import com.amit.converse.chat.config.filter.GroupChatFilter;
+import com.amit.converse.chat.config.filter.ChatContextFilter;
 import com.amit.converse.chat.config.filter.JwtAuthenticationFilter;
 import com.amit.converse.chat.config.filter.UserContextFilter;
 import com.amit.converse.chat.model.Enums.Role;
@@ -18,8 +17,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final GroupChatFilter groupChatFilter;
-    private final DirectChatFilter directChatFilter;
+    private final ChatContextFilter chatContextFilter;
     private final UserContextFilter userContextFilter;
 
     @Bean
@@ -36,8 +34,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // First
                 .addFilterAfter(userContextFilter, JwtAuthenticationFilter.class)           // Second
-                .addFilterAfter(groupChatFilter, UserContextFilter.class)
-                .addFilterAfter(directChatFilter, UserContextFilter.class);
+                .addFilterAfter(chatContextFilter, UserContextFilter.class);
         return http.build();
     }
 }

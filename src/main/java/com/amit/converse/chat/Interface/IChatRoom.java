@@ -1,5 +1,6 @@
 package com.amit.converse.chat.Interface;
 
+import com.amit.converse.chat.model.Enums.ChatRoomType;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -17,4 +18,5 @@ public interface IChatRoom {
     Map<String, Instant> getUserFetchStartTimeMap();
     Instant getCreatedAt();
     Set<String> getDeletedForUsers();
+    ChatRoomType getChatRoomType();
 }
