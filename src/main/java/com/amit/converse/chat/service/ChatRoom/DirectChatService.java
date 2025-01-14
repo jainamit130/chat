@@ -36,6 +36,7 @@ public class DirectChatService extends ChatService<DirectChat> {
     public void processCreation(CreateDirectChatRequest directChatRequest) throws InterruptedException {
         String primaryUserId = directChatRequest.getPrimaryUserId();
         String counterPartUserId = directChatRequest.getUserId();
+        // Updates the context hence fulfilling its purpose of getting a chat new or existing
         getChat(primaryUserId,counterPartUserId);
         sendMessage(directChatRequest.getMessage());
         return;

@@ -15,11 +15,11 @@ import org.springframework.stereotype.Service;
 public class DeleteChatService {
     private final UserContext userContext;
     private final ClearChatService clearChatService;
-    private final UserChatService userService;
+    private final UserChatService userChatService;
     private final RedisChatRoomService redisChatRoomService;
 
     public void deleteChat(IChatRoom chatRoom) {
-        userService.disconnectChat();
+        userChatService.disconnectChat();
         clearChatService.clearChat(chatRoom);
         redisChatRoomService.removeUserFromChatRoom(userContext.getUserId());
     }

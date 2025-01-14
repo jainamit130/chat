@@ -2,16 +2,18 @@ package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.context.ChatContext;
-import com.amit.converse.chat.context.UserContext;
-import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
 import com.amit.converse.chat.service.ClearChatService;
 import com.amit.converse.chat.service.DeleteChatService;
-import com.amit.converse.chat.service.Notification.UserNotificationService;
+import com.amit.converse.chat.service.Redis.RedisReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Service
 public class ChatService<T extends IChatRoom> {
@@ -25,6 +27,8 @@ public class ChatService<T extends IChatRoom> {
     protected ClearChatService clearChatService;
     @Autowired
     protected DeleteChatService deleteChatService;
+    @Autowired
+    private RedisReadService redisReadService;
 
     public void updateChatRoomContext(T chatRoom) {
         context.setChatRoom(chatRoom);
@@ -55,6 +59,11 @@ public class ChatService<T extends IChatRoom> {
     public void deleteChat() {
         deleteChatService.deleteChat(context.getChatRoom());
         processChatRoomToDB(context.getChatRoom());
+    }
+
+    public List<String> getOnlineUserIdsOfChat() {
+        List<String> onlineUserIds = new ArrayList<>(redisReadService.filterOnlineUsers(context.getChatRoom().getUserIds()));
+        return onlineUserIds;
     }
 
 //    clearChat(ChatRoom,UserId) => Clear Chat uses chatRoom field updates it and saves it, it does not notify

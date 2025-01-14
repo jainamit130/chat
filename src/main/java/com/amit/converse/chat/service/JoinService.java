@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.ChatRoom.GroupChatService;
 import com.amit.converse.chat.service.Notification.NotifyGroupJoinService;
 import com.amit.converse.chat.service.User.GroupChatUserService;
@@ -16,8 +17,9 @@ public class JoinService {
     private final NotifyGroupJoinService joinNotificationService;
 
     public void join(List<String> userIds) {
+        List<User> users = groupChatUserService.getUsersFromRepo(userIds);
         groupChatService.joinChatRoom(userIds);
-        groupChatUserService.join(userIds);
-        joinNotificationService.notifyGroup(groupChatUserService.getUsersFromRepo(userIds));
+        groupChatUserService.join(users);
+        joinNotificationService.notifyGroup(users);
     }
 }

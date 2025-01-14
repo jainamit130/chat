@@ -5,7 +5,6 @@ import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.Notification.UserOnlineNotification;
 import com.amit.converse.chat.exceptions.ConverseException;
-import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
 import com.amit.converse.chat.service.AuthService;
@@ -14,6 +13,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -65,4 +66,7 @@ public class UserService {
         }
     }
 
+    public List<String> processUsersToUsernames(List<User> users) {
+        return users.stream().map(user -> user.getUsername()).collect(Collectors.toList());
+    }
 }

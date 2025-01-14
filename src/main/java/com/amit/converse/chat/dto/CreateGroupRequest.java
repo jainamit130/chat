@@ -10,4 +10,8 @@ import java.util.List;
 public class CreateGroupRequest {
     private String groupName;
     private List<String> userIds;
+
+    public void addUserId(String userId) {
+        userIds.add(userId);
+    }
 }

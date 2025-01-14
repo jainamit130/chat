@@ -3,6 +3,7 @@ package com.amit.converse.chat.controller;
 import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.model.Messages.ChatMessage;
+import com.amit.converse.chat.service.ChatRoom.DirectChatService;
 import com.amit.converse.chat.service.ChatRoom.GroupMessageService;
 import com.amit.converse.chat.service.ChatRoom.GroupChatService;
 import com.amit.converse.chat.service.ExitService;
@@ -18,22 +19,14 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/converse/chat/group/")
 public class GroupChatController {
-
-    private final ChatContext<ITransactable> groupContext;
     private final GroupChatService groupChatService;
-    private final GroupMessageService groupMessageService;
     private final JoinService joinService;
     private final ExitService exitService;
-
-    @ModelAttribute
-    public void populateChatContext(@RequestParam String groupId) {
-        groupContext.setChatRoom(groupChatService.getGroupById(groupId));
-    }
 
     @PostMapping("/send/message/{chatRoomId}")
     public ResponseEntity sendMessage(@RequestParam String chatRoomId, @RequestBody ChatMessage chatMessage) {
         try{
-            groupMessageService.sendMessage(chatMessage);
+            groupChatService.sendMessage(chatMessage);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException | InterruptedException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

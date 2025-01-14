@@ -79,9 +79,9 @@ public class GroupServiceOld {
         return chatRooms;
     }
 
-    public Set<String> getOnlineUsersOfGroup(ChatRoom chatRoom){
+    public String getOnlineUsersOfGroup(ChatRoom chatRoom){
         Set<String> onlineUserIds = redisReadService.filterOnlineUsers(chatRoom.getUserIds());
-        return userService.processIdsToName(onlineUserIds);
+        return "";
     }
 
     public List<ChatMessage> getMessagesOfChatRoom(String chatRoomId, String userId,Integer startIndex){

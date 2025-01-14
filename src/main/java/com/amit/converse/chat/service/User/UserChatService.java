@@ -5,6 +5,7 @@ import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.Notification.UserOnlineNotification;
+import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
@@ -33,6 +34,10 @@ public class UserChatService<T extends IChatRoom> {
 
     public void processUsersToDB(List<User> users) {
         userService.processUsersToDB(users);
+    }
+
+    public List<String> processUsersToUsernames(List<User> users) {
+        return userService.processUsersToUsernames(users);
     }
 
     public List<User> getUsersFromRepo(List<String> userIds) {
@@ -73,5 +78,9 @@ public class UserChatService<T extends IChatRoom> {
         UserOnlineNotification userOnlineNotification = UserOnlineNotification.builder().status(status).username(user.getUsername()).build();
         userNotificationService.sendNotificationToUserChats(user,userOnlineNotification);
         return;
+    }
+
+    public IOnlineUsersDTO getOnlineUsersOfChat(){
+        return getOnlineUsersDTO(chatService.getOnlineUserIdsOfChat());
     }
 }

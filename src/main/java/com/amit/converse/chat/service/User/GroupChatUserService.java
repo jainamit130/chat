@@ -2,7 +2,7 @@ package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.Interface.ITransactable;
-import com.amit.converse.chat.model.ChatRooms.GroupChat;
+import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDto;
 import com.amit.converse.chat.model.User;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,9 +22,7 @@ public class GroupChatUserService extends UserChatService<ITransactable> {
         processUsersToDB(users);
     }
 
-
-    public void join(List<String> userIds) {
-        List<User> users = getUsersFromRepo(userIds);
+    public void join(List<User> users) {
         IChatRoom chatRoom = chatContext.getChatRoom();
         for(User user:users) {
             user.connectChat(chatRoom.getId());
@@ -32,12 +30,16 @@ public class GroupChatUserService extends UserChatService<ITransactable> {
         processUsersToDB(users);
     }
 
-    public void exit(List<String> userIds) {
-        List<User> users = getUsersFromRepo(userIds);
+    public void exit(List<User> users) {
         IChatRoom chatRoom = chatContext.getChatRoom();
         for(User user:users) {
             user.disconnectChat(chatRoom.getId());
         }
         processUsersToDB(users);
+    }
+
+    public GroupChatOnlineUsersDto getOnlineUsersDTO(List<String> onlineUserIds) {
+        List<User> onlineUsers = getUsersFromRepo(onlineUserIds);
+        return GroupChatOnlineUsersDto.builder().onlineUsers(processUsersToUsernames(onlineUsers)).build();
     }
 }

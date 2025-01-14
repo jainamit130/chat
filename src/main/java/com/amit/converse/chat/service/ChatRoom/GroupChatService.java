@@ -15,6 +15,8 @@ import java.util.List;
 public class GroupChatService extends ChatService<GroupChat> {
     @Autowired
     private IGroupRepository groupRepository;
+    @Autowired
+    private GroupMessageService messageService;
 
     public ITransactable getGroupById(String groupId) {
         return groupRepository.findById(groupId)
@@ -47,8 +49,8 @@ public class GroupChatService extends ChatService<GroupChat> {
         return savedGroupChat;
     }
 
-    public void sendMessage(ChatMessage chatMessage) {
-
+    public void sendMessage(ChatMessage chatMessage) throws InterruptedException {
+        messageService.sendMessage(chatMessage);
     }
 
     public void processCreation(CreateGroupRequest createGroupRequest) {

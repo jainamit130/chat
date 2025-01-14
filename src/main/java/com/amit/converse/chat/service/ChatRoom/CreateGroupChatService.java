@@ -33,6 +33,7 @@ public class CreateGroupChatService {
     }
 
     public String create(CreateGroupRequest createGroupRequest) {
+        createGroupRequest.addUserId(userContext.getUserId());
         groupChatService.processCreation(createGroupRequest);
         groupChatUserService.processCreation();
         return chatContext.getChatRoom().getId();

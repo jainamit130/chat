@@ -2,7 +2,6 @@ package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.CreateDirectChatRequest;
 import com.amit.converse.chat.dto.CreateGroupRequest;
-import com.amit.converse.chat.service.ChatRoom.CreateChatService;
 import com.amit.converse.chat.service.ChatRoom.CreateDirectChatService;
 import com.amit.converse.chat.service.ChatRoom.CreateGroupChatService;
 import lombok.RequiredArgsConstructor;
