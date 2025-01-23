@@ -4,8 +4,8 @@ import com.amit.converse.chat.model.Enums.ConnectionStatus;
 
 public class OfflineRedisSessionITransition extends RedisSessionITransition {
 
-    public OfflineRedisSessionITransition(String userId) {
-        super(ConnectionStatus.OFFLINE, userId);
+    public OfflineRedisSessionITransition() {
+        super(ConnectionStatus.OFFLINE);
     }
 
     // Remove User Id Key from Redis

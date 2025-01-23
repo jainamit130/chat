@@ -29,7 +29,7 @@ public class DirectChatService extends ChatService<DirectChat> {
         }
     }
 
-    Optional<DirectChat> getChatIfAlreadyExisting(String primaryUserId, String counterPartUserId) {
+    public Optional<DirectChat> getChatIfAlreadyExisting(String primaryUserId, String counterPartUserId) {
         return directChatRepository.findDirectChat(primaryUserId,counterPartUserId);
     }
 
@@ -42,6 +42,10 @@ public class DirectChatService extends ChatService<DirectChat> {
         return;
     }
 
+
+    public Optional<DirectChat> getCommonChat(String user1Id, String user2Id) {
+        return directChatRepository.findDirectChat(user1Id,user2Id);
+    }
 }
 
 

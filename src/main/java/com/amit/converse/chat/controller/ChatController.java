@@ -1,5 +1,6 @@
 package com.amit.converse.chat.controller;
 
+import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

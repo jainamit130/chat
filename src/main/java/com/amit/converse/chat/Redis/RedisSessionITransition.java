@@ -7,15 +7,14 @@ import com.amit.converse.chat.service.User.UserChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 
-public abstract class RedisSessionITransition extends RedisSession implements ITransition {
+public abstract class RedisSessionITransition implements ITransition {
     @Autowired
     protected UserChatService userChatService;
     @Autowired
     protected RedisWriteService redisWriteService;
     private final ConnectionStatus status;
 
-    RedisSessionITransition(ConnectionStatus status, String userId) {
-        super(userId);
+    RedisSessionITransition(ConnectionStatus status) {
         this.status = status;
     }
 

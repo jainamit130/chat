@@ -12,6 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class GroupDetails {
-    private String chatRoomId;
-    private List<UserEventDTO> members;
+    private List<UserDTO> members;
 }

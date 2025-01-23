@@ -1,8 +1,7 @@
 package com.amit.converse.chat.controller;
 
-import com.amit.converse.chat.service.WebSocketMessageService;
+import com.amit.converse.chat.service.ActivityService;
 import lombok.AllArgsConstructor;
-import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 
@@ -14,19 +13,19 @@ import java.util.concurrent.ConcurrentHashMap;
 @AllArgsConstructor
 public class ActivityController {
 
-    private final WebSocketMessageService webSocketMessageService;
+    private final ActivityService activityService;
     private final Set<String> typingUsers = ConcurrentHashMap.newKeySet();
 
     @MessageMapping("/typing/{chatRoomId}")
-    public void handleTypingEvent(String username, @DestinationVariable String chatRoomId) {
+    public void handleTypingEvent(String username) {
         typingUsers.add(username);
-        webSocketMessageService.sendTypingStatusToGroup(new ArrayList<>(typingUsers),chatRoomId);
+        activityService.sendTypingNotification(new ArrayList<>(typingUsers));
     }
 
     @MessageMapping("/stopTyping/{chatRoomId}")
-    public void handleStopTypingEvent(String username, @DestinationVariable String chatRoomId) {
+    public void handleStopTypingEvent(String username) {
         typingUsers.remove(username);
-        webSocketMessageService.sendTypingStatusToGroup(new ArrayList<>(typingUsers),chatRoomId);
+        activityService.sendTypingNotification(new ArrayList<>(typingUsers));
     }
 
 }

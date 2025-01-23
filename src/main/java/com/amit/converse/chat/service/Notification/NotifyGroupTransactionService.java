@@ -5,7 +5,6 @@ import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.Notification.ChatTransactionNotification;
 import com.amit.converse.chat.model.User;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

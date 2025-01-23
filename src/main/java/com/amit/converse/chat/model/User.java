@@ -28,6 +28,7 @@ public class User {
     @Builder.Default
     private Set<String> adminRoleChatRoomIds = new HashSet<>();
 
+    private String status;
     private String username;
     private String password;
     private State state;

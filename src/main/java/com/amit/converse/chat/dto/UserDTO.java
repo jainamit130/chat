@@ -9,7 +9,7 @@ import java.time.Instant;
 @Data
 @AllArgsConstructor
 @Builder
-public class UserEventDTO {
+public class UserDTO {
     private String userId;
     private String username;
     private Instant creationDate;

@@ -1,13 +1,11 @@
 package com.amit.converse.chat.service;
 
-import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.State.Offline;
 import com.amit.converse.chat.State.Online;
 import com.amit.converse.chat.State.State;
 import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.context.UserContext;
-import com.amit.converse.chat.dto.Notification.NewChatNotification;
-import com.amit.converse.chat.dto.UserEventDTO;
+import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRoom;
@@ -50,7 +48,7 @@ public class UserServiceOld {
     public User getLoggedInUser() {
         String userId = authService.getLoggedInUserId();
         User user = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new ConverseException("User with id : "+ userId + " not found!"));
+                .orElseThrow(() -> new ConverseException("User with userId : "+ userId + " not found!"));
         return user;
     }
 
@@ -72,7 +70,7 @@ public class UserServiceOld {
 //        return sharedService.createUserAndSelfChatRoom(user);
 //    }
 
-    public boolean consume(UserEventDTO userEvent) {
+    public boolean consume(UserDTO userEvent) {
         User user = User.builder()
                 .userId(userEvent.getUserId())
                 .username(userEvent.getUsername())
@@ -138,13 +136,13 @@ public class UserServiceOld {
 
     public List<UserDetails> getAllUsers(){
         return userRepository.findAll().stream().map(user -> {
-            return UserDetails.builder().username(user.getUsername()).id(user.getUserId()).build();
+            return UserDetails.builder().username(user.getUsername()).userId(user.getUserId()).build();
         }).collect(Collectors.toList());
     }
 
     public List<UserDetails> searchUser(String searchPrefix){
         return userRepository.findAllByUsernameStartsWithIgnoreCase(searchPrefix).stream().map(user -> {
-            return UserDetails.builder().username(user.getUsername()).id(user.getUserId()).build();
+            return UserDetails.builder().username(user.getUsername()).userId(user.getUserId()).build();
         }).collect(Collectors.toList());
     }
 
@@ -166,20 +164,20 @@ public class UserServiceOld {
         for (String userId : userIds) {
             Optional<User> user = userRepository.findByUserId(userId);
             if (user.isPresent()) {
-                userDetails.add(UserDetails.builder().username(user.get().getUsername()).id(userId).build());
+                userDetails.add(UserDetails.builder().username(user.get().getUsername()).userId(userId).build());
             }
         }
         return userDetails;
     }
 
-    public List<UserEventDTO> processIdsToUserDetails(List<String> userIds) {
-        List<UserEventDTO> userList = new ArrayList<>();
+    public List<UserDTO> processIdsToUserDetails(List<String> userIds) {
+        List<UserDTO> userList = new ArrayList<>();
 
         for (String userId : userIds) {
             Optional<User> user = userRepository.findByUserId(userId);
             if (user.isPresent()) {
-                UserEventDTO userEventDTO = UserEventDTO.builder().userId(userId).username(user.get().getUsername()).build();
-                userList.add(userEventDTO);
+                UserDTO userDTO = UserDTO.builder().userId(userId).username(user.get().getUsername()).build();
+                userList.add(userDTO);
             }
         }
         return userList;
@@ -190,7 +188,7 @@ public class UserServiceOld {
         User loggedInUser = getUser(loggedInUserId);
         Set<String> commonChatRoomIdsSet = sharedService.getCommonChatRooms(user.getChatRoomIds(),loggedInUser.getChatRoomIds());
         ConnectionStatus status = redisService.isUserOnline(userId)? ConnectionStatus.ONLINE: ConnectionStatus.OFFLINE;
-        UserDetails userDetails = UserDetails.builder().username(user.getUsername()).id(userId).userStatus(user.getStatus()).lastSeenTimestamp(user.getLastSeenTimestamp()).status(status).build();
+        UserDetails userDetails = UserDetails.builder().username(user.getUsername()).userId(userId).userStatus(user.getStatus()).lastSeenTimestamp(user.getLastSeenTimestamp()).status(status).build();
         Optional<ChatRoom> individualChatRoom;
         if(!userId.equals(loggedInUserId)) {
             individualChatRoom = sharedService.getIndividualChatIfPresent(userId,loggedInUserId);
@@ -198,10 +196,10 @@ public class UserServiceOld {
             individualChatRoom = Optional.ofNullable(sharedService.getSelfChatRoom(loggedInUserId));
         }
         if(individualChatRoom.isPresent()){
-            userDetails.setCommonIndividualChatId(individualChatRoom.get().getId());
+            userDetails.setCommonChatId(individualChatRoom.get().getId());
             commonChatRoomIdsSet.remove(individualChatRoom.get().getId());
         }
-        userDetails.setCommonChatRoomIds(new ArrayList(commonChatRoomIdsSet));
+        userDetails.setCommonGroupChatIds(new ArrayList(commonChatRoomIdsSet));
         return userDetails;
     }
 }

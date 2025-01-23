@@ -33,7 +33,7 @@ public class CreateDirectChatService {
         return directChat;
     }
 
-    // Returns the DirectChat id
+    // Returns the DirectChat userId
     public String create(CreateDirectChatRequest directChatRequest) throws InterruptedException {
         directChatRequest.setPrimaryUserId(userContext.getUserId());
         directChatService.processCreation(directChatRequest);

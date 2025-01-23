@@ -97,5 +97,6 @@ public class ChatRoomController {
             return new ResponseEntity(groupServiceOld.getGroupDetails(chatRoomId),HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }    }
+        }
+    }
 }

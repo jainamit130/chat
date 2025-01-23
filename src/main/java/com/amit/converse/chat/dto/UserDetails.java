@@ -14,10 +14,12 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class UserDetails {
-    private String id;
+    private String userId;
     private String username;
-    private String commonIndividualChatId;
-    private List<String> commonChatRoomIds;
+    // Self chat if the requester is the loggedIn user else Direct Chat
+    private String commonChatId;
+    // if the requester is the loggedIn user then empty
+    private List<String> commonGroupChatIds;
     private String userStatus;
     private Instant lastSeenTimestamp;
     private ConnectionStatus status;

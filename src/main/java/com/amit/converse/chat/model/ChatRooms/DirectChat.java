@@ -12,6 +12,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class DirectChat extends ChatRoom {
     @NotBlank
+    private transient String name;
+
+    @NotBlank
     private transient String username;
 
     @NotBlank

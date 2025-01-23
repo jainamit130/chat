@@ -1,13 +1,11 @@
 package com.amit.converse.chat.controller;
 
-import com.amit.converse.chat.Interface.ITransactable;
-import com.amit.converse.chat.context.ChatContext;
+import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.model.Messages.ChatMessage;
-import com.amit.converse.chat.service.ChatRoom.DirectChatService;
-import com.amit.converse.chat.service.ChatRoom.GroupMessageService;
 import com.amit.converse.chat.service.ChatRoom.GroupChatService;
 import com.amit.converse.chat.service.ExitService;
 import com.amit.converse.chat.service.JoinService;
+import com.amit.converse.chat.service.User.GroupChatUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +18,7 @@ import java.util.List;
 @RequestMapping("/converse/chat/group/")
 public class GroupChatController {
     private final GroupChatService groupChatService;
+    private final GroupChatUserService groupChatUserService;
     private final JoinService joinService;
     private final ExitService exitService;
 
@@ -48,6 +47,15 @@ public class GroupChatController {
         try {
             exitService.leave(userIds);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @GetMapping("/get/details/{chatRoomId}")
+    public ResponseEntity<GroupDetails> getGroupDetails() {
+        try {
+            return new ResponseEntity(groupChatUserService.getGroupDetails(),HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }

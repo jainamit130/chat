@@ -1,9 +1,8 @@
 package com.amit.converse.chat.controller;
 
-import com.amit.converse.chat.dto.UserEventDTO;
+import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.dto.UserDetails;
-import com.amit.converse.chat.model.User;
-import com.amit.converse.chat.service.UserService;
+import com.amit.converse.chat.service.User.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,30 +14,26 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/converse/users/")
 public class UserController {
-//    private final UserServiceClient userServiceClient;
+//  private final UserServiceClient userServiceClient;
     private final UserService userService;
 
-    @GetMapping("/search")
-    public ResponseEntity<List<UserDetails>> searchUser(@RequestParam(name = "q") String searchQuery){
-        return new ResponseEntity(userService.searchUser(searchQuery), HttpStatus.OK);
+    @GetMapping("/get/profile/{userId}")
+    public ResponseEntity<UserDetails> getProfileDetails(@RequestParam String userId) {
+        return new ResponseEntity<UserDetails>(userService.getProfileDetails(userId), HttpStatus.OK);
     }
 
-    @GetMapping("/getUser/{userId}")
-    public ResponseEntity<UserDetails> getUserDetails(@PathVariable String userId, @RequestParam String loggedInUserId) {
-        return new ResponseEntity<UserDetails>(userService.getUserDetails(userId, loggedInUserId), HttpStatus.OK);
-    }
-
+    // For now All users are shown to everyone. Meaning Everyone is open to chat with anyone.
     @GetMapping("/getUsers")
     public ResponseEntity<List<UserDetails>> getUsers(){
-        return new ResponseEntity(userService.getAllUsers(), HttpStatus.OK);
+        return new ResponseEntity(userService.getAllUserDetails(), HttpStatus.OK);
     }
 
     @PostMapping("/newUser")
-    public ResponseEntity<Void> syncUsers(@RequestBody UserEventDTO userEventDTO) {
-        UserEventDTO userEvent = UserEventDTO.builder()
-                .userId(userEventDTO.getUserId())
-                .username(userEventDTO.getUsername())
-                .creationDate(userEventDTO.getCreationDate())
+    public ResponseEntity<Void> syncUsers(@RequestBody UserDTO userDTO) {
+        UserDTO userEvent = UserDTO.builder()
+                .userId(userDTO.getUserId())
+                .username(userDTO.getUsername())
+                .creationDate(userDTO.getCreationDate())
                 .build();
 
         boolean success = userService.consume(userEvent);

@@ -1,10 +1,12 @@
 package com.amit.converse.chat.service.User;
 
-import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.dto.OnlineUsers.DirectChatOnlineUsersDTO;
-import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDto;
+import com.amit.converse.chat.dto.UserDetails;
+import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.DirectChat;
 import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.ChatRoom.DirectChatService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,6 +16,9 @@ import java.util.Set;
 
 @Service
 public class DirectChatUserService extends UserChatService<DirectChat> {
+
+    @Autowired
+    private DirectChatService directChatService;
 
     public void processCreation() {
         DirectChat directChat = chatContext.getChatRoom();
@@ -38,6 +43,14 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
             directChatOnlineUsersDTOBuilder.lastSeenTimestamp(counterPartUser.getLastSeenTimestamp());
         }
         return directChatOnlineUsersDTOBuilder.build();
+    }
+
+    public String getCommonChatId(String userId) {
+        Optional<DirectChat> directChat = directChatService.getCommonChat(userContext.getUser().getUserId(),userId);
+        if(directChat.isPresent()) {
+            return directChat.get().getId();
+        }
+        return null;
     }
 }
 

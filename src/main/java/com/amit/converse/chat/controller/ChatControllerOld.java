@@ -100,7 +100,7 @@ public class ChatControllerOld {
 //            StringBuilder sb = new StringBuilder();
 //            sb.append("gRPC call executed successfully! Messages:\n");
 //            for (com.amit.converse.common.ChatMessage message : response.getMessagesList()) {
-//                sb.append("Message ID: ").append(message.getId()).append("\n");
+//                sb.append("Message ID: ").append(message.getUserId()).append("\n");
 //                sb.append("Sender ID: ").append(message.getSenderId()).append("\n");
 //                sb.append("Receiver ID: ").append(message.getReceiverId()).append("\n");
 //                sb.append("Content: ").append(message.getContent()).append("\n");
