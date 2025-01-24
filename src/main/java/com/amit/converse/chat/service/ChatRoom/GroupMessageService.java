@@ -1,9 +1,9 @@
 package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.Interface.ITransactable;
-import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.exceptions.ConverseException;
+import com.amit.converse.chat.service.MessageService.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -19,4 +19,6 @@ public interface IChatRoom {
     Instant getCreatedAt();
     Set<String> getDeletedForUsers();
     ChatRoomType getChatRoomType();
+    void clearChat(String userId);
+    void deleteChat(String userId);
 }

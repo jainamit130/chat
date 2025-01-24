@@ -1,8 +1,6 @@
 package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.dto.OnlineUsers.DirectChatOnlineUsersDTO;
-import com.amit.converse.chat.dto.UserDetails;
-import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.DirectChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.ChatRoom.DirectChatService;

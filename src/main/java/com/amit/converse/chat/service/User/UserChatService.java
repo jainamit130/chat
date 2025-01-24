@@ -28,6 +28,22 @@ public abstract class UserChatService<T extends IChatRoom> {
     @Autowired
     protected ChatContext<T> chatContext;
 
+    private void sendNewChatNotificationToUser(String userId) {
+        userNotificationService.sendNotification(userId,new NewChatNotification(chatContext.getChatRoom()));
+    }
+
+    private void disconnectChat(User user) {
+        IChatRoom chatRoom = chatContext.getChatRoom();
+        chatRoom.deleteChat(user.getUserId());
+        user.disconnectChat(chatRoom.getId());
+    }
+
+    public abstract IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat);
+
+    public IOnlineUsersDTO getOnlineUsersOfChat(){
+        return getOnlineUsersDTO(chatService.getOnlineUserIdsOfChat());
+    }
+
     public void processChatRoomToDB(IChatRoom chatRoom) {
         chatService.processChatRoomToDB(chatRoom);
     }
@@ -44,14 +60,9 @@ public abstract class UserChatService<T extends IChatRoom> {
         return userService.getUsersFromRepo(userIds);
     }
 
-    public void disconnectChat() {
+    public void deleteChat() {
         User contextUser = userContext.getUser();
         disconnectChat(contextUser);
-    }
-
-    public void disconnectChat(User user) {
-        IChatRoom chatRoom = chatContext.getChatRoom();
-        user.disconnectChat(chatRoom.getId());
     }
 
     public void connectChat(List<String> userIds) {
@@ -68,10 +79,6 @@ public abstract class UserChatService<T extends IChatRoom> {
         sendNewChatNotificationToUser(user.getUserId());
     }
 
-    private void sendNewChatNotificationToUser(String userId) {
-        userNotificationService.sendNotification(userId,new NewChatNotification(chatContext.getChatRoom()));
-    }
-
     // Notify All ChatRooms of a user about status: went online or went offline
     public void notifyStatus(ConnectionStatus status) {
         User user = userContext.getUser();
@@ -79,11 +86,4 @@ public abstract class UserChatService<T extends IChatRoom> {
         userNotificationService.sendNotificationToUserChats(user,userOnlineNotification);
         return;
     }
-
-    public abstract IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat);
-
-    public IOnlineUsersDTO getOnlineUsersOfChat(){
-        return getOnlineUsersDTO(chatService.getOnlineUserIdsOfChat());
-    }
-
 }

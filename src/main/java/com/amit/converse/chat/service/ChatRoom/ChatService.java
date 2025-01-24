@@ -5,8 +5,7 @@ import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
-import com.amit.converse.chat.service.ClearChatService;
-import com.amit.converse.chat.service.DeleteChatService;
+import com.amit.converse.chat.service.MessageService.MessageService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,10 +22,6 @@ public class ChatService<T extends IChatRoom> {
     @Autowired
     protected IChatRoomRepository chatRoomRepository;
     @Autowired
-    protected ClearChatService clearChatService;
-    @Autowired
-    protected DeleteChatService deleteChatService;
-    @Autowired
     private RedisReadService redisReadService;
 
     public void updateChatRoomContext(T chatRoom) {
@@ -42,27 +37,32 @@ public class ChatService<T extends IChatRoom> {
                 .orElseThrow(() -> new ConverseChatRoomNotFoundException(chatRoomId));
     }
 
-    public void processChatRoomToDB(IChatRoom chatRoom) {
+    protected T saveChat(T chat) {
+        return chatRoomRepository.save(chat);
+    }
+
+    public void processChatRoomToDB(T chatRoom) {
         if (chatRoom.isDeletable()) {
             chatRoomRepository.deleteById(chatRoom.getId());
+            updateChatRoomContext(null);
         } else {
-            chatRoomRepository.save(chatRoom);
+            updateChatRoomContext(saveChat(chatRoom));
         }
     }
 
-    public void clearChat() {
-        clearChatService.clearChat(context.getChatRoom());
-        processChatRoomToDB(context.getChatRoom());
-    }
-
     public void deleteChat() {
-        deleteChatService.deleteChat(context.getChatRoom());
         processChatRoomToDB(context.getChatRoom());
     }
 
     public List<String> getOnlineUserIdsOfChat() {
         List<String> onlineUserIds = new ArrayList<>(redisReadService.filterOnlineUsers(context.getChatRoom().getUserIds()));
         return onlineUserIds;
+    }
+
+    public void clearChat(String userId) {
+        T chatRoom = context.getChatRoom();
+        chatRoom.clearChat(userId);
+        processChatRoomToDB(chatRoom);
     }
 
 //    clearChat(ChatRoom,UserId) => Clear Chat uses chatRoom field updates it and saves it, it does not notify

@@ -10,7 +10,7 @@ public class CreateUserService {
     @Autowired
     private SelfChatUserService selfChatUserService;
 
-    public static User getUser(UserDTO userDTO) {
+    private User getUser(UserDTO userDTO) {
         return User.builder()
                .userId(userDTO.getUserId())
                .username(userDTO.getUsername())

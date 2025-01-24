@@ -21,24 +21,15 @@ public abstract class Message {
     private Instant timestamp;
     private MessageMetaData metaData;
 
+    public abstract void readMessage(String timestamp,String userId);
+
+    public abstract void deliverMessage(String timestamp,String userId);
+
     public void deleteMessage(String userId) {
         metaData.addUserToDeletedForUsers(userId);
     }
-
-    public abstract void readMessage(String timestamp,String userId);
-    public abstract void deliverMessage(String timestamp,String userId);
 
     public Integer getDeletedForMembersCount() {
         return metaData.getDeletedForUsersCount();
     }
 }
-
-
-
-/*
-* Message is processed
-*
-*
-*
-*
-* */

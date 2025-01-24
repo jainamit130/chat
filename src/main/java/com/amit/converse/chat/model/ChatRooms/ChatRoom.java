@@ -46,14 +46,6 @@ public abstract class ChatRoom implements IChatRoom {
     @Builder.Default
     private Map<String, Integer> deliveredMessageCount = new HashMap<>();
 
-    public Boolean deleteChat(String userId) {
-        if(deletedForUsers==null){
-            deletedForUsers=new HashSet<>();
-        }
-        deletedForUsers.add(userId);
-        return true;
-    }
-
     public void setUserIds(List<String> userIds) {
         Set<String> userIdsSet = Set.copyOf(userIds);
         this.userIds = new ArrayList<>(userIdsSet);
@@ -73,6 +65,12 @@ public abstract class ChatRoom implements IChatRoom {
         return getMemberCount();
     }
 
+    @Override
+    public void deleteChat(String userId) {
+        deletedForUsers.add(userId);
+    }
+
+    @Override
     public void clearChat(String userId) {
         Map<String,Instant> userFetchStartTimeMap = getUserFetchStartTimeMap();
         userFetchStartTimeMap.put(userId,Instant.now());

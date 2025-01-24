@@ -1,4 +1,4 @@
-package com.amit.converse.chat.service.ChatRoom;
+package com.amit.converse.chat.service.MessageService;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.context.ChatContext;

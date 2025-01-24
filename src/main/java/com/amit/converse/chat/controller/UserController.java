@@ -29,19 +29,12 @@ public class UserController {
     }
 
     @PostMapping("/newUser")
-    public ResponseEntity<Void> syncUsers(@RequestBody UserDTO userDTO) {
-        UserDTO userEvent = UserDTO.builder()
-                .userId(userDTO.getUserId())
-                .username(userDTO.getUsername())
-                .creationDate(userDTO.getCreationDate())
-                .build();
-
-        boolean success = userService.consume(userEvent);
-
-        if (success) {
+    public ResponseEntity syncUsers(@RequestBody UserDTO userDTO) {
+        try {
+            userService.createUser(userDTO);
             return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR) // Return 500 Internal Server Error if failed
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(null);
         }
     }

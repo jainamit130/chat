@@ -1,6 +1,6 @@
 package com.amit.converse.chat.model;
 
-import com.amit.converse.chat.Redis.RedisSessionITransition;
+import com.amit.converse.chat.Redis.RedisSessionITransitionService;
 import com.amit.converse.chat.State.State;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +32,7 @@ public class User {
     private String username;
     private String password;
     private State state;
-    private RedisSessionITransition redisSessionTransition;
+    private RedisSessionITransitionService redisSessionTransition;
     private Instant lastSeenTimestamp;
     private Instant creationDate;
 

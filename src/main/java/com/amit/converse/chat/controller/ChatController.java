@@ -1,7 +1,8 @@
 package com.amit.converse.chat.controller;
 
-import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
+import com.amit.converse.chat.service.ClearChatService;
+import com.amit.converse.chat.service.DeleteChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,12 +11,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 public class ChatController {
-    private final ChatService chatService;
+    private final ClearChatService clearChatService;
+    private final DeleteChatService deleteChatService;
 
     @PostMapping("/chat/clearChat/{chatRoomId}")
-    public ResponseEntity clearChat(@RequestParam String chatRoomId) {
+    public ResponseEntity clearChat() {
         try {
-            chatService.clearChat();
+            clearChatService.clearChat();
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
@@ -23,9 +25,9 @@ public class ChatController {
     }
 
     @PostMapping("/chat/deleteChat/{chatRoomId}")
-    public ResponseEntity<Boolean> deleteChat(@RequestParam String chatRoomId) {
+    public ResponseEntity<Boolean> deleteChat() {
         try {
-            chatService.deleteChat();
+            deleteChatService.deleteChat();
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

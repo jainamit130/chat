@@ -2,15 +2,15 @@ package com.amit.converse.chat.Redis;
 
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 
-public class OfflineRedisSessionITransition extends RedisSessionITransition {
+public class OfflineRedisSessionITransitionService extends RedisSessionITransitionService {
 
-    public OfflineRedisSessionITransition() {
+    public OfflineRedisSessionITransitionService() {
         super(ConnectionStatus.OFFLINE);
     }
 
     // Remove User Id Key from Redis
     @Override
     public void alterUser() {
-        redisWriteService.removeUser(userId);
+        redisWriteService.removeUser(userContext.getUserId());
     }
 }

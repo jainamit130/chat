@@ -1,11 +1,13 @@
 package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.context.UserContext;
+import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
 import com.amit.converse.chat.service.AuthService;
+import com.amit.converse.chat.service.CreateUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ public class UserService {
     protected UserContext userContext;
     @Autowired
     protected UserDetailsService userDetailsService;
+    @Autowired
+    protected CreateUserService createUserService;
     @Autowired
     protected UserRepository userRepository;
     @Autowired
@@ -83,5 +87,13 @@ public class UserService {
     public UserDetails getProfileDetails(String userId) {
         if(userContext.getUserId().equals(userId)) return userDetailsService.getProfileDetails(userContext.getUser());
         return userDetailsService.getUserDetails(getUserById(userId));
+    }
+
+    public void createUser(UserDTO userDTO) throws ConverseException {
+        String username = userDTO.getUsername();
+        if(userRepository.existsByUsername(username)) {
+            throw new ConverseException("Username already exists: " + username);
+        }
+        createUserService.createUser(userDTO);
     }
 }
