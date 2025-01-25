@@ -68,6 +68,12 @@ public class UserService {
             updateContext(getContextUserIfPresent.get());
     }
 
+    public void transit() {
+        User user = userContext.getUser();
+        user.transit();
+        processUserToDB(user);
+    }
+
     public User getUserById(String userId) {
         return userRepository.findByUserId(userId)
                 .orElseThrow(() -> new ConverseException("User not found!"));

@@ -21,15 +21,10 @@ public class RedisSessionController {
     private final DirectChatRedisTransitionService directChatRedisTransitionService;
     private final GroupChatRedisTransitionService groupChatRedisTransitionService;
 
-    private void transit() {
-        User user = userService.getUserById(userContext.getUserId());
-        user.transit();
-        userService.processUserToDB(userContext.getUser());
-    }
-
     @PostMapping("/state/transit")
     public ResponseEntity transitState() {
-        transit();
+        User user = userService.getUserById(userContext.getUserId());
+        user.getState().transit();
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
