@@ -1,4 +1,4 @@
-![Animation1](https://github.com/user-attachments/assets/104d8e5d-793e-41da-bb69-ae0187b446b1)
+![Animation](https://github.com/user-attachments/assets/14389526-2e1b-4e2b-acae-3c11361e5575)
 
 ![Animation2](https://github.com/user-attachments/assets/d3901c43-80de-42a4-83fa-06c489832bb1)
 
