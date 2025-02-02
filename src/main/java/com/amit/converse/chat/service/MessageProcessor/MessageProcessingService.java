@@ -1,4 +1,4 @@
-package com.amit.converse.chat.service;
+package com.amit.converse.chat.service.MessageProcessor;
 
 import com.amit.converse.chat.service.ChatRoom.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -32,6 +32,10 @@ public class ChatService<T extends IChatRoom> {
         messageService.sendMessage(message);
     }
 
+    public List<IChatRoom> getChatRoomsByIds(List<String> chatRoomIds) {
+        return chatRoomRepository.findAllById(chatRoomIds);
+    }
+
     public IChatRoom getChatRoomById(String chatRoomId) {
         return chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ConverseChatRoomNotFoundException(chatRoomId));

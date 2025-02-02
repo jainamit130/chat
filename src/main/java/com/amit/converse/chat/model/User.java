@@ -26,6 +26,9 @@ public class User {
     private Set<String> chatRoomIds = new HashSet<>();
 
     @Builder.Default
+    private Set<String> exitedChatRoomIds = new HashSet<>();
+
+    @Builder.Default
     private Set<String> adminRoleChatRoomIds = new HashSet<>();
 
     private String status;
@@ -38,11 +41,15 @@ public class User {
 
     public void disconnectChat(String chatRoomId) {
         chatRoomIds.remove(chatRoomId);
+        exitedChatRoomIds.add(chatRoomId);
     }
 
     public void connectChat(String chatRoomId) {
+        exitedChatRoomIds.remove(chatRoomId);
         chatRoomIds.add(chatRoomId);
     }
+
+    public boolean isExited(String chatRoomId) { return exitedChatRoomIds.contains(chatRoomId); }
 
     public void addChatRoom(String chatRoomId){
         chatRoomIds.add(chatRoomId);

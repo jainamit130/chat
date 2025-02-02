@@ -8,4 +8,8 @@ import org.springframework.stereotype.Component;
 @Data
 public class ChatContext<T extends IChatRoom> {
     protected T chatRoom;
+
+    public String getChatRoomId() {
+        return chatRoom.getId();
+    }
 }

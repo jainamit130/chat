@@ -8,6 +8,7 @@ import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.Enums.MessageType;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.repository.ChatMessageRepository;
+import com.amit.converse.chat.service.MessageProcessor.MessageProcessingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

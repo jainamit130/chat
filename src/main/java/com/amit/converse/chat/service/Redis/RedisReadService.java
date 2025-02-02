@@ -22,6 +22,19 @@ public class RedisReadService implements IRedisReadService {
         return redisTemplate.hasKey(userId.toString());
     }
 
+    // Active Users - meaning users online and inside the chatRoom
+    public Set<String> filterActiveUsers(String chatRoomId, List<String> userIds) {
+        Set<String> activeUsers = new HashSet<>();
+
+        for (String userId : userIds) {
+            if (isUserInChatRoom(chatRoomId,userId)) {
+                activeUsers.add(userId);
+            }
+        }
+
+        return activeUsers;
+    }
+
     public Set<String> filterOnlineUsers(List<String> userIds) {
         Set<String> onlineUsers = new HashSet<>();
 

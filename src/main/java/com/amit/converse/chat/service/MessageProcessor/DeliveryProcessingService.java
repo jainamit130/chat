@@ -1,0 +1,36 @@
+package com.amit.converse.chat.service.MessageProcessor;
+
+import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.model.Messages.Message;
+import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.ChatRoom.ChatService;
+import com.amit.converse.chat.service.Redis.RedisReadService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class DeliveryProcessingService implements deliveryProcessor {
+
+    @Autowired
+    private ChatService chatService;
+
+    @Autowired
+    private RedisReadService redisReadService;
+
+    @Autowired
+    private MarkDeliveredService markDeliveredService;
+
+    @Override
+    public void deliver(User user) {
+        // all undelivered messages in all chatRooms must be marked delivered
+        List<IChatRoom> chatRooms = chatService.getChatRoomsByIds(List.of(user.getChatRoomIds()));
+        markDeliveredService.deliver(chatRooms,user.getUserId());
+    }
+
+    @Override
+    public void deliver(Message message) {
+        markDeliveredService.deliver(message);
+    }
+}
