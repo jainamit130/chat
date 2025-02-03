@@ -5,6 +5,9 @@ import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.Notification.ChatTransactionNotification;
 import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.MessageService.ChatMessageService;
+import com.amit.converse.chat.service.MessageService.NotificationMessageService;
+import com.amit.converse.chat.service.MessageService.SaveMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,17 +26,22 @@ public abstract class NotifyGroupTransactionService {
     @Autowired
     protected ChatNotificationService chatNotificationService;
 
+    @Autowired
+    protected SaveMessageService saveMessageService;
+
     protected abstract String getTransactionMessage();
 
-    protected final String getMessage(User joinedUser) {
-        return userContext.getUser().getUsername() + " " + getTransactionMessage() + " " + joinedUser.getUsername();
+    protected final String generateMessage(User joinedUser) {
+        String message = userContext.getUser().getUsername() + " " + getTransactionMessage() + " " + joinedUser.getUsername();
+        saveMessageService.saveMessage(NotificationMessageService.generateNotificationMessage(chatContext.getChatRoomId(),message));
+        return message;
     }
 
     public final void notifyGroup(List<User> joinedUsers) {
         ITransactable chatRoom = chatContext.getChatRoom();
         List<String> joinNotifications = new ArrayList<>();
         for(User joinedUser : joinedUsers) {
-            joinNotifications.add(getMessage(joinedUser));
+            joinNotifications.add(generateMessage(joinedUser));
         }
         ChatTransactionNotification notification = ChatTransactionNotification.builder().notifications(joinNotifications).build();
         chatNotificationService.sendNotification(chatRoom.getId(),notification);

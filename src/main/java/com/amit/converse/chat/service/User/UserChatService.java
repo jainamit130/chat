@@ -35,7 +35,7 @@ public abstract class UserChatService<T extends IChatRoom> {
     private void disconnectChat(User user) {
         IChatRoom chatRoom = chatContext.getChatRoom();
         chatRoom.deleteChat(user.getUserId());
-        user.disconnectChat(chatRoom.getId());
+        user.disconnectChat(chatRoom.getId(), chatRoom.getUnreadMessageCount(user.getUserId()));
     }
 
     public abstract IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat);

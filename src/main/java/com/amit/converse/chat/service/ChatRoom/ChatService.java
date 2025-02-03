@@ -5,7 +5,7 @@ import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
-import com.amit.converse.chat.service.MessageService.MessageService;
+import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ public class ChatService<T extends IChatRoom> {
     @Autowired
     protected ChatContext<T> context;
     @Autowired
-    protected MessageService messageService;
+    protected ChatMessageService chatMessageService;
     @Autowired
     protected IChatRoomRepository chatRoomRepository;
     @Autowired
@@ -29,7 +29,7 @@ public class ChatService<T extends IChatRoom> {
     }
 
     public void sendMessage(ChatMessage message) throws InterruptedException {
-        messageService.sendMessage(message);
+        chatMessageService.sendMessage(message);
     }
 
     public List<IChatRoom> getChatRoomsByIds(List<String> chatRoomIds) {

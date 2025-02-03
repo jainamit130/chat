@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 
@@ -13,13 +14,14 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Document(collection = "messages")
 public abstract class Message {
     @Id
     private String id;
-    private String chatRoomId;
-    private String content;
-    private Instant timestamp;
-    private MessageMetaData metaData;
+    protected String chatRoomId;
+    protected String content;
+    protected Instant timestamp;
+    protected MessageMetaData metaData;
 
     public abstract void readMessage(String timestamp,String userId);
 

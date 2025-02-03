@@ -18,6 +18,6 @@ public class Offline extends State {
     public void transit() {
         user.setState(new Online());
         userService.transit();
-        messageProcessingService.deliver();
+        deliveryProcessingService.deliver(user);
     }
 }

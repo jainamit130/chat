@@ -3,12 +3,12 @@ package com.amit.converse.chat.service.ChatRoom;
 import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.exceptions.ConverseException;
-import com.amit.converse.chat.service.MessageService.MessageService;
+import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GroupMessageService extends MessageService<ITransactable> {
+public class GroupChatMessageService extends ChatMessageService<ITransactable> {
 
     @Autowired
     private UserContext userContext;

@@ -43,7 +43,7 @@ public class GroupChatUserService extends UserChatService<ITransactable> {
     public void exit(List<User> users) {
         IChatRoom chatRoom = chatContext.getChatRoom();
         for(User user:users) {
-            user.disconnectChat(chatRoom.getId());
+            user.disconnectChat(chatRoom.getId(),chatRoom.getUnreadMessageCount(user.getUserId()));
         }
         processUsersToDB(users);
     }

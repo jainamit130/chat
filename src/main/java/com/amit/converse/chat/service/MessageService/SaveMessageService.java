@@ -1,16 +1,16 @@
 package com.amit.converse.chat.service.MessageService;
 
-import com.amit.converse.chat.model.Messages.ChatMessage;
+import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.repository.Message.IMessageRepository;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
 public class SaveMessageService {
-    private final IMessageRepository messageRepository;
+    @Autowired
+    private IMessageRepository messageRepository;
 
-    public ChatMessage saveMessage(ChatMessage message) {
+    public Message saveMessage(Message message) {
         return messageRepository.save(message);
     }
 }

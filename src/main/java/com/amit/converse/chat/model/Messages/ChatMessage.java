@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Document(collection = "chatMessages")
+@Document(collection = "messages")
 @CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
 @EqualsAndHashCode(callSuper = true)
 public class ChatMessage extends Message {

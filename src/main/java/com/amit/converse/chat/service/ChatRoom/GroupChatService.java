@@ -15,7 +15,7 @@ public class GroupChatService extends ChatService<GroupChat> {
     @Autowired
     private IGroupChatRepository groupRepository;
     @Autowired
-    private GroupMessageService messageService;
+    private GroupChatMessageService messageService;
 
     @Override
     public GroupChat getChatRoomById(String chatRoomId) {

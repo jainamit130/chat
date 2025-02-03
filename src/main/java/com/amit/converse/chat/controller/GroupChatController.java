@@ -23,7 +23,7 @@ public class GroupChatController {
     private final ExitService exitService;
 
     @PostMapping("/send/message/{chatRoomId}")
-    public ResponseEntity sendMessage(@RequestParam String chatRoomId, @RequestBody ChatMessage chatMessage) {
+    public ResponseEntity sendMessage(@RequestBody ChatMessage chatMessage) {
         try{
             groupChatService.sendMessage(chatMessage);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -33,7 +33,7 @@ public class GroupChatController {
     }
 
     @PostMapping("/add/users/{chatRoomId}")
-    public ResponseEntity joinChat(@RequestParam String chatRoomId, @RequestBody List<String> userIds) {
+    public ResponseEntity joinChat(@RequestBody List<String> userIds) {
         try {
             joinService.join(userIds);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
@@ -43,7 +43,7 @@ public class GroupChatController {
     }
 
     @PostMapping("/remove/users/{chatRoomId}")
-    public ResponseEntity<Boolean> exitChat(@RequestParam String chatRoomId, @RequestBody List<String> userIds) {
+    public ResponseEntity<Boolean> exitChat(@RequestBody List<String> userIds) {
         try {
             exitService.leave(userIds);
             return new ResponseEntity(HttpStatus.NO_CONTENT);

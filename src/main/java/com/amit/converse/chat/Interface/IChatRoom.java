@@ -16,6 +16,8 @@ public interface IChatRoom {
     Boolean isDeletable();
     String getId();
     Map<String, Instant> getUserFetchStartTimeMap();
+    Instant getLastVisitedTimestamp(String userId);
+    Integer getUnreadMessageCount(String userId);
     Instant getCreatedAt();
     Set<String> getDeletedForUsers();
     ChatRoomType getChatRoomType();

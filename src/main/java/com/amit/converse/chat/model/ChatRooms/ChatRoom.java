@@ -26,7 +26,6 @@ public abstract class ChatRoom implements IChatRoom {
     protected List<String> userIds;
     protected Instant createdAt;
     protected transient ChatMessage latestMessage;
-    protected transient Integer unreadMessageCount;
     @NotBlank
     protected ChatRoomType chatRoomType;
 
@@ -44,7 +43,7 @@ public abstract class ChatRoom implements IChatRoom {
     private Map<String, Integer> readMessageCount = new HashMap<>();
 
     @Builder.Default
-    private Map<String, Integer> deliveredMessageCount = new HashMap<>();
+    private Map<String, Instant> lastVisitedTimestamp = new HashMap<>();
 
     public void setUserIds(List<String> userIds) {
         Set<String> userIdsSet = Set.copyOf(userIds);
@@ -77,11 +76,26 @@ public abstract class ChatRoom implements IChatRoom {
         setUserFetchStartTimeMap(userFetchStartTimeMap);
     }
 
-    public void deliverMessages(String userId) {
-        deliveredMessageCount.put(userId,totalMessageCount);
+    private void updateLastVisitedTimestamp(String userId) {
+        lastVisitedTimestamp.put(userId,Instant.now());
+    }
+
+    @Override
+    public Instant getLastVisitedTimestamp(String userId) {
+        return lastVisitedTimestamp.getOrDefault(userId,Instant.now());
+    }
+
+    private Integer getReadMessageCount(String userId) {
+        return readMessageCount.getOrDefault(userId,0);
+    }
+
+    @Override
+    public Integer getUnreadMessageCount(String userId) {
+        return getTotalMessageCount()-getReadMessageCount(userId);
     }
 
     public void readMessages(String userId) {
+        updateLastVisitedTimestamp(userId);
         readMessageCount.put(userId,totalMessageCount);
     }
 
