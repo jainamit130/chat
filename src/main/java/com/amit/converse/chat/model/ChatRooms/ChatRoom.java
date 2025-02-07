@@ -4,9 +4,7 @@ import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
 import jakarta.validation.constraints.NotBlank;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,9 +14,9 @@ import java.time.Instant;
 import java.util.*;
 
 @Data
-@Builder
 @SuperBuilder
 @AllArgsConstructor
+@NoArgsConstructor
 @Document(collection = "chatRooms")
 public abstract class ChatRoom implements IChatRoom {
     @Id

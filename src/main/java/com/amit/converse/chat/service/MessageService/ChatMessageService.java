@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public abstract class ChatMessageService<T extends IChatRoom> {
@@ -28,6 +27,8 @@ public abstract class ChatMessageService<T extends IChatRoom> {
     protected MessageProcessingService messageProcessingService;
     @Autowired
     protected ChatNotificationService chatNotificationService;
+    @Autowired
+    protected UserNotificationService userNotificationService;
     @Autowired
     private UserChatService userChatService;
     @Autowired
@@ -46,7 +47,7 @@ public abstract class ChatMessageService<T extends IChatRoom> {
     protected abstract void authoriseSender() throws ConverseException;
 
     public void sendMessageMarkedNotification(String chatRoomId, String senderId, List<String> messageIds) {
-        chatNotificationService.sendNotification(chatRoomId, new MessageMarkedNotification(senderId,messageIds));
+        userNotificationService.sendNotification(senderId, new MessageMarkedNotification(chatRoomId,messageIds));
     }
 
     public void sendMessageNotification(String chatRoomId, ChatMessage message) {

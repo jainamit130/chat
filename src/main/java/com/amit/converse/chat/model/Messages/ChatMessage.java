@@ -11,9 +11,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode(callSuper = false)
 @Document(collection = "messages")
 @CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
-@EqualsAndHashCode(callSuper = true)
 public class ChatMessage extends Message {
     private String senderId;
     private MessageStatus status;
@@ -26,12 +26,12 @@ public class ChatMessage extends Message {
     }
 
     @Override
-    public void readMessage(String timestamp,String userId) {
-        messageMetaData.readMessage(timestamp,userId);
+    public Integer readMessage(String timestamp,String userId) {
+        return messageMetaData.readMessage(timestamp,userId);
     }
 
     @Override
-    public void deliverMessage(String timestamp,String userId) {
-        messageMetaData.deliverMessage(timestamp,userId);
+    public Integer deliverMessage(String timestamp,String userId) {
+        return messageMetaData.deliverMessage(timestamp,userId);
     }
 }

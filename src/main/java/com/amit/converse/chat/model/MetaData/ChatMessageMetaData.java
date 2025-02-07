@@ -1,9 +1,6 @@
 package com.amit.converse.chat.model.MetaData;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -14,6 +11,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = false)
 @Builder
 public class ChatMessageMetaData extends MessageMetaData {
     @Builder.Default
@@ -33,23 +31,24 @@ public class ChatMessageMetaData extends MessageMetaData {
 
 
     @Override
-    public void readMessage(String timestamp,String userId) {
+    public Integer readMessage(String timestamp,String userId) {
         if(!readRecipients.contains(userId)){
             readRecipients.add(userId);
             Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
             userIds.add(userId);
             readReceiptsByTime.put(timestamp,userIds);
         }
+        return readRecipients.size();
     }
 
     @Override
-    public void deliverMessage(String timestamp, String userId) {
+    public Integer deliverMessage(String timestamp, String userId) {
         if(!deliveredRecipients.contains(userId)) {
             deliveredRecipients.add(userId);
             Set<String> userIds = deliveryReceiptsByTime.getOrDefault(timestamp, new HashSet());
             userIds.add(userId);
             deliveryReceiptsByTime.put(timestamp, userIds);
         }
-        return;
+        return deliveredRecipients.size();
     }
 }

@@ -8,8 +8,7 @@ import java.util.List;
 
 @Data
 @Builder
-@SuperBuilder
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 public class DirectChat extends ChatRoom {
     @NotBlank
     private transient String name;

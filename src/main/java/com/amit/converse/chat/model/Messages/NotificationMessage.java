@@ -5,21 +5,19 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
 @Builder
+@EqualsAndHashCode(callSuper = false)
 @Document(collection = "messages")
 @CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
-@EqualsAndHashCode(callSuper = true)
 public class NotificationMessage extends Message {
 
     @Override
-    public void readMessage(String timestamp, String userId) {
-
+    public Integer readMessage(String timestamp, String userId) {
+        return 0;
     }
 
     @Override
-    public void deliverMessage(String timestamp, String userId) {
-
+    public Integer deliverMessage(String timestamp, String userId) {
+        return 0;
     }
 }

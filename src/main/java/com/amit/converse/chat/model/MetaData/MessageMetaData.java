@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,7 +12,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@SuperBuilder
 public abstract class MessageMetaData {
     @Builder.Default
     private boolean isEncrypted = false;
@@ -19,9 +20,9 @@ public abstract class MessageMetaData {
     @Builder.Default
     private Set<String> deletedForUsers = new HashSet<>();
 
-    public abstract void readMessage(String timestamp,String userId);
+    public abstract Integer readMessage(String timestamp,String userId);
 
-    public abstract void deliverMessage(String timestamp,String userId);
+    public abstract Integer deliverMessage(String timestamp,String userId);
 
     public void addUserToDeletedForUsers(String userId) {
         deletedForUsers.add(userId);

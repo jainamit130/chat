@@ -10,8 +10,8 @@ import java.util.*;
 
 @Data
 @Builder
+@EqualsAndHashCode(callSuper = false)
 @Document(collection = "chatRooms")
-@EqualsAndHashCode(callSuper = true)
     public class GroupChat extends ChatRoom implements ITransactable {
     @NotBlank
     private String name;

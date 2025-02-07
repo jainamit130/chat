@@ -59,7 +59,7 @@ public class ChatService<T extends IChatRoom> {
     }
 
     public List<String> getOnlineUserIdsOfChat() {
-        List<String> onlineUserIds = new ArrayList<>(redisReadService.filterOnlineUsers(context.getChatRoom().getUserIds()));
+        List<String> onlineUserIds = new ArrayList<>(redisReadService.filterOnlineUsers(context.getChatRoom()));
         return onlineUserIds;
     }
 

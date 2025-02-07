@@ -9,5 +9,7 @@ public class MessageProcessingService {
     @Autowired
     private ChatService chatService;
 
+    @Autowired
+    private DeliveryProcessingService deliveryProcessingService;
 
 }

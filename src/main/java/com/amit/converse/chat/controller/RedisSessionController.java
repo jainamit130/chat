@@ -4,7 +4,6 @@ import com.amit.converse.chat.Redis.DirectChatRedisTransitionService;
 import com.amit.converse.chat.Redis.GroupChatRedisTransitionService;
 import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
-import com.amit.converse.chat.dto.OnlineUsersDto;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.UserService;
 import lombok.AllArgsConstructor;

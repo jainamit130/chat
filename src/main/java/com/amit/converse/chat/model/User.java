@@ -4,6 +4,7 @@ import com.amit.converse.chat.Redis.RedisSessionITransitionService;
 import com.amit.converse.chat.State.Offline;
 import com.amit.converse.chat.State.Online;
 import com.amit.converse.chat.State.State;
+import com.amit.converse.chat.service.MessageProcessor.IDeliverableEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +21,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Document(collection = "user")
-public class User {
+public class User implements IDeliverableEntity {
 
     @Id
     private String id;

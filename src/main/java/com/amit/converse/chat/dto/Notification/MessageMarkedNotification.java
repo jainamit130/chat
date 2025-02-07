@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import java.util.List;
 
 @AllArgsConstructor
-public class MessageMarkedNotification implements IChatNotification {
-    private String senderId;
+public class MessageMarkedNotification implements IUserNotification {
+    private String chatRoomId;
     private List<String> messageIds;
 }

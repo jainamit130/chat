@@ -23,12 +23,16 @@ public class ChatContextFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String chatRoomId = request.getParameter("chatRoomId");
-        if(chatRoomId!=null) {
-            IChatRoom directChat = chatService.getChatRoomById(chatRoomId);
-            if(directChat!=null) {
-                chatContext.setChatRoom(directChat);
+        if (chatRoomId != null) {
+            try {
+                IChatRoom chatRoom = chatService.getChatRoomById(chatRoomId);
+                if (chatRoom != null) {
+                    chatContext.setChatRoom(chatRoom);
+                }
+            } catch (Exception e) {
             }
         }
         filterChain.doFilter(request, response);
     }
+
 }

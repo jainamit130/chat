@@ -8,8 +8,8 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @Builder
+@EqualsAndHashCode(callSuper = false)
 @Document(collection = "chatRooms")
-@EqualsAndHashCode(callSuper = true)
 public class SelfChat extends ChatRoom {
 
     @NotNull

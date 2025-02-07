@@ -1,9 +1,11 @@
 package com.amit.converse.chat.service.Redis;
 
+import com.amit.converse.chat.Interface.IChatRoom;
 import lombok.AllArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -23,11 +25,12 @@ public class RedisReadService implements IRedisReadService {
     }
 
     // Active Users - meaning users online and inside the chatRoom
-    public Set<String> filterActiveUsers(String chatRoomId, List<String> userIds) {
+    public Set<String> filterActiveUsers(IChatRoom chatRoom) {
+        List<String> onlineUserIds = new ArrayList<>(filterOnlineUsers(chatRoom));
         Set<String> activeUsers = new HashSet<>();
 
-        for (String userId : userIds) {
-            if (isUserInChatRoom(chatRoomId,userId)) {
+        for (String userId : onlineUserIds) {
+            if (isUserInChatRoom(chatRoom.getId(),userId)) {
                 activeUsers.add(userId);
             }
         }
@@ -35,10 +38,10 @@ public class RedisReadService implements IRedisReadService {
         return activeUsers;
     }
 
-    public Set<String> filterOnlineUsers(List<String> userIds) {
+    public Set<String> filterOnlineUsers(IChatRoom chatRoom) {
         Set<String> onlineUsers = new HashSet<>();
 
-        for (String userId : userIds) {
+        for (String userId : chatRoom.getUserIds()) {
             if (isUserOnline(userId)) {
                 onlineUsers.add(userId);
             }
