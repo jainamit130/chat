@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DeliveryProcessingService implements deliveryProcessor {
+public class ReadProcessingService implements readProcessor {
 
     @Autowired
     private ChatService chatService;
@@ -20,22 +20,22 @@ public class DeliveryProcessingService implements deliveryProcessor {
     private RedisReadService redisReadService;
 
     @Autowired
-    private MarkDeliveredService markDeliveredService;
+    private MarkReadService markReadService;
 
     @Override
-    public void deliver(User user) {
+    public void read(User user) {
         // all undelivered messages in all chatRooms must be marked delivered
         List<IChatRoom> chatRooms = chatService.getChatRoomsByIds(List.of(user.getChatRoomIds()));
         for(IChatRoom chatRoom:chatRooms) {
-            markDeliveredService.mark(chatRoom,user);
+            markReadService.mark(chatRoom,user);
         }
-        markDeliveredService.saveAllMarkedMessages();
+        markReadService.saveAllMarkedMessages();
     }
 
     @Override
-    public void deliver(ChatMessage message) {
+    public void read(ChatMessage message) {
         IChatRoom chatRoom = chatService.getChatRoomById(message.getChatRoomId());
-        markDeliveredService.mark(chatRoom,message);
-        markDeliveredService.saveAllMarkedMessages();
+        markReadService.mark(chatRoom,message);
+        markReadService.saveAllMarkedMessages();
     }
 }

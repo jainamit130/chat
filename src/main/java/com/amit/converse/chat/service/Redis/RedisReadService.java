@@ -38,6 +38,18 @@ public class RedisReadService implements IRedisReadService {
         return activeUsers;
     }
 
+    public Set<String> filterActiveUsers(IChatRoom chatRoom,List<String> onlineUserIds) {
+        Set<String> activeUsers = new HashSet<>();
+
+        for (String userId : onlineUserIds) {
+            if (isUserInChatRoom(chatRoom.getId(),userId)) {
+                activeUsers.add(userId);
+            }
+        }
+
+        return activeUsers;
+    }
+
     public Set<String> filterOnlineUsers(IChatRoom chatRoom) {
         Set<String> onlineUsers = new HashSet<>();
 
