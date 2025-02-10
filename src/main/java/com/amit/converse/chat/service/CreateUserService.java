@@ -3,9 +3,15 @@ package com.amit.converse.chat.service;
 import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.SelfChatUserService;
+import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class CreateUserService {
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     private SelfChatUserService selfChatUserService;
@@ -21,7 +27,7 @@ public class CreateUserService {
 
 
     public void createUser(UserDTO userDTO) {
-        getUser(userDTO);
+        userService.createUser(getUser(userDTO));
         selfChatUserService.getSelfChatId();
     }
 

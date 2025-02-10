@@ -9,4 +9,9 @@ import org.springframework.stereotype.Component;
 public class UserContext {
     protected String userId;
     protected User user;
+
+    public void setUser(User user) {
+        setUserId(user.getUserId());
+        this.user = user;
+    }
 }

@@ -6,6 +6,7 @@ import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.List;
 public class DeliveryProcessingService implements deliveryProcessor {
 
     @Autowired
+    @Lazy
     private ChatService chatService;
 
     @Autowired

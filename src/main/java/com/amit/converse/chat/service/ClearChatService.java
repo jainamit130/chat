@@ -25,9 +25,8 @@ public class ClearChatService {
     public void clearChat() {
         String contextUserId = userContext.getUserId();
         IChatRoom chatRoom = context.getChatRoom();
-        Map<String, Instant> userFetchStartTimeMap = chatRoom.getUserFetchStartTimeMap();
+        Instant lastClearedTimestamp = chatRoom.getUserFetchStartTime(contextUserId);
         chatService.clearChat(contextUserId);
-        Instant lastClearedTimestamp = userFetchStartTimeMap.getOrDefault(contextUserId,chatRoom.getCreatedAt());
         deleteMessageService.deleteMessagesForUserFromTillNow(chatRoom,lastClearedTimestamp,contextUserId);
     }
 }

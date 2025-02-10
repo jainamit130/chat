@@ -3,7 +3,7 @@ type ChatRoom {
     name: String!
     userIds: [String!]!
     chatRoomType: ChatRoomType!
-    createdBy: String!
+    createdBy: String
     createdAt: String!
     unreadMessageCount: Int!
     latestMessage: ChatMessage
@@ -20,7 +20,6 @@ type ChatMessage {
     status: MessageStatus!
     content: String!
     type: String
-    isEncrypted: Boolean!
     user: User!
     deletedForEveryone: Boolean
 }

@@ -6,6 +6,7 @@ import com.amit.converse.chat.dto.Notification.MessageMarkedNotification;
 import com.amit.converse.chat.dto.Notification.MessageNotification;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.Messages.ChatMessage;
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.Message.IChatMessageRepository;
 import com.amit.converse.chat.service.MessageProcessor.MessageProcessingService;
 import com.amit.converse.chat.service.Notification.ChatNotificationService;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public abstract class ChatMessageService<T extends IChatRoom> {
+public class ChatMessageService<T extends IChatRoom> {
 
     @Autowired
     protected ChatContext<T> chatContext;
@@ -40,11 +41,20 @@ public abstract class ChatMessageService<T extends IChatRoom> {
 
     public void saveMessages(List<ChatMessage> messages) { chatMessageRepository.saveAll(messages); }
 
-    public List<ChatMessage> getMessagesOfChatFrom(String chatRoomId, String userId, Instant from) {
-        return chatMessageRepository.findMessagesOfChatForUserFrom(chatRoomId,userId,from);
+    public List<ChatMessage> getMessagesOfChatFrom(IChatRoom chatRoom) {
+        User user = userChatService.getContextUser();
+        Instant fromInstant = chatRoom.getUserFetchStartTime(user.getUserId());
+        return getMessagesOfChatFrom(chatRoom,user,fromInstant);
     }
 
-    protected abstract void authoriseSender() throws ConverseException;
+    public List<ChatMessage> getMessagesOfChatFrom(IChatRoom chatRoom, User user, Instant fromInstant) {
+        return chatMessageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
+    }
+
+    protected void authoriseSender() throws ConverseException {
+        // all direct send messages are valid. No block feature yet.
+        return;
+    };
 
     public void sendMessageMarkedNotification(String chatRoomId, String senderId, List<String> messageIds) {
         userNotificationService.sendNotification(senderId, new MessageMarkedNotification(chatRoomId,messageIds));
@@ -55,11 +65,11 @@ public abstract class ChatMessageService<T extends IChatRoom> {
     }
 
     public final void sendMessage(ChatMessage message) throws InterruptedException {
-        T chatRoom = chatContext.getChatRoom();
+        IChatRoom chatRoom = chatContext.getChatRoom();
         authoriseSender();
         ChatMessage savedMessage = saveMessage(message);
         sendMessageNotification(chatRoom.getId(),savedMessage);
         userChatService.connectChat(new ArrayList<>(chatRoom.getDeletedForUsers()));
-        messageProcessingService.processMessageAfterSave(chatContext.getChatRoom().getId());
+        messageProcessingService.process(message);
     }
 }

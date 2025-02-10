@@ -24,6 +24,6 @@ public class SelfChatService extends ChatService<SelfChat>{
         if(selfChat.isPresent()) {
             return selfChat.get();
         }
-        return CreateSelfChatService.getSelfChat(user.getUsername(),user.getUserId());
+        return saveSelfChatToDB(CreateSelfChatService.getSelfChat(user.getUsername(),user.getUserId()));
     }
 }

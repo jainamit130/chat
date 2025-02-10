@@ -48,11 +48,6 @@ public class GroupChatUserService extends UserChatService<ITransactable> {
         processUsersToDB(users);
     }
 
-    public GroupChatOnlineUsersDto getOnlineUsersDTO(List<String> onlineUserIds) {
-        List<User> onlineUsers = getUsersFromRepo(onlineUserIds);
-        return GroupChatOnlineUsersDto.builder().onlineUsers(processUsersToUsernames(onlineUsers)).build();
-    }
-
     public GroupDetails getGroupDetails() {
         IChatRoom chatRoom = chatContext.getChatRoom();
         List<User> users = getUsersFromRepo(chatRoom.getUserIds());
@@ -65,6 +60,6 @@ public class GroupChatUserService extends UserChatService<ITransactable> {
     }
 
     public List<String> getCommonChatIds(String userId) {
-        return groupChatService.getCommonChats(userContext.getUserId(),userId).stream().map(groupChat -> groupChat.getId()).collect(Collectors.toList());
+        return groupChatService.getCommonChats(getContextUser().getUserId(),userId).stream().map(groupChat -> groupChat.getId()).collect(Collectors.toList());
     }
 }

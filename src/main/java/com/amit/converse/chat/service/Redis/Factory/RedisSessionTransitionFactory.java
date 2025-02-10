@@ -2,18 +2,19 @@ package com.amit.converse.chat.service.Redis.Factory;
 
 import com.amit.converse.chat.Redis.OfflineRedisSessionITransitionService;
 import com.amit.converse.chat.Redis.OnlineRedisSessionITransitionService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-@RequiredArgsConstructor
+@Configuration
 public class RedisSessionTransitionFactory {
-    private final OnlineRedisSessionITransitionService onlineRedisSessionTransition;
-    private final OfflineRedisSessionITransitionService offlineRedisSessionTransition;
 
+    @Bean
     public OnlineRedisSessionITransitionService getOnlineRedisSessionTransition() {
-        return onlineRedisSessionTransition;
+        return new OnlineRedisSessionITransitionService();
     }
 
+    @Bean
     public OfflineRedisSessionITransitionService getOfflineRedisSessionTransition() {
-        return offlineRedisSessionTransition;
+        return new OfflineRedisSessionITransitionService();
     }
 }

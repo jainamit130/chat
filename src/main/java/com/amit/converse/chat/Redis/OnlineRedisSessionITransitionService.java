@@ -1,10 +1,12 @@
 package com.amit.converse.chat.Redis;
 
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
+import org.springframework.stereotype.Service;
 
+@Service
 public class OnlineRedisSessionITransitionService extends RedisSessionITransitionService {
 
-    public OnlineRedisSessionITransitionService(String userId) {
+    public OnlineRedisSessionITransitionService() {
         super(ConnectionStatus.ONLINE);
     }
 

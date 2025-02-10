@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.print.attribute.HashPrintServiceAttributeSet;
 import java.time.Instant;
 import java.util.*;
 
@@ -61,6 +60,9 @@ public abstract class ChatRoom implements IChatRoom {
     public Integer getTotalMemberCount() {
         return getMemberCount();
     }
+
+    @Override
+    public Instant getUserFetchStartTime(String userId) { return userFetchStartTimeMap.getOrDefault(userId,getCreatedAt()); }
 
     @Override
     public void deleteChat(String userId) {

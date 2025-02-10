@@ -4,6 +4,7 @@ import com.amit.converse.chat.Interface.ITransition;
 import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
+import com.amit.converse.chat.service.MessageProcessor.ReadProcessingService;
 import com.amit.converse.chat.service.Redis.RedisChatRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,8 @@ public abstract class ChatRoomRedisTransitionService implements ITransition {
     private ChatContext chatContext;
     @Autowired
     private RedisChatRoomService redisChatRoomService;
+    @Autowired
+    private ReadProcessingService readProcessingService;
 
     public abstract IOnlineUsersDTO transitAndGetOnlineUsers();
 
@@ -23,5 +26,6 @@ public abstract class ChatRoomRedisTransitionService implements ITransition {
     public void transit() {
         redisChatRoomService.removeUserFromChatRoom(userContext.getUserId());
         redisChatRoomService.addUserIdToChatRoom(chatContext.getChatRoom().getId(),userContext.getUserId());
+        readProcessingService.read(userContext.getUser());
     }
 }

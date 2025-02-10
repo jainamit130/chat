@@ -23,16 +23,16 @@ public class UserService {
     @Autowired
     protected UserDetailsService userDetailsService;
     @Autowired
-    protected CreateUserService createUserService;
-    @Autowired
     protected UserRepository userRepository;
     @Autowired
     private AuthService authService;
 
     private void updateContext(User user) {
-        if(user.getUserId().equals(userContext.getUserId())) {
-            userContext.setUser(user);
-        }
+        userContext.setUser(user);
+    }
+
+    public User getUserContext() {
+        return userContext.getUser();
     }
 
     private Optional<User> getContextUserIfPresentInUsers(List<User> users) {
@@ -56,9 +56,7 @@ public class UserService {
     }
 
     public void processUserToDB(User user) {
-        userRepository.save(user);
-        if(user.equals(userContext.getUser()))
-            updateContext(userRepository.save(user));
+        updateContext(userRepository.save(user));
     }
 
     public void processUsersToDB(List<User> users) {
@@ -95,11 +93,11 @@ public class UserService {
         return userDetailsService.getUserDetails(getUserById(userId));
     }
 
-    public void createUser(UserDTO userDTO) throws ConverseException {
-        String username = userDTO.getUsername();
+    public void createUser(User user) throws ConverseException {
+        String username = user.getUsername();
         if(userRepository.existsByUsername(username)) {
             throw new ConverseException("Username already exists: " + username);
         }
-        createUserService.createUser(userDTO);
+        processUserToDB(user);
     }
 }

@@ -1,12 +1,11 @@
 package com.amit.converse.chat.State;
 
-import org.springframework.stereotype.Component;
+import com.amit.converse.chat.Redis.OfflineRedisSessionITransitionService;
 
-@Component
 public class Online extends State {
 
     public Online() {
-        user.setRedisSessionTransition(redisSessionTransitionFactory.getOfflineRedisSessionTransition());
+        user.setRedisSessionTransition(new OfflineRedisSessionITransitionService());
     }
 
     @Override

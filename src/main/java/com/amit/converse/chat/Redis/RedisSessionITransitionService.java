@@ -7,7 +7,9 @@ import com.amit.converse.chat.service.Redis.RedisWriteService;
 import com.amit.converse.chat.service.User.UserChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Service;
 
+@Service
 public abstract class RedisSessionITransitionService implements ITransition {
     @Autowired
     protected UserChatService userChatService;

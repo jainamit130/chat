@@ -30,11 +30,12 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
         processChatRoomToDB(directChat);
     }
 
+    @Override
     public DirectChatOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIds) {
         DirectChatOnlineUsersDTO.DirectChatOnlineUsersDTOBuilder directChatOnlineUsersDTOBuilder = DirectChatOnlineUsersDTO.builder();
         List<User> onlineUsers = getUsersFromRepo(onlineUserIds);
         Optional<User> optionalCounterPartUser = onlineUsers.stream()
-                .filter(user -> !user.getUserId().equals(userContext.getUserId()))
+                .filter(user -> !user.getUserId().equals(getContextUser().getUserId()))
                 .findFirst();
         if(optionalCounterPartUser.isPresent()) {
             User counterPartUser = optionalCounterPartUser.get();
@@ -44,7 +45,7 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
     }
 
     public String getCommonChatId(String userId) {
-        Optional<DirectChat> directChat = directChatService.getCommonChat(userContext.getUser().getUserId(),userId);
+        Optional<DirectChat> directChat = directChatService.getCommonChat(getContextUser().getUserId(),userId);
         if(directChat.isPresent()) {
             return directChat.get().getId();
         }

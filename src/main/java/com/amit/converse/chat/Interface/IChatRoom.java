@@ -15,7 +15,7 @@ public interface IChatRoom {
     Integer getTotalMemberCount();
     Boolean isDeletable();
     String getId();
-    Map<String, Instant> getUserFetchStartTimeMap();
+    Instant getUserFetchStartTime(String userId);
     Instant getLastVisitedTimestamp(String userId);
     Integer getUnreadMessageCount(String userId);
     Instant getCreatedAt();

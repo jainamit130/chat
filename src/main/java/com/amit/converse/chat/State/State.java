@@ -9,9 +9,7 @@ import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-@Component
 public abstract class State implements ITransition {
-    @Autowired
     protected User user;
 
     @Autowired

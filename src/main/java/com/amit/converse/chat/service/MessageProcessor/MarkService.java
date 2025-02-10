@@ -6,6 +6,7 @@ import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -21,6 +22,7 @@ public abstract class MarkService {
     protected RedisReadService redisReadService;
 
     @Autowired
+    @Lazy
     private ChatMessageService chatMessageService;
 
     private Map<String,List<String>> senderSpecificMessageIds;
@@ -69,7 +71,7 @@ public abstract class MarkService {
 
     protected void mark(IChatRoom chatRoom, User user) {
         Instant lastDeliveredTimestamp = user.getLastSeenTimestamp();
-        List<ChatMessage> toBeDeliveredChatRoomMessages = chatMessageService.getMessagesOfChatFrom(chatRoom.getId(), user.getUserId(),lastDeliveredTimestamp);
+        List<ChatMessage> toBeDeliveredChatRoomMessages = chatMessageService.getMessagesOfChatFrom(chatRoom, user,lastDeliveredTimestamp);
         markMessages(toBeDeliveredChatRoomMessages,user.getUserId(),chatRoom.getMemberCount());
         markedMessages.addAll(toBeDeliveredChatRoomMessages);
         sendSenderSpecificMessageMarkedNotification(chatRoom,senderSpecificMessageIds);

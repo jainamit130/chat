@@ -1,9 +1,14 @@
 package com.amit.converse.chat.controller;
 
+import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.dto.UserDetails;
+import com.amit.converse.chat.service.CreateUserService;
+import com.amit.converse.chat.service.User.UserChatService;
 import com.amit.converse.chat.service.User.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,8 +19,15 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/converse/users/")
 public class UserController {
-//  private final UserServiceClient userServiceClient;
     private final UserService userService;
+    private final UserChatService userChatService;
+    protected CreateUserService createUserService;
+
+    @QueryMapping
+    public List<IChatRoom> getChatRoomsOfUser() {
+        List<IChatRoom> chatRooms=userChatService.getChatRoomsOfUser();
+        return chatRooms;
+    }
 
     @GetMapping("/get/profile/{userId}")
     public ResponseEntity<UserDetails> getProfileDetails(@RequestParam String userId) {
@@ -31,7 +43,7 @@ public class UserController {
     @PostMapping("/newUser")
     public ResponseEntity syncUsers(@RequestBody UserDTO userDTO) {
         try {
-            userService.createUser(userDTO);
+            createUserService.createUser(userDTO);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

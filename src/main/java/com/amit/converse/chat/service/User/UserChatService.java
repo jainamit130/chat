@@ -2,29 +2,31 @@ package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.context.ChatContext;
-import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.Notification.UserOnlineNotification;
+import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDto;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
 import com.amit.converse.chat.service.Notification.UserNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public abstract class UserChatService<T extends IChatRoom> {
+public class UserChatService<T extends IChatRoom> {
     @Autowired
+    @Lazy
     private UserService userService;
     @Autowired
+    @Lazy
     private ChatService chatService;
     @Autowired
     private UserNotificationService userNotificationService;
-    @Autowired
-    protected UserContext userContext;
     @Autowired
     protected ChatContext<T> chatContext;
 
@@ -38,7 +40,14 @@ public abstract class UserChatService<T extends IChatRoom> {
         user.disconnectChat(chatRoom.getId(), chatRoom.getUnreadMessageCount(user.getUserId()));
     }
 
-    public abstract IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat);
+    public User getContextUser() {
+        return userService.getUserContext();
+    }
+
+    public IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat) {
+        List<User> onlineUsers = getUsersFromRepo(onlineUserIdsOfChat);
+        return GroupChatOnlineUsersDto.builder().onlineUsers(processUsersToUsernames(onlineUsers)).build();
+    }
 
     public IOnlineUsersDTO getOnlineUsersOfChat(){
         return getOnlineUsersDTO(chatService.getOnlineUserIdsOfChat());
@@ -61,7 +70,7 @@ public abstract class UserChatService<T extends IChatRoom> {
     }
 
     public void deleteChat() {
-        User contextUser = userContext.getUser();
+        User contextUser = userService.getUserContext();
         disconnectChat(contextUser);
     }
 
@@ -81,9 +90,14 @@ public abstract class UserChatService<T extends IChatRoom> {
 
     // Notify All ChatRooms of a user about status: went online or went offline
     public void notifyStatus(ConnectionStatus status) {
-        User user = userContext.getUser();
+        User user = userService.getUserContext();
         UserOnlineNotification userOnlineNotification = UserOnlineNotification.builder().status(status).username(user.getUsername()).build();
         userNotificationService.sendNotificationToUserChats(user,userOnlineNotification);
         return;
+    }
+
+    public List<IChatRoom> getChatRoomsOfUser() {
+        User user = userService.getUserContext();
+        return chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()));
     }
 }
