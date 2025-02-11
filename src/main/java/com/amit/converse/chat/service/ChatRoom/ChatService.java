@@ -3,6 +3,7 @@ package com.amit.converse.chat.service.ChatRoom;
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
@@ -14,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class ChatService<T extends IChatRoom> {
+public class ChatService<T extends ChatRoom> {
     @Autowired
     protected ChatContext<T> context;
     @Autowired
@@ -34,7 +35,7 @@ public class ChatService<T extends IChatRoom> {
         chatMessageService.sendMessage(message);
     }
 
-    public List<IChatRoom> getChatRoomsByIds(List<String> chatRoomIds) {
+    public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds) {
         return chatRoomRepository.findAllById(chatRoomIds);
     }
 

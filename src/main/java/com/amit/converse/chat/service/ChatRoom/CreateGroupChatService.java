@@ -28,7 +28,6 @@ public class CreateGroupChatService {
         GroupChat groupChat = GroupChat.builder().build();
         groupChat.setName(name);
         groupChat.setUserIds(userIds);
-        groupChat.setChatRoomType(ChatRoomType.GROUP);
         return groupChat;
     }
 

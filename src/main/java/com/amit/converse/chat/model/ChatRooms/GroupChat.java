@@ -1,8 +1,10 @@
 package com.amit.converse.chat.model.ChatRooms;
 
 import com.amit.converse.chat.Interface.ITransactable;
+import com.amit.converse.chat.model.Enums.ChatRoomType;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -10,9 +12,21 @@ import java.util.*;
 
 @Data
 @Builder
+@TypeAlias("GROUP")
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "chatRooms")
     public class GroupChat extends ChatRoom implements ITransactable {
+
+    public GroupChat(String name, String createdBy, List<String> adminUserIds, Boolean isExited, Map<String, Instant> exitedMembers, Map<String, Instant> blindPeriod) {
+        super(ChatRoomType.GROUP);
+        this.name = name;
+        this.createdBy = createdBy;
+        this.adminUserIds = adminUserIds;
+        this.isExited = isExited;
+        this.exitedMembers = exitedMembers;
+        this.blindPeriod = blindPeriod;
+    }
+
     @NotBlank
     private String name;
     private String createdBy;
@@ -26,6 +40,10 @@ import java.util.*;
 
     @Builder.Default
     private Map<String,Instant> blindPeriod = new HashMap<>();
+
+    public GroupChat() {
+        super(ChatRoomType.GROUP);
+    }
 
     @Override
     public Integer getExitedMemberCount() {

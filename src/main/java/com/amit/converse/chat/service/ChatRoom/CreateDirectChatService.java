@@ -29,7 +29,6 @@ public class CreateDirectChatService {
             add(partUserId);
             add(counterPartUserId);
         }});
-        directChat.setChatRoomType(ChatRoomType.DIRECT);
         return directChat;
     }
 

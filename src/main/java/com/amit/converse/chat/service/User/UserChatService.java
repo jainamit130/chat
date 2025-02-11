@@ -1,11 +1,11 @@
 package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.Interface.IChatRoom;
-import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.Notification.UserOnlineNotification;
 import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDto;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
@@ -15,10 +15,11 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
-public class UserChatService<T extends IChatRoom> {
+public class UserChatService<T extends ChatRoom> {
     @Autowired
     @Lazy
     private UserService userService;
@@ -74,7 +75,8 @@ public class UserChatService<T extends IChatRoom> {
     public void connectChat(List<String> userIds,IChatRoom chatRoom) {
         List<User> users = getUsersFromRepo(userIds);
         for(User user:users) {
-            connectChat(user,chatRoom);
+            user.connectChat(chatRoom.getId());
+            sendNewChatNotificationToUser(user.getUserId(),chatRoom);
         }
         processUsersToDB(users);
     }
@@ -82,6 +84,7 @@ public class UserChatService<T extends IChatRoom> {
     public void connectChat(User user,IChatRoom chatRoom) {
         user.connectChat(chatRoom.getId());
         sendNewChatNotificationToUser(user.getUserId(),chatRoom);
+        processUsersToDB(Collections.singletonList(user));
     }
 
     // Notify All ChatRooms of a user about status: went online or went offline
@@ -92,7 +95,7 @@ public class UserChatService<T extends IChatRoom> {
         return;
     }
 
-    public List<IChatRoom> getChatRoomsOfUser() {
+    public List<ChatRoom> getChatRoomsOfUser() {
         User user = userService.getUserContext();
         return chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()));
     }

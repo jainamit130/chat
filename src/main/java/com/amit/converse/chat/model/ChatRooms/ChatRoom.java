@@ -3,10 +3,13 @@ package com.amit.converse.chat.model.ChatRooms;
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -14,17 +17,39 @@ import java.util.*;
 
 @Data
 @SuperBuilder
-@AllArgsConstructor
-@NoArgsConstructor
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = DirectChat.class, name = "DIRECT"),
+        @JsonSubTypes.Type(value = GroupChat.class, name = "GROUP"),
+        @JsonSubTypes.Type(value = SelfChat.class, name = "SELF")
+})
 @Document(collection = "chatRooms")
 public abstract class ChatRoom implements IChatRoom {
+
+    @PersistenceCreator
+    public ChatRoom(String id, List<String> userIds, ChatRoomType chatRoomType, Instant createdAt, ChatMessage latestMessage, Map<String, Instant> userFetchStartTimeMap, Set<String> deletedForUsers, Integer totalMessageCount, Map<String, Integer> readMessageCount, Map<String, Instant> lastVisitedTimestamp) {
+        this.id = id;
+        this.userIds = userIds;
+        this.chatRoomType = chatRoomType;
+        this.createdAt = createdAt;
+        this.latestMessage = latestMessage;
+        this.userFetchStartTimeMap = userFetchStartTimeMap;
+        this.deletedForUsers = deletedForUsers;
+        this.totalMessageCount = totalMessageCount;
+        this.readMessageCount = readMessageCount;
+        this.lastVisitedTimestamp = lastVisitedTimestamp;
+    }
+
+    public ChatRoom(ChatRoomType chatRoomType) {
+        this.chatRoomType = chatRoomType;
+    }
+
     @Id
     protected String id;
     protected List<String> userIds;
+    protected final ChatRoomType chatRoomType;
     protected Instant createdAt;
     protected transient ChatMessage latestMessage;
-    @NotBlank
-    protected ChatRoomType chatRoomType;
 
     // Clear Chat Feature
     @Builder.Default
