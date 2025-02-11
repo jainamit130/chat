@@ -33,7 +33,7 @@ public class UserDetailsService {
 
     public UserDetails getProfileDetails(User user) {
         UserDetails userDetails = getInitializedUserDetails(user);
-        userDetails.setCommonChatId(selfChatUserService.getSelfChatId());
+        userDetails.setCommonChatId(selfChatUserService.getSelfChat().getId());
         return userDetails;
     }
 

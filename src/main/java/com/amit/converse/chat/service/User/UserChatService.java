@@ -24,18 +24,15 @@ public class UserChatService<T extends IChatRoom> {
     private UserService userService;
     @Autowired
     @Lazy
-    private ChatService chatService;
+    protected ChatService<T> chatService;
     @Autowired
     private UserNotificationService userNotificationService;
-    @Autowired
-    protected ChatContext<T> chatContext;
 
-    private void sendNewChatNotificationToUser(String userId) {
-        userNotificationService.sendNotification(userId,new NewChatNotification(chatContext.getChatRoom()));
+    private void sendNewChatNotificationToUser(String userId, IChatRoom newChatRoom) {
+        userNotificationService.sendNotification(userId,new NewChatNotification(newChatRoom));
     }
 
-    private void disconnectChat(User user) {
-        IChatRoom chatRoom = chatContext.getChatRoom();
+    private void disconnectChat(User user, IChatRoom chatRoom) {
         chatRoom.deleteChat(user.getUserId());
         user.disconnectChat(chatRoom.getId(), chatRoom.getUnreadMessageCount(user.getUserId()));
     }
@@ -53,7 +50,7 @@ public class UserChatService<T extends IChatRoom> {
         return getOnlineUsersDTO(chatService.getOnlineUserIdsOfChat());
     }
 
-    public void processChatRoomToDB(IChatRoom chatRoom) {
+    public void processChatRoomToDB(T chatRoom) {
         chatService.processChatRoomToDB(chatRoom);
     }
 
@@ -69,23 +66,22 @@ public class UserChatService<T extends IChatRoom> {
         return userService.getUsersFromRepo(userIds);
     }
 
-    public void deleteChat() {
+    public void deleteChat(IChatRoom chatRoom) {
         User contextUser = userService.getUserContext();
-        disconnectChat(contextUser);
+        disconnectChat(contextUser,chatRoom);
     }
 
-    public void connectChat(List<String> userIds) {
+    public void connectChat(List<String> userIds,IChatRoom chatRoom) {
         List<User> users = getUsersFromRepo(userIds);
         for(User user:users) {
-            connectChat(user);
+            connectChat(user,chatRoom);
         }
         processUsersToDB(users);
     }
 
-    public void connectChat(User user) {
-        IChatRoom chatRoom = chatContext.getChatRoom();
+    public void connectChat(User user,IChatRoom chatRoom) {
         user.connectChat(chatRoom.getId());
-        sendNewChatNotificationToUser(user.getUserId());
+        sendNewChatNotificationToUser(user.getUserId(),chatRoom);
     }
 
     // Notify All ChatRooms of a user about status: went online or went offline
@@ -99,5 +95,10 @@ public class UserChatService<T extends IChatRoom> {
     public List<IChatRoom> getChatRoomsOfUser() {
         User user = userService.getUserContext();
         return chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()));
+    }
+
+    public User createUser(User user) {
+        userService.createUser(user);
+        return getContextUser();
     }
 }

@@ -19,7 +19,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         throw new UnsupportedOperationException("This method is not supported!");
     }
 
-    public UserDetails loadUserByUserId(String userId) throws UsernameNotFoundException {
+    public UserDetailsImpl loadUserByUserId(String userId) throws UsernameNotFoundException {
         return userRepository.findByUserId(userId)
                 .map(user -> new UserDetailsImpl(
                         user.getUserId(),

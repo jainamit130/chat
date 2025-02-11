@@ -8,11 +8,13 @@ import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.Message.IChatMessageRepository;
+import com.amit.converse.chat.service.ChatRoom.ChatService;
 import com.amit.converse.chat.service.MessageProcessor.MessageProcessingService;
 import com.amit.converse.chat.service.Notification.ChatNotificationService;
 import com.amit.converse.chat.service.Notification.UserNotificationService;
 import com.amit.converse.chat.service.User.UserChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -23,7 +25,8 @@ import java.util.List;
 public class ChatMessageService<T extends IChatRoom> {
 
     @Autowired
-    protected ChatContext<T> chatContext;
+    @Lazy
+    protected ChatService chatService;
     @Autowired
     protected MessageProcessingService messageProcessingService;
     @Autowired
@@ -65,11 +68,11 @@ public class ChatMessageService<T extends IChatRoom> {
     }
 
     public final void sendMessage(ChatMessage message) throws InterruptedException {
-        IChatRoom chatRoom = chatContext.getChatRoom();
+        IChatRoom chatRoom = chatService.getContextChatRoom();
         authoriseSender();
         ChatMessage savedMessage = saveMessage(message);
         sendMessageNotification(chatRoom.getId(),savedMessage);
-        userChatService.connectChat(new ArrayList<>(chatRoom.getDeletedForUsers()));
+        userChatService.connectChat(new ArrayList<>(chatRoom.getDeletedForUsers()),chatRoom);
         messageProcessingService.process(message);
     }
 }

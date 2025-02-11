@@ -19,12 +19,12 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
     private DirectChatService directChatService;
 
     public void processCreation() {
-        DirectChat directChat = chatContext.getChatRoom();
+        DirectChat directChat = chatService.getContextChatRoom();
         Set<String> deletedForUserIds = directChat.getDeletedForUsers();
         List<User> deletedForUsers = getUsersFromRepo(new ArrayList<>(deletedForUserIds));
         for(User user: deletedForUsers) {
             deletedForUsers.remove(user.getUserId());
-            connectChat(user);
+            connectChat(user,directChat);
         }
         processUsersToDB(deletedForUsers);
         processChatRoomToDB(directChat);

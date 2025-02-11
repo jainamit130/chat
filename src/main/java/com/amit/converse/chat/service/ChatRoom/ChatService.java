@@ -24,6 +24,8 @@ public class ChatService<T extends IChatRoom> {
     @Autowired
     private RedisReadService redisReadService;
 
+    public T getContextChatRoom() { return context.getChatRoom(); }
+
     public void updateChatRoomContext(T chatRoom) {
         context.setChatRoom(chatRoom);
     }

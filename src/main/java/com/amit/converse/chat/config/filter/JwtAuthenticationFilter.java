@@ -1,5 +1,7 @@
 package com.amit.converse.chat.config.filter;
 
+import com.amit.converse.chat.config.UserDetailsImpl;
+import com.amit.converse.chat.config.UserDetailsServiceImpl;
 import com.amit.converse.chat.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -22,6 +24,7 @@ import java.util.Collections;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,8 +41,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Validate token without loading UserDetails
             if (jwtService.isTokenValid(jwt)) {
                 // Create Authentication object without UserDetails
+                UserDetailsImpl userDetails = userDetailsService.loadUserByUserId(userId);
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userId,
+                        userDetails,
                         null,
                         Collections.emptyList()
                 );

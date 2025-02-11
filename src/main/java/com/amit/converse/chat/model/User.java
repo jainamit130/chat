@@ -70,10 +70,6 @@ public class User implements IDeliverableEntity {
 
     public boolean isExited(String chatRoomId) { return exitedChatRoomIds.containsKey(chatRoomId); }
 
-    public void addChatRoom(String chatRoomId){
-        chatRoomIds.add(chatRoomId);
-    }
-
     public void updateLastSeenToNow() {
         lastSeenTimestamp = Instant.now();
     }

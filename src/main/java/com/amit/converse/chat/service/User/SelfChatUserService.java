@@ -19,7 +19,7 @@ public class SelfChatUserService extends UserChatService<SelfChat> {
         return null;
     }
 
-    public String getSelfChatId() {
-        return selfChatService.getChat(getContextUser()).getId();
+    public SelfChat getSelfChat() {
+        return selfChatService.getChat(getContextUser());
     }
 }

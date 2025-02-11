@@ -18,22 +18,22 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class GroupChatUserService extends UserChatService<ITransactable> {
+public class GroupChatUserService extends UserChatService<GroupChat> {
 
     @Autowired
     private GroupChatService groupChatService;
 
     public void processCreation() {
-        ITransactable chatRoom = chatContext.getChatRoom();
+        GroupChat chatRoom = chatService.getContextChatRoom();
         List<User> users = getUsersFromRepo(chatRoom.getUserIds());
         for(User user : users) {
-            connectChat(user);
+            connectChat(user,chatRoom);
         }
         processUsersToDB(users);
     }
 
     public void join(List<User> users) {
-        IChatRoom chatRoom = chatContext.getChatRoom();
+        GroupChat chatRoom = chatService.getContextChatRoom();
         for(User user:users) {
             user.connectChat(chatRoom.getId());
         }
@@ -41,7 +41,7 @@ public class GroupChatUserService extends UserChatService<ITransactable> {
     }
 
     public void exit(List<User> users) {
-        IChatRoom chatRoom = chatContext.getChatRoom();
+        GroupChat chatRoom = chatService.getContextChatRoom();
         for(User user:users) {
             user.disconnectChat(chatRoom.getId(),chatRoom.getUnreadMessageCount(user.getUserId()));
         }
@@ -49,7 +49,7 @@ public class GroupChatUserService extends UserChatService<ITransactable> {
     }
 
     public GroupDetails getGroupDetails() {
-        IChatRoom chatRoom = chatContext.getChatRoom();
+        GroupChat chatRoom = chatService.getContextChatRoom();
         List<User> users = getUsersFromRepo(chatRoom.getUserIds());
         List<UserDTO> userDTOList = new ArrayList<>();
         for(User user: users) {
