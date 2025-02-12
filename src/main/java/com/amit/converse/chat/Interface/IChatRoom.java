@@ -4,7 +4,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @Document(collection = "chatRooms")
@@ -15,6 +14,7 @@ public interface IChatRoom {
     Boolean isDeletable();
     String getId();
     Instant getUserFetchStartTime(String userId);
+    void readMessages(String userId);
     Instant getLastVisitedTimestamp(String userId);
     Integer getUnreadMessageCount(String userId);
     Instant getCreatedAt();

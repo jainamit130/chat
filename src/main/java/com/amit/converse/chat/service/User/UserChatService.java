@@ -75,7 +75,7 @@ public class UserChatService<T extends ChatRoom> {
     public void connectChat(List<String> userIds,IChatRoom chatRoom) {
         List<User> users = getUsersFromRepo(userIds);
         for(User user:users) {
-            user.connectChat(chatRoom.getId());
+            connectChat(user,chatRoom);
             sendNewChatNotificationToUser(user.getUserId(),chatRoom);
         }
         processUsersToDB(users);
@@ -83,8 +83,11 @@ public class UserChatService<T extends ChatRoom> {
 
     public void connectChat(User user,IChatRoom chatRoom) {
         user.connectChat(chatRoom.getId());
+    }
+
+    public void connectChatAndNotify(User user,IChatRoom chatRoom) {
+        connectChat(user,chatRoom);
         sendNewChatNotificationToUser(user.getUserId(),chatRoom);
-        processUsersToDB(Collections.singletonList(user));
     }
 
     // Notify All ChatRooms of a user about status: went online or went offline
@@ -97,7 +100,7 @@ public class UserChatService<T extends ChatRoom> {
 
     public List<ChatRoom> getChatRoomsOfUser() {
         User user = userService.getUserContext();
-        return chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()));
+        return chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()),user.getUserId());
     }
 
     public User createUser(User user) {

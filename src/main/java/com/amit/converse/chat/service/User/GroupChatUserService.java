@@ -27,7 +27,7 @@ public class GroupChatUserService extends UserChatService<GroupChat> {
         GroupChat chatRoom = chatService.getContextChatRoom();
         List<User> users = getUsersFromRepo(chatRoom.getUserIds());
         for(User user : users) {
-            connectChat(user,chatRoom);
+            connectChatAndNotify(user,chatRoom);
         }
         processUsersToDB(users);
     }

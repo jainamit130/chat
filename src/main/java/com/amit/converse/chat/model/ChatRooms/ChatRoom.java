@@ -16,7 +16,6 @@ import java.time.Instant;
 import java.util.*;
 
 @Data
-@SuperBuilder
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = DirectChat.class, name = "DIRECT"),
@@ -26,46 +25,45 @@ import java.util.*;
 @Document(collection = "chatRooms")
 public abstract class ChatRoom implements IChatRoom {
 
+    // Persistence creator to provide constructor for MongoDB
     @PersistenceCreator
-    public ChatRoom(String id, List<String> userIds, ChatRoomType chatRoomType, Instant createdAt, ChatMessage latestMessage, Map<String, Instant> userFetchStartTimeMap, Set<String> deletedForUsers, Integer totalMessageCount, Map<String, Integer> readMessageCount, Map<String, Instant> lastVisitedTimestamp) {
+    public ChatRoom(String id, List<String> userIds, ChatRoomType chatRoomType, Instant createdAt,
+                    Map<String, Instant> userFetchStartTimeMap, Set<String> deletedForUsers,
+                    Integer unreadMessageCount, Map<String, Instant> lastVisitedTimestamp) {
         this.id = id;
         this.userIds = userIds;
         this.chatRoomType = chatRoomType;
         this.createdAt = createdAt;
-        this.latestMessage = latestMessage;
         this.userFetchStartTimeMap = userFetchStartTimeMap;
         this.deletedForUsers = deletedForUsers;
-        this.totalMessageCount = totalMessageCount;
-        this.readMessageCount = readMessageCount;
+        this.unreadMessageCount = unreadMessageCount;
         this.lastVisitedTimestamp = lastVisitedTimestamp;
     }
 
+    // Constructor for child classes to initialize chatRoomType
     public ChatRoom(ChatRoomType chatRoomType) {
         this.chatRoomType = chatRoomType;
+        this.lastVisitedTimestamp = new HashMap<>();
+        this.deletedForUsers = new HashSet<>();
+        this.userFetchStartTimeMap = new HashMap<>();
+        this.totalMessageCount = 0;
+        this.unreadMessageCount = 0;
+        this.readMessageCount = new HashMap<>();
     }
 
     @Id
     protected String id;
     protected List<String> userIds;
-    protected final ChatRoomType chatRoomType;
+    protected ChatRoomType chatRoomType;
     protected Instant createdAt;
-    protected transient ChatMessage latestMessage;
-
     // Clear Chat Feature
-    @Builder.Default
-    private Map<String, Instant> userFetchStartTimeMap = new HashMap<>();
-
-    @Builder.Default
-    private Set<String> deletedForUsers = new HashSet<>();
-
-    @Builder.Default
-    private Integer totalMessageCount = 0;
-
-    @Builder.Default
-    private Map<String, Integer> readMessageCount = new HashMap<>();
-
-    @Builder.Default
-    private Map<String, Instant> lastVisitedTimestamp = new HashMap<>();
+    protected Map<String, Instant> userFetchStartTimeMap;
+    protected Set<String> deletedForUsers;
+    protected Integer totalMessageCount;
+    protected Map<String, Integer> readMessageCount;
+    protected Map<String, Instant> lastVisitedTimestamp;
+    protected transient Integer unreadMessageCount;
+    protected transient ChatMessage latestMessage;
 
     public void setUserIds(List<String> userIds) {
         Set<String> userIdsSet = Set.copyOf(userIds);
@@ -119,6 +117,7 @@ public abstract class ChatRoom implements IChatRoom {
         return getTotalMessageCount()-getReadMessageCount(userId);
     }
 
+    @Override
     public void readMessages(String userId) {
         updateLastVisitedTimestamp(userId);
         readMessageCount.put(userId,totalMessageCount);

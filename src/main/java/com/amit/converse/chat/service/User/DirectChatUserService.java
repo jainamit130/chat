@@ -24,7 +24,7 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
         List<User> deletedForUsers = getUsersFromRepo(new ArrayList<>(deletedForUserIds));
         for(User user: deletedForUsers) {
             deletedForUsers.remove(user.getUserId());
-            connectChat(user,directChat);
+            connectChatAndNotify(user,directChat);
         }
         processUsersToDB(deletedForUsers);
         processChatRoomToDB(directChat);

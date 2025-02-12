@@ -26,12 +26,11 @@ public class ReadProcessingService implements readProcessor {
 
     @Override
     public void read(User user) {
-        // all undelivered messages in all chatRooms must be marked delivered
-        List<IChatRoom> chatRooms = chatService.getChatRoomsByIds(List.of(user.getChatRoomIds()));
-        for(IChatRoom chatRoom:chatRooms) {
-            markReadService.mark(chatRoom,user);
-        }
+        // all unread messages in the chatRoom must be marked read
+        IChatRoom chatRoom = chatService.getContextChatRoom();
+        markReadService.mark(chatRoom,user);
         markReadService.saveAllMarkedMessages();
+        chatService.readMessages(user);
     }
 
     @Override

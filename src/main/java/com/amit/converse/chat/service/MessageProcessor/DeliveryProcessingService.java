@@ -27,7 +27,7 @@ public class DeliveryProcessingService implements deliveryProcessor {
     @Override
     public void deliver(User user) {
         // all undelivered messages in all chatRooms must be marked delivered
-        List<IChatRoom> chatRooms = chatService.getChatRoomsByIds(List.of(user.getChatRoomIds()));
+        List<IChatRoom> chatRooms = chatService.getChatRoomsByIds(List.of(user.getChatRoomIds()), user.getUserId());
         for(IChatRoom chatRoom:chatRooms) {
             markDeliveredService.mark(chatRoom,user);
         }

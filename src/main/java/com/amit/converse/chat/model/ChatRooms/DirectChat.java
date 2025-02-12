@@ -1,15 +1,9 @@
 package com.amit.converse.chat.model.ChatRooms;
 
 import com.amit.converse.chat.model.Enums.ChatRoomType;
-import com.amit.converse.chat.model.Messages.ChatMessage;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.data.annotation.TypeAlias;
-
-import java.time.Instant;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Data
 @Builder

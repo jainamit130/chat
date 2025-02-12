@@ -20,10 +20,6 @@ public class MongoDBConfig {
 
         // Configure a replacement for dots in map keys (as dots are not allowed in MongoDB keys)
         converter.setMapKeyDotReplacement("_");
-
-        // Remove _class field for documents
-        converter.setTypeMapper(new DefaultMongoTypeMapper(null));
-
         converter.setCustomConversions(customConversions);
         return converter;
     }

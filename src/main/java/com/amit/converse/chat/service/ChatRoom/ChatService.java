@@ -5,6 +5,7 @@ import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
@@ -35,8 +36,13 @@ public class ChatService<T extends ChatRoom> {
         chatMessageService.sendMessage(message);
     }
 
-    public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds) {
-        return chatRoomRepository.findAllById(chatRoomIds);
+    public void readMessages(User user) {
+        getContextChatRoom().readMessages(user.getUserId());
+        processChatRoomToDB(getContextChatRoom());
+    }
+
+    public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds,String userId) {
+        return chatRoomRepository.getAllChatRooms(chatRoomIds,userId);
     }
 
     public IChatRoom getChatRoomById(String chatRoomId) {
