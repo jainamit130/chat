@@ -2,6 +2,7 @@ package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.dto.CreateDirectChatRequest;
 import com.amit.converse.chat.model.ChatRooms.DirectChat;
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatRoom.IDirectChatRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,12 +14,12 @@ public class DirectChatService extends ChatService<DirectChat> {
     @Autowired
     private IDirectChatRepository directChatRepository;
 
-    private void processDirectChatCreation(String primaryUserId, String counterPartUserId) {
-        Optional<DirectChat> alreadyExistingDirectChat = getChatIfAlreadyExisting(primaryUserId,counterPartUserId);
+    private void processDirectChatCreation(User primaryUser, User counterPartUser) {
+        Optional<DirectChat> alreadyExistingDirectChat = getChatIfAlreadyExisting(primaryUser.getUserId(),counterPartUser.getUserId());
         if(alreadyExistingDirectChat.isPresent()) {
             updateChatRoomContext(alreadyExistingDirectChat.get());
         } else {
-            processChatRoomToDB(CreateDirectChatService.getNewDirectChat(primaryUserId, counterPartUserId));
+            processChatRoomToDB(CreateDirectChatService.getNewDirectChat(primaryUser, counterPartUser));
         }
     }
 
@@ -31,11 +32,9 @@ public class DirectChatService extends ChatService<DirectChat> {
         return directChatRepository.save(directChat);
     }
 
-    public void processCreation(CreateDirectChatRequest directChatRequest) throws InterruptedException {
-        String primaryUserId = directChatRequest.getPrimaryUserId();
-        String counterPartUserId = directChatRequest.getUserId();
+    public void processCreation(User primaryUser, User counterPartUser,CreateDirectChatRequest directChatRequest) throws InterruptedException {
         // Updates the context, fulfilling its purpose of getting a chat new or existing
-        processDirectChatCreation(primaryUserId,counterPartUserId);
+        processDirectChatCreation(primaryUser,counterPartUser);
         sendMessage(directChatRequest.getMessage());
         return;
     }

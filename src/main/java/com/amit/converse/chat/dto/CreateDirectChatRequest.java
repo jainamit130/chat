@@ -8,8 +8,6 @@ import lombok.Data;
 @Data
 @Builder
 public class CreateDirectChatRequest {
-    private String primaryUserId;
     @NotBlank
-    private String userId;
     private ChatMessage message;
 }

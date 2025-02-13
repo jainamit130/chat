@@ -40,8 +40,8 @@ public class GroupChatService extends ChatService<GroupChat> {
         return groupRepository.save(groupChat);
     }
 
-    public void processCreation(CreateGroupRequest createGroupRequest) {
-        processChatRoomToDB(CreateGroupChatService.getGroupChat(createGroupRequest.getGroupName(),createGroupRequest.getUserIds()));
+    public void processCreation(CreateGroupRequest createGroupRequest,String adminUserId) {
+        processChatRoomToDB(CreateGroupChatService.getGroupChat(createGroupRequest.getGroupName(),createGroupRequest.getUserIds(),adminUserId));
     }
 
     public List<GroupChat> getCommonChats(String user1Id, String user2Id) {

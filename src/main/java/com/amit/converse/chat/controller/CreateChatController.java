@@ -16,10 +16,10 @@ public class CreateChatController {
     private final CreateDirectChatService createDirectChatService;
     private final CreateGroupChatService createGroupChatService;
 
-    @PostMapping("create/direct")
-    public ResponseEntity<String> createDirectChat(@RequestBody CreateDirectChatRequest directChatRequest) {
+    @PostMapping("create/direct/{userId}")
+    public ResponseEntity<String> createDirectChat(@RequestParam String userId, @RequestBody CreateDirectChatRequest directChatRequest) {
         try {
-            return new ResponseEntity(createDirectChatService.create(directChatRequest), HttpStatus.OK);
+            return new ResponseEntity(createDirectChatService.create(userId,directChatRequest), HttpStatus.OK);
         } catch (InterruptedException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }

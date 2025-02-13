@@ -70,7 +70,7 @@ public class KafkaConfig {
 //
 //    @Bean
 //    public NewTopic chatMessagesTopic() {
-//        return TopicBuilder.name("chatMessages")
+//        return TopicBuilder.chatRoomName("chatMessages")
 //                .partitions(1) // You can adjust this based on your needs
 //                .replicas(1) // Adjust replication factor as needed
 //                .build();

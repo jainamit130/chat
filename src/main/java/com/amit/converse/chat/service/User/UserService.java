@@ -50,6 +50,12 @@ public class UserService {
         return getUserById(authService.getLoggedInUserId());
     }
 
+    public User getUserFromRepo(String userId) {
+        User user = userRepository.findByUserId(userId)
+                .orElseThrow(() -> new ConverseException("User not found!"));
+        return user;
+    }
+
     public List<User> getUsersFromRepo(List<String> userIds) {
         List<User> users = userRepository.findAllByUserIdIn(userIds);
         return users;

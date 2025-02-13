@@ -10,40 +10,42 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.Instant;
 import java.util.*;
 
-@Data
-@Builder
+@Getter
+@Setter
 @TypeAlias("GROUP")
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "chatRooms")
     public class GroupChat extends ChatRoom implements ITransactable {
 
-    public GroupChat(String name, String createdBy, List<String> adminUserIds, Boolean isExited, Map<String, Instant> exitedMembers, Map<String, Instant> blindPeriod) {
-        super(ChatRoomType.GROUP);
+    public GroupChat(String name, List<String> userIds, String adminUserId) {
+        super(ChatRoomType.GROUP,userIds);
         this.name = name;
-        this.createdBy = createdBy;
-        this.adminUserIds = adminUserIds;
-        this.isExited = isExited;
-        this.exitedMembers = exitedMembers;
-        this.blindPeriod = blindPeriod;
+        this.adminUserIds = Collections.singletonList(adminUserId);
+        this.createdBy=adminUserId;
+        this.isExited = false;
+        this.exitedMembers = new HashMap<>();
+        this.blindPeriod = new HashMap<>();
     }
 
-    @NotBlank
-    private String name;
+
+    /*
+    * In a List of chatrooms
+    * i want to use the chatRoom and do the respective based on the instance
+    *
+    * Direct Chat -> fetch counterpart username and set chatRoom chatRoomName
+    * Group Chat -> fetch its own chatRoomName and set chatRoom chatRoomName
+    * Self Chat -> fetch its own chatRoomName and set chatRoom chatRoomName
+    *
+    * */
+
+    private final String name;
     private String createdBy;
     // Admin UserIds for Group only
     private List<String> adminUserIds;
     // Exit Group Feature Only For Groups
     private transient Boolean isExited;
-
-    @Builder.Default
-    private Map<String,Instant> exitedMembers = new HashMap<>();
-
-    @Builder.Default
-    private Map<String,Instant> blindPeriod = new HashMap<>();
-
-    public GroupChat() {
-        super(ChatRoomType.GROUP);
-    }
+    private Map<String,Instant> exitedMembers;
+    private Map<String,Instant> blindPeriod;
 
     @Override
     public Integer getExitedMemberCount() {

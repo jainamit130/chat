@@ -63,6 +63,10 @@ public class UserChatService<T extends ChatRoom> {
         return userService.processUsersToUsernames(users);
     }
 
+    public User getUserFromRepo(String userId) {
+        return userService.getUserFromRepo(userId);
+    }
+
     public List<User> getUsersFromRepo(List<String> userIds) {
         return userService.getUsersFromRepo(userIds);
     }

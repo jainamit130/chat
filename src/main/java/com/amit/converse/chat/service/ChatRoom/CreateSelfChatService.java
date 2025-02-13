@@ -12,10 +12,7 @@ import java.util.List;
 public class CreateSelfChatService {
 
     public static SelfChat getSelfChat(String name, String userId) {
-        SelfChat selfChat = SelfChat.builder().build();
-        selfChat.setName(name);
-        selfChat.setUserIds(List.of(userId));
-        selfChat.setCreatedAt(Instant.now());
+        SelfChat selfChat = new SelfChat(name,List.of(userId));
         return selfChat;
     }
 }

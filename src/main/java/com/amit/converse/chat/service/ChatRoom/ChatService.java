@@ -42,7 +42,7 @@ public class ChatService<T extends ChatRoom> {
     }
 
     public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds,String userId) {
-        return chatRoomRepository.getAllChatRooms(chatRoomIds,userId);
+        return chatRoomRepository.findAllById(chatRoomIds);
     }
 
     public IChatRoom getChatRoomById(String chatRoomId) {

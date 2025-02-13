@@ -5,11 +5,8 @@ import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -25,29 +22,14 @@ import java.util.*;
 @Document(collection = "chatRooms")
 public abstract class ChatRoom implements IChatRoom {
 
-    // Persistence creator to provide constructor for MongoDB
-    @PersistenceCreator
-    public ChatRoom(String id, List<String> userIds, ChatRoomType chatRoomType, Instant createdAt,
-                    Map<String, Instant> userFetchStartTimeMap, Set<String> deletedForUsers,
-                    Integer unreadMessageCount, Map<String, Instant> lastVisitedTimestamp) {
-        this.id = id;
+    public ChatRoom(ChatRoomType chatRoomType, List<String> userIds) {
+        this.chatRoomType = chatRoomType;
         this.userIds = userIds;
-        this.chatRoomType = chatRoomType;
-        this.createdAt = createdAt;
-        this.userFetchStartTimeMap = userFetchStartTimeMap;
-        this.deletedForUsers = deletedForUsers;
-        this.unreadMessageCount = unreadMessageCount;
-        this.lastVisitedTimestamp = lastVisitedTimestamp;
-    }
-
-    // Constructor for child classes to initialize chatRoomType
-    public ChatRoom(ChatRoomType chatRoomType) {
-        this.chatRoomType = chatRoomType;
+        this.createdAt = Instant.now();
         this.lastVisitedTimestamp = new HashMap<>();
         this.deletedForUsers = new HashSet<>();
         this.userFetchStartTimeMap = new HashMap<>();
         this.totalMessageCount = 0;
-        this.unreadMessageCount = 0;
         this.readMessageCount = new HashMap<>();
     }
 
@@ -62,6 +44,7 @@ public abstract class ChatRoom implements IChatRoom {
     protected Integer totalMessageCount;
     protected Map<String, Integer> readMessageCount;
     protected Map<String, Instant> lastVisitedTimestamp;
+    protected transient String chatRoomName;
     protected transient Integer unreadMessageCount;
     protected transient ChatMessage latestMessage;
 

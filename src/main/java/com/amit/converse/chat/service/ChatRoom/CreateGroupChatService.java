@@ -10,6 +10,7 @@ import com.amit.converse.chat.service.User.GroupChatUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,16 +25,14 @@ public class CreateGroupChatService {
     private final GroupChatService groupChatService;
     private final GroupChatUserService groupChatUserService;
 
-    public static GroupChat getGroupChat(String name, List<String> userIds) {
-        GroupChat groupChat = GroupChat.builder().build();
-        groupChat.setName(name);
-        groupChat.setUserIds(userIds);
+    public static GroupChat getGroupChat(String name, List<String> userIds, String adminUserId) {
+        GroupChat groupChat = new GroupChat(name,userIds, adminUserId);
         return groupChat;
     }
 
     public String create(CreateGroupRequest createGroupRequest) {
         createGroupRequest.addUserId(userContext.getUserId());
-        groupChatService.processCreation(createGroupRequest);
+        groupChatService.processCreation(createGroupRequest,userContext.getUserId());
         groupChatUserService.processCreation();
         return chatContext.getChatRoom().getId();
     }

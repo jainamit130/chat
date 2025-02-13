@@ -3,13 +3,8 @@ type ChatRoom {
     name: String!
     userIds: [String!]!
     chatRoomType: ChatRoomType!
-    createdBy: String
-    createdAt: String!
-    unreadMessageCount: Int!
+    unreadMessageCount: Int
     latestMessage: ChatMessage
-    recipientUsername: String
-    creatorUsername: String
-    isExited: Boolean
 }
 
 type ChatMessage {
@@ -43,7 +38,7 @@ type User {
 }
 
 type Query {
-    getChatRoomsOfUser(userId: String!): [ChatRoom!]!
+    getChatRoomsOfUser: [ChatRoom!]!
     getMessagesOfChatRoom(chatRoomId: String!,userId: String!,fromCount: Int = 0): [ChatMessage!]!
 }
 
