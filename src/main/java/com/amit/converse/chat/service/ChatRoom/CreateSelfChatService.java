@@ -4,7 +4,6 @@ import com.amit.converse.chat.model.ChatRooms.SelfChat;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
 
 @Service

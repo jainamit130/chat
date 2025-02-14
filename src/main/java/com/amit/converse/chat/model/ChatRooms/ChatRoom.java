@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -21,6 +22,16 @@ import java.util.*;
 })
 @Document(collection = "chatRooms")
 public abstract class ChatRoom implements IChatRoom {
+
+    @PersistenceCreator
+    public ChatRoom(String id, List<String> userIds, ChatRoomType chatRoomType, Instant createdAt, Map<String, Instant> userFetchStartTimeMap, Map<String, Instant> lastVisitedTimestamp) {
+        this.id = id;
+        this.userIds = userIds;
+        this.chatRoomType = chatRoomType;
+        this.createdAt = createdAt;
+        this.userFetchStartTimeMap = userFetchStartTimeMap;
+        this.lastVisitedTimestamp = lastVisitedTimestamp;
+    }
 
     public ChatRoom(ChatRoomType chatRoomType, List<String> userIds) {
         this.chatRoomType = chatRoomType;
