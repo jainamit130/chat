@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -49,6 +48,10 @@ public class UserChatService<T extends ChatRoom> {
 
     public IOnlineUsersDTO getOnlineUsersOfChat(){
         return getOnlineUsersDTO(chatService.getOnlineUserIdsOfChat());
+    }
+
+    public Integer getUnreadMessageCount(IChatRoom chatRoom) {
+        return chatRoom.getUnreadMessageCount(getContextUser().getUserId());
     }
 
     public void processChatRoomToDB(T chatRoom) {

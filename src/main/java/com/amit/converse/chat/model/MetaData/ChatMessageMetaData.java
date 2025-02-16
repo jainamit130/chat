@@ -2,7 +2,6 @@ package com.amit.converse.chat.model.MetaData;
 
 import lombok.*;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -10,24 +9,22 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-@Builder
 public class ChatMessageMetaData extends MessageMetaData {
-    @Builder.Default
-    private Boolean deletedForEveryone = false;
 
-    @Builder.Default
-    private Set<String> deliveredRecipients = new HashSet<>();
+    public ChatMessageMetaData() {
+        this.deletedForEveryone = false;
+        this.deliveredRecipients = new HashSet<>();
+        this.readRecipients = new HashSet<>();
+        this.deliveryReceiptsByTime = new HashMap<>();
+        this.readReceiptsByTime = new HashMap<>();
+    }
 
-    @Builder.Default
-    private Set<String> readRecipients = new HashSet<>();
-
-    @Builder.Default
-    private Map<String, Set<String>> deliveryReceiptsByTime = new HashMap<>();
-
-    @Builder.Default
-    private Map<String, Set<String>> readReceiptsByTime = new HashMap<>();
+    private Boolean deletedForEveryone;
+    private Set<String> deliveredRecipients;
+    private Set<String> readRecipients;
+    private Map<String, Set<String>> deliveryReceiptsByTime;
+    private Map<String, Set<String>> readReceiptsByTime;
 
 
     @Override

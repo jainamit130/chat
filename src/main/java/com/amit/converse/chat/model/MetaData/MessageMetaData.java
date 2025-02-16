@@ -11,14 +11,16 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
 @SuperBuilder
 public abstract class MessageMetaData {
-    @Builder.Default
-    private boolean isEncrypted = false;
 
-    @Builder.Default
-    private Set<String> deletedForUsers = new HashSet<>();
+    public MessageMetaData() {
+        this.isEncrypted = false;
+        this.deletedForUsers = new HashSet<>();
+    }
+
+    private boolean isEncrypted;
+    private Set<String> deletedForUsers;
 
     public abstract Integer readMessage(String timestamp,String userId);
 

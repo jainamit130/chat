@@ -12,7 +12,7 @@ public class NotificationMessageService {
     private IMessageRepository messageRepository;
 
     public static NotificationMessage generateNotificationMessage(String chatRoomId,String content) {
-        NotificationMessage notificationMessage = NotificationMessage.builder().build();
+        NotificationMessage notificationMessage = new NotificationMessage();
         notificationMessage.setContent(content);
         notificationMessage.setChatRoomId(chatRoomId);
         notificationMessage.setTimestamp(Instant.now());

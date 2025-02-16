@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ChatMessageService<T extends IChatRoom> {
@@ -37,6 +38,10 @@ public class ChatMessageService<T extends IChatRoom> {
     private UserChatService userChatService;
     @Autowired
     private IChatMessageRepository chatMessageRepository;
+
+    private ChatMessage getEmptyMessage() {
+        return new ChatMessage();
+    }
 
     public ChatMessage saveMessage(ChatMessage message) {
         return chatMessageRepository.save(message);
@@ -74,5 +79,13 @@ public class ChatMessageService<T extends IChatRoom> {
         sendMessageNotification(chatRoom.getId(),savedMessage);
         userChatService.connectChat(new ArrayList<>(chatRoom.getDeletedForUsers()),chatRoom);
         messageProcessingService.process(message);
+    }
+
+    public ChatMessage getLatestMessage(IChatRoom chatRoom) {
+        Optional<ChatMessage> latestMessage = chatMessageRepository.findLatestMessage(chatRoom.getId(),userChatService.getContextUser().getUserId());
+        if(latestMessage.isPresent()) {
+            return latestMessage.get();
+        }
+        return new ChatMessage();
     }
 }

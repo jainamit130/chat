@@ -13,7 +13,6 @@ import java.time.Instant;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
 @Document(collection = "messages")
 public abstract class Message {
     @Id
@@ -21,17 +20,26 @@ public abstract class Message {
     protected String chatRoomId;
     protected String content;
     protected Instant timestamp;
-    protected MessageMetaData metaData;
+    protected MessageMetaData messageMetaData;
+
+    public Message(String content) {
+        this.content = content;
+    }
+
+    public Message(String content,MessageMetaData messageMetaData) {
+        this.messageMetaData = messageMetaData;
+        this.content = content;
+    }
 
     public abstract Integer readMessage(String timestamp,String userId);
 
     public abstract Integer deliverMessage(String timestamp,String userId);
 
     public void deleteMessage(String userId) {
-        metaData.addUserToDeletedForUsers(userId);
+        messageMetaData.addUserToDeletedForUsers(userId);
     }
 
     public Integer getDeletedForMembersCount() {
-        return metaData.getDeletedForUsersCount();
+        return messageMetaData.getDeletedForUsersCount();
     }
 }

@@ -1,5 +1,6 @@
 package com.amit.converse.chat.Interface;
 
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -13,6 +14,7 @@ public interface IChatRoom {
     Integer getTotalMemberCount();
     Boolean isDeletable();
     String getId();
+    void setLatestMessage(ChatMessage message);
     Instant getUserFetchStartTime(String userId);
     void readMessages(String userId);
     Instant getLastVisitedTimestamp(String userId);

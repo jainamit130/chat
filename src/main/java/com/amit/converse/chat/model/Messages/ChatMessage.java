@@ -9,8 +9,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-@Builder
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "messages")
 @CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
@@ -18,8 +16,15 @@ public class ChatMessage extends Message {
     private String senderId;
     private MessageStatus status;
 
-    @Builder.Default
-    private MessageMetaData messageMetaData = new ChatMessageMetaData();
+    public ChatMessage() {
+        super("There are no messages!");
+    }
+
+    public ChatMessage(String senderId,String content) {
+        super(content,new ChatMessageMetaData());
+        this.senderId = senderId;
+        this.status = MessageStatus.PENDING;
+    }
 
     public void setMessageStatus(MessageStatus newStatus) {
         status = newStatus;

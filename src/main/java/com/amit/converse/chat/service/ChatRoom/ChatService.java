@@ -7,7 +7,6 @@ import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
-import com.amit.converse.chat.service.AggregationService;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +21,6 @@ public class ChatService<T extends ChatRoom> {
     protected ChatContext<T> context;
     @Autowired
     protected ChatMessageService chatMessageService;
-    @Autowired
-    private AggregationService aggregationService;
     @Autowired
     protected IChatRoomRepository chatRoomRepository;
     @Autowired
@@ -45,7 +42,7 @@ public class ChatService<T extends ChatRoom> {
     }
 
     public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds,String userId) {
-        return aggregationService.getFulFilledChatRooms(chatRoomIds,userId);
+        return chatRoomRepository.getAllChatRoomsByIds(chatRoomIds,userId);
     }
 
     public IChatRoom getChatRoomById(String chatRoomId) {
