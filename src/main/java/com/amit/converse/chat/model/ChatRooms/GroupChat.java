@@ -18,7 +18,7 @@ import java.util.*;
     public class GroupChat extends ChatRoom implements ITransactable {
 
     public GroupChat(String name, List<String> userIds, String adminUserId) {
-        super(ChatRoomType.GROUP,userIds);
+        super(name,ChatRoomType.GROUP,userIds);
         this.name = name;
         this.adminUserIds = Collections.singletonList(adminUserId);
         this.createdBy=adminUserId;

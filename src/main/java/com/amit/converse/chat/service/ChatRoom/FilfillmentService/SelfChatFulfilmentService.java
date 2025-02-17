@@ -5,10 +5,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GroupChatFulfilmentService extends ChatRoomFulfilmentService {
+public class SelfChatFulfilmentService extends ChatRoomFulfilmentService {
     @Override
     public void fillName(ChatRoom chatRoom) {
-        // Since the name for GroupChat is persisted and hence the ChatRoom instance must already have the name populated
-        return;
+
     }
 }

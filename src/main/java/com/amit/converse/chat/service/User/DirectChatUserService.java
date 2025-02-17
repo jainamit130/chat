@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.dto.OnlineUsers.DirectChatOnlineUsersDTO;
+import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRooms.DirectChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.ChatRoom.DirectChatService;
@@ -28,6 +29,12 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
         }
         processUsersToDB(deletedForUsers);
         processChatRoomToDB(directChat);
+    }
+
+    public User getCounterPartUser(List<String> userIds) {
+        if(userIds.size()!=2) throw new ConverseException("Invalid Chat!");
+        String counterPartUserId = userIds.stream().filter(userId -> !userId.equals(getContextUser().getUserId())).findFirst().get();
+        return getUserFromRepo(counterPartUserId);
     }
 
     @Override

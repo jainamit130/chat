@@ -1,22 +1,15 @@
 type ChatRoom {
     id: String!
-    name: String!
+    chatRoomName: String!
     userIds: [String!]!
     chatRoomType: ChatRoomType!
-    unreadMessageCount: Int
-    latestMessage: ChatMessage
+    unreadMessageCount: Int!
+    latestMessage: ChatMessage!
 }
 
 type ChatMessage {
     id: String!
     senderId: String!
-    chatRoomId: String!
-    timestamp: String!
-    status: MessageStatus!
-    content: String!
-    type: String
-    user: User!
-    deletedForEveryone: Boolean
 }
 
 enum MessageStatus {
@@ -27,7 +20,7 @@ enum MessageStatus {
 }
 
 enum ChatRoomType {
-    INDIVIDUAL
+    DIRECT
     GROUP
     SELF
 }
@@ -39,10 +32,5 @@ type User {
 
 type Query {
     getChatRoomsOfUser: [ChatRoom!]!
-    getMessagesOfChatRoom(chatRoomId: String!,userId: String!,fromCount: Int = 0): [ChatMessage!]!
 }
 
-type Mutation {
-    markAllMessagesRead(chatRoomId: String!, userId: String!): Boolean
-    markAllMessagesDelivered(userId: String!): Boolean
-}

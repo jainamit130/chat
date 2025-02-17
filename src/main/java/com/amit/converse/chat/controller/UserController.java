@@ -3,6 +3,7 @@ package com.amit.converse.chat.controller;
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.dto.UserDetails;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.service.CreateUserService;
 import com.amit.converse.chat.service.User.UserChatService;
 import com.amit.converse.chat.service.User.UserService;
@@ -24,8 +25,8 @@ public class UserController {
     protected CreateUserService createUserService;
 
     @QueryMapping
-    public List<IChatRoom> getChatRoomsOfUser() {
-        List<IChatRoom> chatRooms=userChatService.getChatRoomsOfUser();
+    public List<ChatRoom> getChatRoomsOfUser() {
+        List<ChatRoom> chatRooms=userChatService.getChatRoomsOfUser();
         return chatRooms;
     }
 

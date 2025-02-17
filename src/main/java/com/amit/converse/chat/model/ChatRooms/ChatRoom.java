@@ -3,11 +3,12 @@ package com.amit.converse.chat.model.ChatRooms;
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
+import com.amit.converse.chat.service.ChatRoom.FilfillmentService.ChatRoomFulfilmentService;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -23,14 +24,16 @@ import java.util.*;
 @Document(collection = "chatRooms")
 public abstract class ChatRoom implements IChatRoom {
 
-    @PersistenceCreator
-    public ChatRoom(String id, List<String> userIds, ChatRoomType chatRoomType, Instant createdAt, Map<String, Instant> userFetchStartTimeMap, Map<String, Instant> lastVisitedTimestamp) {
-        this.id = id;
-        this.userIds = userIds;
+    public ChatRoom(String name,ChatRoomType chatRoomType, List<String> userIds) {
+        this.chatRoomName = name;
         this.chatRoomType = chatRoomType;
-        this.createdAt = createdAt;
-        this.userFetchStartTimeMap = userFetchStartTimeMap;
-        this.lastVisitedTimestamp = lastVisitedTimestamp;
+        this.userIds = userIds;
+        this.createdAt = Instant.now();
+        this.lastVisitedTimestamp = new HashMap<>();
+        this.deletedForUsers = new HashSet<>();
+        this.userFetchStartTimeMap = new HashMap<>();
+        this.totalMessageCount = 0;
+        this.readMessageCount = new HashMap<>();
     }
 
     public ChatRoom(ChatRoomType chatRoomType, List<String> userIds) {
@@ -59,9 +62,20 @@ public abstract class ChatRoom implements IChatRoom {
     protected transient Integer unreadMessageCount;
     protected transient ChatMessage latestMessage;
 
+    @Autowired
+    protected ChatRoomFulfilmentService chatRoomFulfilmentService;
+
     public void setUserIds(List<String> userIds) {
         Set<String> userIdsSet = Set.copyOf(userIds);
         this.userIds = new ArrayList<>(userIdsSet);
+    }
+
+    public void setName(String name) {
+        this.chatRoomName = name;
+    }
+
+    public void fulfill() {
+        chatRoomFulfilmentService.fulfill(this);
     }
 
     public Integer getDeletedForUsersCount() {
