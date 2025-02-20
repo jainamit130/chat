@@ -17,7 +17,7 @@ public class ChatMessage extends Message {
     private MessageStatus status;
 
     public ChatMessage() {
-        super("There are no messages!");
+        super("There are no messages!",new ChatMessageMetaData());
     }
 
     public ChatMessage(String senderId,String content) {

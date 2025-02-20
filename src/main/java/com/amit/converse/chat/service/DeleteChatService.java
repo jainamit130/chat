@@ -17,7 +17,6 @@ public class DeleteChatService {
     private final ClearChatService clearChatService;
 
     public void deleteChat() {
-        chatService.deleteChat();
         userChatService.deleteChat(chatService.getContextChatRoom());
         redisChatRoomService.removeUserFromChatRoom(userContext.getUserId());
     }

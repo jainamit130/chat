@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -74,9 +75,11 @@ public class UserChatService<T extends ChatRoom> {
         return userService.getUsersFromRepo(userIds);
     }
 
-    public void deleteChat(IChatRoom chatRoom) {
+    public void deleteChat(T chatRoom) {
         User contextUser = userService.getUserContext();
         disconnectChat(contextUser,chatRoom);
+        processChatRoomToDB(chatRoom);
+        processUsersToDB(Collections.singletonList(contextUser));
     }
 
     public void connectChat(List<String> userIds,IChatRoom chatRoom) {

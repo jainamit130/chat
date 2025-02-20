@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/converse/chat/")
 public class ChatController {
     private final ClearChatService clearChatService;
     private final DeleteChatService deleteChatService;
@@ -25,7 +26,7 @@ public class ChatController {
         return chatMessages;
     }
 
-    @PostMapping("/chat/clearChat/{chatRoomId}")
+    @PostMapping("/clearChat/{chatRoomId}")
     public ResponseEntity clearChat() {
         try {
             clearChatService.clearChat();
@@ -35,7 +36,7 @@ public class ChatController {
         }
     }
 
-    @PostMapping("/chat/deleteChat/{chatRoomId}")
+    @PostMapping("/deleteChat/{chatRoomId}")
     public ResponseEntity<Boolean> deleteChat() {
         try {
             deleteChatService.deleteChat();

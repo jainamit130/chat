@@ -36,6 +36,7 @@ public class ChatService<T extends ChatRoom> {
     }
 
     public void sendMessage(ChatMessage message) throws InterruptedException {
+        message.setChatRoomId(context.getChatRoomId());
         chatMessageService.sendMessage(message);
     }
 

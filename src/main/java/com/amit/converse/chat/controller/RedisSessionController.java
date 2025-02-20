@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/converse/user/")
+@RequestMapping("/converse/users/")
 public class RedisSessionController {
     private final UserContext userContext;
     private final UserService userService;

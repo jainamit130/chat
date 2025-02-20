@@ -97,6 +97,7 @@ public abstract class ChatRoom implements IChatRoom {
 
     @Override
     public void deleteChat(String userId) {
+        userIds.remove(userId);
         deletedForUsers.add(userId);
     }
 

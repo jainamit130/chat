@@ -16,7 +16,7 @@ public class DirectChatController {
     private final DirectChatService directChatService;
 
     @PostMapping("/send/message/{chatRoomId}")
-    public ResponseEntity sendMessage(@RequestParam String chatRoomId, @RequestBody ChatMessage message) {
+    public ResponseEntity sendMessage(@RequestBody ChatMessage message) {
         try {
             directChatService.sendMessage(message);
             return new ResponseEntity(HttpStatus.NO_CONTENT);

@@ -4,6 +4,7 @@ import com.amit.converse.chat.service.ActivityService;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -11,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Controller
 @AllArgsConstructor
+@RequestMapping("/converse/chat/")
 public class ActivityController {
 
     private final ActivityService activityService;
