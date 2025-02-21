@@ -5,11 +5,13 @@ import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.service.Redis.RedisWriteService;
 import com.amit.converse.chat.service.User.UserChatService;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
+@Data
 public abstract class RedisSessionITransitionService implements ITransition {
     @Autowired
     protected UserChatService userChatService;
@@ -17,9 +19,9 @@ public abstract class RedisSessionITransitionService implements ITransition {
     protected UserContext userContext;
     @Autowired
     protected RedisWriteService redisWriteService;
-    private final ConnectionStatus status;
+    private ConnectionStatus status;
 
-    RedisSessionITransitionService(ConnectionStatus status) {
+    public RedisSessionITransitionService(ConnectionStatus status) {
         this.status = status;
     }
 

@@ -26,7 +26,7 @@ public class JwtService {
     private Long expiration;
 
     public boolean isTokenValid(String token) {
-        final String userId = extractUserId(token);
+        final String userId = extractId(token);
         return (userId != null && !isTokenExpired(token));
     }
 
@@ -34,7 +34,7 @@ public class JwtService {
         return extractExpiration(token).before(new Date());
     }
 
-    public String extractUserId(String token) {
+    public String extractId(String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
@@ -58,6 +58,10 @@ public class JwtService {
 
     public Instant getExpirationTime(){
         return Instant.now().plusMillis(expiration);
+    }
+
+    public String extractServiceName(String token) {
+        return extractClaim(token, claims -> claims.get("serviceName", String.class));
     }
 
     public <T> T extractClaim(String token, Function<Claims ,T> claimsResolver) {

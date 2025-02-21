@@ -1,6 +1,7 @@
 package com.amit.converse.chat.Redis;
 
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
+import lombok.Data;
 import org.springframework.stereotype.Service;
 
 @Service

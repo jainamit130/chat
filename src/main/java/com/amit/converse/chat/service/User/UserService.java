@@ -1,13 +1,12 @@
 package com.amit.converse.chat.service.User;
 
+import com.amit.converse.chat.State.Offline;
 import com.amit.converse.chat.context.UserContext;
-import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
 import com.amit.converse.chat.service.AuthService;
-import com.amit.converse.chat.service.CreateUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -79,8 +78,10 @@ public class UserService {
     }
 
     public User getUserById(String userId) {
-        return userRepository.findByUserId(userId)
+        User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new ConverseException("User not found!"));
+        user.setState(new Offline(user));
+        return user;
     }
 
     public List<String> processUsersToUsernames(List<User> users) {

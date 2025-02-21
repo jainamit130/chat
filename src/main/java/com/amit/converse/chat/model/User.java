@@ -5,10 +5,10 @@ import com.amit.converse.chat.State.Offline;
 import com.amit.converse.chat.State.Online;
 import com.amit.converse.chat.State.State;
 import com.amit.converse.chat.service.MessageProcessor.IDeliverableEntity;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -19,6 +19,7 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Builder
 @Document(collection = "user")
 public class User implements IDeliverableEntity {
@@ -37,13 +38,24 @@ public class User implements IDeliverableEntity {
     @Builder.Default
     private Set<String> adminRoleChatRoomIds = new HashSet<>();
 
-    private String status;
+    @Builder.Default
+    private String status = "Hey there! I am using Converse";
     private String username;
     private String password;
+    @Transient
+    @JsonIgnore
     private State state;
     private RedisSessionITransitionService redisSessionTransition;
     private Instant lastSeenTimestamp;
     private Instant creationDate;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
     public void setState(Online online) {
         this.state = online;

@@ -1,5 +1,7 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.State.Offline;
+import com.amit.converse.chat.State.Online;
 import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.SelfChatUserService;
@@ -19,12 +21,14 @@ public class CreateUserService {
     private SelfChatUserService selfChatUserService;
 
     private User getUser(UserDTO userDTO) {
-        return User.builder()
+        User user = User.builder()
                .userId(userDTO.getUserId())
                .username(userDTO.getUsername())
                .creationDate(userDTO.getCreationDate())
                .lastSeenTimestamp(userDTO.getCreationDate())
                .build();
+        user.setState(new Offline(user));
+        return user;
     }
 
 
