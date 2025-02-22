@@ -2,19 +2,25 @@ package com.amit.converse.chat.service.Redis.Factory;
 
 import com.amit.converse.chat.Redis.OfflineRedisSessionITransitionService;
 import com.amit.converse.chat.Redis.OnlineRedisSessionITransitionService;
+import com.amit.converse.chat.service.Redis.RedisWriteService;
+import com.amit.converse.chat.service.User.UserChatService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Service;
 
-@Configuration
+@Service
 public class RedisSessionTransitionFactory {
 
-    @Bean
+    @Autowired
+    protected UserChatService userChatService;
+    @Autowired
+    protected RedisWriteService redisWriteService;
+
     public OnlineRedisSessionITransitionService getOnlineRedisSessionTransition() {
-        return new OnlineRedisSessionITransitionService();
+        return new OnlineRedisSessionITransitionService(userChatService,redisWriteService);
     }
 
-    @Bean
     public OfflineRedisSessionITransitionService getOfflineRedisSessionTransition() {
-        return new OfflineRedisSessionITransitionService();
+        return new OfflineRedisSessionITransitionService(userChatService,redisWriteService);
     }
 }

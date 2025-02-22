@@ -13,16 +13,14 @@ import org.springframework.stereotype.Service;
 @Service
 @Data
 public abstract class RedisSessionITransitionService implements ITransition {
-    @Autowired
-    protected UserChatService userChatService;
-    @Autowired
-    protected UserContext userContext;
-    @Autowired
-    protected RedisWriteService redisWriteService;
     private ConnectionStatus status;
+    protected UserChatService userChatService;
+    protected RedisWriteService redisWriteService;
 
-    public RedisSessionITransitionService(ConnectionStatus status) {
+    public RedisSessionITransitionService(ConnectionStatus status, UserChatService userChatService, RedisWriteService redisWriteService) {
         this.status = status;
+        this.userChatService = userChatService;
+        this.redisWriteService = redisWriteService;
     }
 
     public final void transit() {

@@ -11,7 +11,10 @@ public class RedisUserService implements IRedisUserService{
     protected final RedisTemplate<String, Object> redisTemplate;
 
     public void setUser(String userId) {
-        redisTemplate.opsForValue().set(userId,null);
+        if (userId == null) {
+            throw new IllegalArgumentException("User ID cannot be null");
+        }
+        redisTemplate.opsForValue().set(userId,"");
     }
 
     public void removeUser(String userId) {

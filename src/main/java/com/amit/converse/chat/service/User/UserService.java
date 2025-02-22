@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.State.Offline;
+import com.amit.converse.chat.State.StateFactoryService;
 import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
@@ -18,11 +19,11 @@ import java.util.stream.Collectors;
 public class UserService {
 
     @Autowired
-    protected UserContext userContext;
+    private UserContext userContext;
     @Autowired
-    protected UserDetailsService userDetailsService;
+    private UserDetailsService userDetailsService;
     @Autowired
-    protected UserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
     private AuthService authService;
 
@@ -80,7 +81,6 @@ public class UserService {
     public User getUserById(String userId) {
         User user = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new ConverseException("User not found!"));
-        user.setState(new Offline(user));
         return user;
     }
 

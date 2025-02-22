@@ -1,20 +1,20 @@
 package com.amit.converse.chat.State;
 
-import com.amit.converse.chat.Redis.OfflineRedisSessionITransitionService;
 import com.amit.converse.chat.model.User;
-import org.springframework.stereotype.Component;
+import com.amit.converse.chat.service.MessageProcessor.DeliveryProcessingService;
+import com.amit.converse.chat.service.Redis.Factory.RedisSessionTransitionFactory;
+import com.amit.converse.chat.service.User.UserService;
 
-@Component
 public class Online extends State {
 
-    public Online(User user) {
-        super(user);
-        user.setRedisSessionTransition(new OfflineRedisSessionITransitionService());
+    public Online(User user, UserService userService, DeliveryProcessingService deliveryProcessingService, RedisSessionTransitionFactory redisSessionTransitionFactory) {
+        super(user,userService,deliveryProcessingService,redisSessionTransitionFactory);
+        user.setRedisSessionTransition(redisSessionTransitionFactory.getOfflineRedisSessionTransition());
     }
 
     @Override
     public void transit() {
-        user.setState(new Offline(user));
+        user.setState(new Offline(user,userService,deliveryProcessingService,redisSessionTransitionFactory));
         userService.transit();
     }
 }

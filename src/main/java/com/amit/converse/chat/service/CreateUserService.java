@@ -2,6 +2,7 @@ package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.State.Offline;
 import com.amit.converse.chat.State.Online;
+import com.amit.converse.chat.State.StateFactoryService;
 import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.SelfChatUserService;
@@ -20,6 +21,9 @@ public class CreateUserService {
     @Autowired
     private SelfChatUserService selfChatUserService;
 
+    @Autowired
+    private StateFactoryService stateFactoryService;
+
     private User getUser(UserDTO userDTO) {
         User user = User.builder()
                .userId(userDTO.getUserId())
@@ -27,7 +31,6 @@ public class CreateUserService {
                .creationDate(userDTO.getCreationDate())
                .lastSeenTimestamp(userDTO.getCreationDate())
                .build();
-        user.setState(new Offline(user));
         return user;
     }
 

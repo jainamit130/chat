@@ -43,7 +43,6 @@ public class User implements IDeliverableEntity {
     private String username;
     private String password;
     @Transient
-    @JsonIgnore
     private State state;
     private RedisSessionITransitionService redisSessionTransition;
     private Instant lastSeenTimestamp;
@@ -57,13 +56,9 @@ public class User implements IDeliverableEntity {
         this.status = status;
     }
 
-    public void setState(Online online) {
-        this.state = online;
-    }
-
-    public void setState(Offline offline) {
-        this.state = offline;
-        updateLastSeenTimestamp();
+    public void setState(State state) {
+        this.state = state;
+        if(state instanceof Offline) updateLastSeenTimestamp();
     }
 
     public void updateLastSeenTimestamp() {

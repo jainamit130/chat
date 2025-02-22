@@ -79,7 +79,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         messageConverters.add(converter);
 
         // Don't add default converters.
-        return false;
+        return true;
     }
 
 }
