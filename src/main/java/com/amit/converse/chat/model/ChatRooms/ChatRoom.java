@@ -126,6 +126,10 @@ public abstract class ChatRoom implements IChatRoom {
         return getTotalMessageCount()-getReadMessageCount(userId);
     }
 
+    public void totalMessageCountIncrement() {
+        totalMessageCount++;
+    }
+
     @Override
     public void readMessages(String userId) {
         updateLastVisitedTimestamp(userId);

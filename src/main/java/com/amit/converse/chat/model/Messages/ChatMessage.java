@@ -30,6 +30,10 @@ public class ChatMessage extends Message {
         status = newStatus;
     }
 
+    public void readMessage() { this.status=MessageStatus.READ; }
+
+    public void deliverMessage() { this.status=MessageStatus.DELIVERED; }
+
     @Override
     public Integer readMessage(String timestamp,String userId) {
         return messageMetaData.readMessage(timestamp,userId);

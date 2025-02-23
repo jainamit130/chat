@@ -14,15 +14,14 @@ import java.util.List;
 @Service
 public class ReadProcessingService implements readProcessor {
 
-    @Autowired
-    @Lazy
-    private ChatService chatService;
+    private final ChatService chatService;
+    private final MarkReadService markReadService;
 
     @Autowired
-    private RedisReadService redisReadService;
-
-    @Autowired
-    private MarkReadService markReadService;
+    public ReadProcessingService(@Lazy ChatService chatService, MarkReadService markReadService) {
+        this.chatService = chatService;
+        this.markReadService = markReadService;
+    }
 
     @Override
     public void read(User user) {

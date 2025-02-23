@@ -35,11 +35,6 @@ public class ChatService<T extends ChatRoom> {
         context.setChatRoom(chatRoom);
     }
 
-    public void sendMessage(ChatMessage message) throws InterruptedException {
-        message.setChatRoomId(context.getChatRoomId());
-        chatMessageService.sendMessage(message);
-    }
-
     public void readMessages(User user) {
         getContextChatRoom().readMessages(user.getUserId());
         processChatRoomToDB(getContextChatRoom());
@@ -91,4 +86,9 @@ public class ChatService<T extends ChatRoom> {
         return chatMessageService.getMessagesOfChatFrom(context.getChatRoom());
     }
 
+    public void processSentMessage() {
+        T chatRoom = getContextChatRoom();
+        chatRoom.totalMessageCountIncrement();
+        processChatRoomToDB(chatRoom);
+    }
 }

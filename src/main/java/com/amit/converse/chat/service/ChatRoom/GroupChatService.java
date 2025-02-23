@@ -14,8 +14,6 @@ import java.util.List;
 public class GroupChatService extends ChatService<GroupChat> {
     @Autowired
     private IGroupChatRepository groupRepository;
-    @Autowired
-    private GroupChatMessageService messageService;
 
     @Override
     public GroupChat getChatRoomById(String chatRoomId) {

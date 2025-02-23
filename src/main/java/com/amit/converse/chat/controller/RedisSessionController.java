@@ -15,14 +15,13 @@ import org.springframework.web.bind.annotation.*;
 @AllArgsConstructor
 @RequestMapping("/converse/users/")
 public class RedisSessionController {
-    private final UserContext userContext;
     private final UserService userService;
     private final DirectChatRedisTransitionService directChatRedisTransitionService;
     private final GroupChatRedisTransitionService groupChatRedisTransitionService;
 
     @PostMapping("/state/transit")
     public ResponseEntity transitState() {
-        User user = userService.getUserById(userContext.getUserId());
+        User user = userService.getUserContext();
         user.getState().transit();
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

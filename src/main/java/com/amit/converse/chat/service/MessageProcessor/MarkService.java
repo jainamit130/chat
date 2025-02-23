@@ -5,29 +5,31 @@ import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public abstract class MarkService {
 
-    @Autowired
     protected RedisReadService redisReadService;
-
-    @Autowired
-    @Lazy
-    private ChatMessageService chatMessageService;
-
+    protected ChatMessageService chatMessageService;
     private Map<String,List<String>> senderSpecificMessageIds;
     private List<ChatMessage> markedMessages;
     private List<String> onlineUserIds;
+
+    public MarkService(RedisReadService redisReadService, ChatMessageService chatMessageService) {
+        this.redisReadService = redisReadService;
+        this.chatMessageService = chatMessageService;
+        this.senderSpecificMessageIds = new HashMap<>();
+        this.markedMessages = new ArrayList<>();
+        this.onlineUserIds = new ArrayList<>();
+    }
 
     protected List<String> getOnlineUserIds() {
         return Collections.unmodifiableList(onlineUserIds);
@@ -57,8 +59,11 @@ public abstract class MarkService {
             List<String> senderMessageIds = senderSpecificMessageIds.getOrDefault(message.getSenderId(),new ArrayList<>());
             senderMessageIds.add(message.getId());
             senderSpecificMessageIds.put(message.getSenderId(),senderMessageIds);
+            processMessage(message);
         }
     }
+
+    public abstract void processMessage(ChatMessage message);
 
     private void markMessages(List<ChatMessage> messages, String userId, Integer memberCount) {
         String currentTimestampStr = Instant.now().toString();
@@ -83,6 +88,7 @@ public abstract class MarkService {
         for(String onlineUserId:activeUserIds) {
             markMessages(Collections.singletonList(message),onlineUserId,chatRoom.getMemberCount());
         }
+        markedMessages.add(message);
         sendMessageMarkedNotificationToSender(chatRoom, message.getSenderId(),Collections.singletonList(message.getId()));
     }
 

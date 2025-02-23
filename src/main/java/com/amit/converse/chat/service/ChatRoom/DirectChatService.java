@@ -14,6 +14,9 @@ public class DirectChatService extends ChatService<DirectChat> {
     @Autowired
     private IDirectChatRepository directChatRepository;
 
+    @Autowired
+    private DirectChatMessageService directChatMessageService;
+
     private void processDirectChatCreation(User primaryUser, User counterPartUser) {
         Optional<DirectChat> alreadyExistingDirectChat = getChatIfAlreadyExisting(primaryUser.getUserId(),counterPartUser.getUserId());
         if(alreadyExistingDirectChat.isPresent()) {
@@ -35,7 +38,7 @@ public class DirectChatService extends ChatService<DirectChat> {
     public void processCreation(User primaryUser, User counterPartUser,CreateDirectChatRequest directChatRequest) throws InterruptedException {
         // Updates the context, fulfilling its purpose of getting a chat new or existing
         processDirectChatCreation(primaryUser,counterPartUser);
-        sendMessage(directChatRequest.getMessage());
+        directChatMessageService.sendMessage(directChatRequest.getMessage());
         return;
     }
 

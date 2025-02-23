@@ -2,10 +2,8 @@ package com.amit.converse.chat.model;
 
 import com.amit.converse.chat.Redis.RedisSessionITransitionService;
 import com.amit.converse.chat.State.Offline;
-import com.amit.converse.chat.State.Online;
 import com.amit.converse.chat.State.State;
 import com.amit.converse.chat.service.MessageProcessor.IDeliverableEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
@@ -44,6 +42,7 @@ public class User implements IDeliverableEntity {
     private String password;
     @Transient
     private State state;
+    @Transient
     private RedisSessionITransitionService redisSessionTransition;
     private Instant lastSeenTimestamp;
     private Instant creationDate;

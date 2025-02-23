@@ -5,6 +5,7 @@ import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.dto.Notification.MessageMarkedNotification;
 import com.amit.converse.chat.dto.Notification.MessageNotification;
 import com.amit.converse.chat.exceptions.ConverseException;
+import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.Message.IChatMessageRepository;
@@ -47,7 +48,15 @@ public class ChatMessageService<T extends IChatRoom> {
         return chatMessageRepository.save(message);
     }
 
-    public void saveMessages(List<ChatMessage> messages) { chatMessageRepository.saveAll(messages); }
+    private void fulfilMessage(ChatMessage message) {
+        message.setChatRoomId(chatService.getContextChatRoom().getId());
+        message.setSenderId(userChatService.getContextUser().getUserId());
+        message.setStatus(MessageStatus.PENDING);
+    }
+
+    public void saveMessages(List<ChatMessage> messages) {
+        chatMessageRepository.saveAll(messages);
+    }
 
     public List<ChatMessage> getMessagesOfChatFrom(IChatRoom chatRoom) {
         User user = userChatService.getContextUser();
@@ -73,12 +82,14 @@ public class ChatMessageService<T extends IChatRoom> {
     }
 
     public final void sendMessage(ChatMessage message) throws InterruptedException {
+        fulfilMessage(message);
         IChatRoom chatRoom = chatService.getContextChatRoom();
         authoriseSender();
         ChatMessage savedMessage = saveMessage(message);
         sendMessageNotification(chatRoom.getId(),savedMessage);
         userChatService.connectChat(new ArrayList<>(chatRoom.getDeletedForUsers()),chatRoom);
-        messageProcessingService.process(message);
+        messageProcessingService.process(savedMessage);
+        chatService.processSentMessage();
     }
 
     public ChatMessage getLatestMessage(IChatRoom chatRoom) {
