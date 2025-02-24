@@ -7,11 +7,13 @@ import com.amit.converse.chat.service.ChatRoom.ChatService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Scope("prototype")
 public class DeliveryProcessingService implements deliveryProcessor {
 
     private final ChatService chatService;

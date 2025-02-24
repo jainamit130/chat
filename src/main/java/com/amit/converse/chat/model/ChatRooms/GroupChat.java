@@ -2,8 +2,8 @@ package com.amit.converse.chat.model.ChatRooms;
 
 import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,7 +15,7 @@ import java.util.*;
 @TypeAlias("GROUP")
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "chatRooms")
-    public class GroupChat extends ChatRoom implements ITransactable {
+public class GroupChat extends ChatRoom implements ITransactable {
 
     public GroupChat(String name, List<String> userIds, String adminUserId) {
         super(name,ChatRoomType.GROUP,userIds);
@@ -27,16 +27,16 @@ import java.util.*;
         this.blindPeriod = new HashMap<>();
     }
 
-
-    /*
-    * In a List of chatrooms
-    * i want to use the chatRoom and do the respective based on the instance
-    *
-    * Direct Chat -> fetch counterpart username and set chatRoom chatRoomName
-    * Group Chat -> fetch its own chatRoomName and set chatRoom chatRoomName
-    * Self Chat -> fetch its own chatRoomName and set chatRoom chatRoomName
-    *
-    * */
+    @PersistenceCreator
+    public GroupChat(String name, List<String> userIds, String createdBy, List<String> adminUserIds) {
+        super(name,ChatRoomType.GROUP,userIds);
+        this.name = name;
+        this.adminUserIds = adminUserIds;
+        this.createdBy=createdBy;
+        this.isExited = false;
+        this.exitedMembers = new HashMap<>();
+        this.blindPeriod = new HashMap<>();
+    }
 
     private final String name;
     private String createdBy;
@@ -71,7 +71,7 @@ import java.util.*;
 
     @Override
     public Boolean isDeletable() {
-        return getExitedMemberCount()==super.getDeletedForUsersCount();
+        return getUserIds().isEmpty() && getExitedMemberCount()==super.getDeletedForUsersCount();
     }
 
     @Override
