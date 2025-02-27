@@ -15,6 +15,8 @@ type ChatMessage {
     id: String!
     senderId: String!
     content: String!
+    timestamp: String!
+    status: MessageStatus!
 }
 
 enum MessageStatus {
@@ -35,7 +37,24 @@ type User {
     username: String!
 }
 
+interface IOnlineUsersDTO {
+}
+
+type DirectChatOnlineUsersDTO implements IOnlineUsersDTO {
+    lastSeenTimestamp: String
+}
+
+type GroupChatOnlineUsersDTO implements IOnlineUsersDTO {
+    onlineUsers: [String]
+}
+
+type ChatRoomData {
+    messages: [ChatMessage]
+    onlineUsersDTO: IOnlineUsersDTO
+}
+
 type Query {
     getChatRoomsOfUser: [ChatRoom!]!
+    getChatRoomData: [ChatMessage!]!
 }
 

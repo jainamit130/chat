@@ -49,6 +49,7 @@ public class ChatMessageService<T extends IChatRoom> {
     }
 
     private void fulfilMessage(ChatMessage message) {
+        message.setTimestamp(Instant.now());
         message.setChatRoomId(chatService.getContextChatRoom().getId());
         message.setSenderId(userChatService.getContextUser().getUserId());
         message.setStatus(MessageStatus.PENDING);

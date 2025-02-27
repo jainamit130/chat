@@ -11,7 +11,7 @@ import java.util.List;
 public interface IChatRoomRepository extends MongoRepository<ChatRoom, String> {
 
     @Aggregation(pipeline = {
-            "{ $match: { 'id': { $in: ?0 }, 'deletedForUsers': { $nin: [?1] } } }"
+            "{ $match: { '_id': { $in: ?0 }, 'deletedForUsers': { $nin: [?1] } } }"
     })
     List<ChatRoom> getAllChatRoomsByIds(List<String> chatRoomIds, String userId);
 }

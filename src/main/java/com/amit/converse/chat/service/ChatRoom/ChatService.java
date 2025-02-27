@@ -1,7 +1,9 @@
 package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.Redis.ChatRoomRedisTransitionService;
 import com.amit.converse.chat.context.ChatContext;
+import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
@@ -28,6 +30,8 @@ public class ChatService<T extends ChatRoom> {
     private ChatRoomFulfilmentServiceFactory chatRoomFulfilmentServiceFactory;
     @Autowired
     private RedisReadService redisReadService;
+    @Autowired
+    private ChatRoomRedisTransitionServiceFactory chatRoomRedisTransitionServiceFactory;
 
     public T getContextChatRoom() { return context.getChatRoom(); }
 
@@ -90,5 +94,10 @@ public class ChatService<T extends ChatRoom> {
         T chatRoom = getContextChatRoom();
         chatRoom.totalMessageCountIncrement();
         processChatRoomToDB(chatRoom);
+    }
+
+    public ChatRoomData getChatRoomData() {
+
+        return ChatRoomData.builder().messages(getMessagesOfChatRoom())..build();
     }
 }

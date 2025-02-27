@@ -57,11 +57,6 @@ public class User implements IDeliverableEntity {
 
     public void setState(State state) {
         this.state = state;
-        if(state instanceof Offline) updateLastSeenTimestamp();
-    }
-
-    public void updateLastSeenTimestamp() {
-        this.setLastSeenTimestamp(Instant.now());
     }
 
     public void disconnectChat(String chatRoomId, Integer unreadMessageCount) {

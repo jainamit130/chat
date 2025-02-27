@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -28,7 +29,7 @@ public class DeliveryProcessingService implements deliveryProcessor {
     @Override
     public void deliver(User user) {
         // all undelivered messages in all chatRooms must be marked delivered
-        List<IChatRoom> chatRooms = chatService.getChatRoomsByIds(List.of(user.getChatRoomIds()), user.getUserId());
+        List<IChatRoom> chatRooms = chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()), user.getUserId());
         for(IChatRoom chatRoom:chatRooms) {
             markDeliveredService.mark(chatRoom,user);
         }
