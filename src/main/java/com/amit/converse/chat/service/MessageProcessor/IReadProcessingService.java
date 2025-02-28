@@ -4,23 +4,18 @@ import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
-import com.amit.converse.chat.service.Redis.RedisReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
-@Scope("prototype")
-public class ReadProcessingService implements readProcessor {
+public class IReadProcessingService implements IReadProcessor {
 
     private final ChatService chatService;
     private final MarkReadService markReadService;
 
     @Autowired
-    public ReadProcessingService(@Lazy ChatService chatService, MarkReadService markReadService) {
+    public IReadProcessingService(@Lazy ChatService chatService, MarkReadService markReadService) {
         this.chatService = chatService;
         this.markReadService = markReadService;
     }
@@ -39,5 +34,6 @@ public class ReadProcessingService implements readProcessor {
         IChatRoom chatRoom = chatService.getChatRoomById(message.getChatRoomId());
         markReadService.mark(chatRoom,message);
         markReadService.saveAllMarkedMessages();
+        markReadService.clearMarkService();
     }
 }

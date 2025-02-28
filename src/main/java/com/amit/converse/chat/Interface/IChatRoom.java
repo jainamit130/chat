@@ -1,5 +1,6 @@
 package com.amit.converse.chat.Interface;
 
+import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -23,4 +24,5 @@ public interface IChatRoom {
     Set<String> getDeletedForUsers();
     void clearChat(String userId);
     void deleteChat(String userId);
+    IOnlineUsersDTO transit();
 }

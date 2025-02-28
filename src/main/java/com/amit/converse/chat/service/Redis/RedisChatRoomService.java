@@ -11,13 +11,16 @@ public class RedisChatRoomService implements IRedisChatroomService{
     protected RedisTemplate<String, String> redisTemplate;
 
     public void addUserIdToChatRoom(String chatRoomId, String userId) {
-        if(chatRoomId!=null)
-            redisTemplate.opsForValue().set(userId,chatRoomId);
+        if (chatRoomId != null && userId != null) {
+            String key = getChatRoomUserKey(chatRoomId, userId);
+            redisTemplate.opsForValue().set(key, "");
+        }
     }
 
-    public void removeUserFromChatRoom(String userId) {
-        if(redisTemplate.hasKey(userId)) {
-            redisTemplate.opsForValue().set(userId,null);
+    public void removeUserFromChatRoom(String chatRoomId,String userId) {
+        String key = getChatRoomUserKey(chatRoomId,userId);
+        if(redisTemplate.hasKey(key)) {
+            redisTemplate.delete(key);
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.ChatRoom.FilfillmentService;
 
+import com.amit.converse.chat.Redis.DirectChatRedisTransitionService;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.DirectChatUserService;
@@ -13,6 +14,15 @@ public class DirectChatFulfilmentService extends ChatRoomFulfilmentService {
     @Autowired
     @Lazy
     private DirectChatUserService directChatUserService;
+
+    @Autowired
+    @Lazy
+    private DirectChatRedisTransitionService directChatRedisTransitionService;
+
+    @Override
+    public void fillTransitionService(ChatRoom chatRoom) {
+        chatRoom.setChatRoomRedisTransitionService(directChatRedisTransitionService);
+    }
 
     @Override
     public void fillName(ChatRoom chatRoom) {

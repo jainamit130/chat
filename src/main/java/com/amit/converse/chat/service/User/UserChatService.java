@@ -3,7 +3,7 @@ package com.amit.converse.chat.service.User;
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.Notification.UserOnlineNotification;
-import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDto;
+import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDTO;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
@@ -41,10 +41,13 @@ public class UserChatService<T extends ChatRoom> {
     public User getContextUser() {
         return userService.getUserContext();
     }
+    public ChatRoom getContextChatRoom() {
+        return chatService.getContextChatRoom();
+    }
 
     public IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat) {
         List<User> onlineUsers = getUsersFromRepo(onlineUserIdsOfChat);
-        return GroupChatOnlineUsersDto.builder().onlineUsers(processUsersToUsernames(onlineUsers)).build();
+        return GroupChatOnlineUsersDTO.builder().onlineUsers(processUsersToUsernames(onlineUsers)).build();
     }
 
     public IOnlineUsersDTO getOnlineUsersOfChat(){

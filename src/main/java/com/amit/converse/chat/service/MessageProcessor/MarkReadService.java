@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Scope("prototype")
 public class MarkReadService extends MarkService {
 
     @Autowired

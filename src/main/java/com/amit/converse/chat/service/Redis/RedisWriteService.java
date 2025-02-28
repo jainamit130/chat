@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class RedisWriteService implements IRedisUserService,IRedisChatroomService{
-    private final RedisUserService redisUserService;
-    private final RedisChatRoomService redisChatRoomService;
+    private final IRedisUserService redisUserService;
+    private final IRedisChatroomService redisChatRoomService;
 
     @Override
     public void addUserIdToChatRoom(String chatRoomId, String userId) {
@@ -15,8 +15,8 @@ public class RedisWriteService implements IRedisUserService,IRedisChatroomServic
     }
 
     @Override
-    public void removeUserFromChatRoom(String userId) {
-        redisChatRoomService.removeUserFromChatRoom(userId);
+    public void removeUserFromChatRoom(String chatRoomId,String userId) {
+        redisChatRoomService.removeUserFromChatRoom(chatRoomId,userId);
     }
 
     @Override

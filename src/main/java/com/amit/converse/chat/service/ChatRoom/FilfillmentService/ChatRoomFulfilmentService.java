@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.ChatRoom.FilfillmentService;
 
+import com.amit.converse.chat.Redis.ChatRoomRedisTransitionService;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.User.UserChatService;
@@ -24,9 +25,12 @@ public abstract class ChatRoomFulfilmentService {
         chatRoom.setUnreadMessageCount(userChatService.getUnreadMessageCount(chatRoom));
     }
 
+    public abstract void fillTransitionService(ChatRoom chatRoom);
+
     public abstract void fillName(ChatRoom chatRoom);
 
     public final void fulfill(ChatRoom chatRoom) {
+        fillTransitionService(chatRoom);
         fillLatestMessage(chatRoom);
         fillUnreadMessageCount(chatRoom);
         fillName(chatRoom);

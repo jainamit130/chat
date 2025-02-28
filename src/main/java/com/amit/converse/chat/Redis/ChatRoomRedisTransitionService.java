@@ -1,31 +1,34 @@
 package com.amit.converse.chat.Redis;
 
 import com.amit.converse.chat.Interface.ITransition;
-import com.amit.converse.chat.context.ChatContext;
-import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
-import com.amit.converse.chat.service.MessageProcessor.ReadProcessingService;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
+import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.MessageProcessor.IReadProcessingService;
 import com.amit.converse.chat.service.Redis.RedisChatRoomService;
+import com.amit.converse.chat.service.User.UserChatService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
 public abstract class ChatRoomRedisTransitionService implements ITransition {
     @Autowired
-    private UserContext userContext;
-    @Autowired
-    private ChatContext chatContext;
+    @Lazy
+    private UserChatService userChatService;
     @Autowired
     private RedisChatRoomService redisChatRoomService;
     @Autowired
-    private ReadProcessingService readProcessingService;
+    private IReadProcessingService readProcessingService;
 
     public abstract IOnlineUsersDTO transitAndGetOnlineUsers();
 
     @Override
     public void transit() {
-        redisChatRoomService.removeUserFromChatRoom(userContext.getUserId());
-        redisChatRoomService.addUserIdToChatRoom(chatContext.getChatRoom().getId(),userContext.getUserId());
-        readProcessingService.read(userContext.getUser());
+        User user = userChatService.getContextUser();
+        ChatRoom chatRoom = userChatService.getContextChatRoom();
+        redisChatRoomService.removeUserFromChatRoom(chatRoom.getId(),user.getUserId());
+        redisChatRoomService.addUserIdToChatRoom(chatRoom.getId(),user.getUserId());
+        readProcessingService.read(user);
     }
 }

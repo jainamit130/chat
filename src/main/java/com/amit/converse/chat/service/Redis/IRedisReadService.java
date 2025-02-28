@@ -5,7 +5,7 @@ import com.amit.converse.chat.Interface.IChatRoom;
 import java.util.List;
 import java.util.Set;
 
-public interface IRedisReadService {
+public interface IRedisReadService extends IRedisService {
     Boolean isUserInChatRoom(String chatRoomId, String userId);
     Boolean isUserOnline(String userId);
     Set<String> filterOnlineUsers(IChatRoom chatRoom);

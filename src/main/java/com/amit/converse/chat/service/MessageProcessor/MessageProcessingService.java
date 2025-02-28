@@ -11,7 +11,7 @@ public class MessageProcessingService {
     private DeliveryProcessingService deliveryProcessingService;
 
     @Autowired
-    private ReadProcessingService readProcessingService;
+    private IReadProcessingService readProcessingService;
 
     public final void process(ChatMessage message) {
         deliveryProcessingService.deliver(message);

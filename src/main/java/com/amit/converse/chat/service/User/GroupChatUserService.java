@@ -1,9 +1,6 @@
 package com.amit.converse.chat.service.User;
 
-import com.amit.converse.chat.Interface.IChatRoom;
-import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.dto.GroupDetails;
-import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDto;
 import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.User;

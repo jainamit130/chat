@@ -12,4 +12,5 @@ public class ChatContext<T extends IChatRoom> {
     public String getChatRoomId() {
         return chatRoom.getId();
     }
+
 }

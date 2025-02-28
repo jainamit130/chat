@@ -1,13 +1,14 @@
 package com.amit.converse.chat.model.ChatRooms;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.Redis.ChatRoomRedisTransitionService;
+import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
 import com.amit.converse.chat.service.ChatRoom.FilfillmentService.ChatRoomFulfilmentService;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -61,9 +62,8 @@ public abstract class ChatRoom implements IChatRoom {
     protected transient String chatRoomName;
     protected transient Integer unreadMessageCount;
     protected transient ChatMessage latestMessage;
-
-    @Autowired
     protected ChatRoomFulfilmentService chatRoomFulfilmentService;
+    protected ChatRoomRedisTransitionService chatRoomRedisTransitionService;
 
     public void setUserIds(List<String> userIds) {
         Set<String> userIdsSet = Set.copyOf(userIds);
@@ -136,4 +136,8 @@ public abstract class ChatRoom implements IChatRoom {
         readMessageCount.put(userId,totalMessageCount);
     }
 
+    @Override
+    public IOnlineUsersDTO transit() {
+        return chatRoomRedisTransitionService.transitAndGetOnlineUsers();
+    }
 }

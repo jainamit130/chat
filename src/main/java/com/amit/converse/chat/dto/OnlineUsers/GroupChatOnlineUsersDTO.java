@@ -7,6 +7,6 @@ import java.util.List;
 
 @Builder
 @Data
-public class GroupChatOnlineUsersDto implements IOnlineUsersDTO {
+public class GroupChatOnlineUsersDTO implements IOnlineUsersDTO {
     List<String> onlineUsers;
 }

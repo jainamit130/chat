@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Scope("prototype")
 public class MarkDeliveredService extends MarkService {
 
     @Autowired

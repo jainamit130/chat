@@ -14,8 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Scope("prototype")
-public class DeliveryProcessingService implements deliveryProcessor {
+public class DeliveryProcessingService implements IDeliveryProcessor {
 
     private final ChatService chatService;
     private final MarkDeliveredService markDeliveredService;
@@ -41,5 +40,7 @@ public class DeliveryProcessingService implements deliveryProcessor {
         IChatRoom chatRoom = chatService.getChatRoomById(message.getChatRoomId());
         markDeliveredService.mark(chatRoom,message);
         markDeliveredService.saveAllMarkedMessages();
+        markDeliveredService.clearMarkService();
     }
+
 }

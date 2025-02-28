@@ -1,7 +1,7 @@
 package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.Interface.IChatRoom;
-import com.amit.converse.chat.Redis.ChatRoomRedisTransitionService;
+import com.amit.converse.chat.Redis.ChatRoomRedisTransitionServiceFactory;
 import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
@@ -30,8 +30,6 @@ public class ChatService<T extends ChatRoom> {
     private ChatRoomFulfilmentServiceFactory chatRoomFulfilmentServiceFactory;
     @Autowired
     private RedisReadService redisReadService;
-    @Autowired
-    private ChatRoomRedisTransitionServiceFactory chatRoomRedisTransitionServiceFactory;
 
     public T getContextChatRoom() { return context.getChatRoom(); }
 
@@ -54,8 +52,11 @@ public class ChatService<T extends ChatRoom> {
     }
 
     public IChatRoom getChatRoomById(String chatRoomId) {
-        return chatRoomRepository.findById(chatRoomId)
+        ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ConverseChatRoomNotFoundException(chatRoomId));
+        chatRoom.setChatRoomFulfilmentService(chatRoomFulfilmentServiceFactory.getFulfilmentService(chatRoom.getChatRoomType()));
+        chatRoom.fulfill();
+        return chatRoom;
     }
 
     protected T saveChat(T chat) {
@@ -97,7 +98,9 @@ public class ChatService<T extends ChatRoom> {
     }
 
     public ChatRoomData getChatRoomData() {
-
-        return ChatRoomData.builder().messages(getMessagesOfChatRoom())..build();
+        ChatRoom chatRoom = getContextChatRoom();
+        return ChatRoomData.builder().messages(getMessagesOfChatRoom()).
+                onlineUsersDTO(chatRoom.transit())
+                .build();
     }
 }

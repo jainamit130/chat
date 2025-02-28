@@ -17,11 +17,11 @@ public class RedisReadService implements IRedisReadService {
     protected final RedisTemplate<String, Object> redisTemplate;
 
     public Boolean isUserInChatRoom(String chatRoomId, String userId) {
-        return redisTemplate.hasKey(userId.toString() + " : " + chatRoomId.toString());
+        return redisTemplate.hasKey(chatRoomId+ ":" + userId);
     }
 
     public Boolean isUserOnline(String userId) {
-        return redisTemplate.hasKey(userId.toString());
+        return redisTemplate.hasKey(userId);
     }
 
     // Active Users - meaning users online and inside the chatRoom

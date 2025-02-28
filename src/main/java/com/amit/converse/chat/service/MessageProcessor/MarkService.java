@@ -16,7 +16,6 @@ import java.time.Instant;
 import java.util.*;
 
 @Service
-@Scope("prototype")
 public abstract class MarkService {
 
     protected RedisReadService redisReadService;
@@ -24,6 +23,12 @@ public abstract class MarkService {
     private Map<String,List<String>> senderSpecificMessageIds;
     private List<ChatMessage> markedMessages;
     private List<String> onlineUserIds;
+
+    public void clearMarkService() {
+        this.senderSpecificMessageIds = new HashMap<>();
+        this.markedMessages = new ArrayList<>();
+        this.onlineUserIds = new ArrayList<>();
+    }
 
     public MarkService(RedisReadService redisReadService, ChatMessageService chatMessageService) {
         this.redisReadService = redisReadService;
