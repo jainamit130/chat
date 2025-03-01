@@ -15,8 +15,13 @@ public class UserContext {
     private User user;
 
     public void setUser(User user) {
-        user.setState(stateFactoryService.getState(user));
-        setUserId(user.getUserId());
         this.user = user;
+        this.user.setState(stateFactoryService.getState(this.user));
+        this.setUserId(user.getUserId());
+    }
+
+    public void setAndTransitUser(User user) {
+        setUser(user);
+        this.user.transit();
     }
 }

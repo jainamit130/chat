@@ -6,11 +6,11 @@ import lombok.Data;
 
 @Builder
 @Data
-public class UserOnlineNotification implements IChatNotification {
+public class UserOnlineStatusNotification implements IChatNotification {
     private String username;
     private ConnectionStatus status;
 
-    public UserOnlineNotification(String username, ConnectionStatus status) {
+    public UserOnlineStatusNotification(String username, ConnectionStatus status) {
         this.username = username;
         this.status = status;
     }

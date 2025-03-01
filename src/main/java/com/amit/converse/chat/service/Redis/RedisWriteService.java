@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.Redis;
 
+import com.amit.converse.chat.service.User.UserChatService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 public class RedisWriteService implements IRedisUserService,IRedisChatroomService{
     private final IRedisUserService redisUserService;
     private final IRedisChatroomService redisChatRoomService;
+    private final UserChatService userChatService;
 
     @Override
     public void addUserIdToChatRoom(String chatRoomId, String userId) {
@@ -26,6 +28,8 @@ public class RedisWriteService implements IRedisUserService,IRedisChatroomServic
 
     @Override
     public void removeUser(String userId) {
+        // Remove any chatRoomId: userId that might be present in redis
+        redisChatRoomService.removeUserFromChatRoom(userChatService.getContextChatRoom().getId(),userId);
         redisUserService.removeUser(userId);
     }
 }

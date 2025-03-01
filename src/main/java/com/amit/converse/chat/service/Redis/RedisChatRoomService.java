@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.Redis;
 
+import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,7 @@ public class RedisChatRoomService implements IRedisChatroomService{
     public void addUserIdToChatRoom(String chatRoomId, String userId) {
         if (chatRoomId != null && userId != null) {
             String key = getChatRoomUserKey(chatRoomId, userId);
-            redisTemplate.opsForValue().set(key, "");
+            redisTemplate.opsForValue().set(key, "",60,TimeUnit.SECONDS);
         }
     }
 

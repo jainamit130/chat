@@ -19,10 +19,9 @@ public class RedisSessionController {
     private final DirectChatRedisTransitionService directChatRedisTransitionService;
     private final GroupChatRedisTransitionService groupChatRedisTransitionService;
 
-    @PostMapping("/state/transit")
-    public ResponseEntity transitState() {
-        User user = userService.getUserContext();
-        user.getState().transit();
+    @PostMapping("/state/active")
+    public ResponseEntity activateUser() {
+        System.out.println(userService.getUserContext().getUsername() + " is active with a TTL of 60 seconds");
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 

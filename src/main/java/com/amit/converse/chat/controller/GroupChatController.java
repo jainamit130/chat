@@ -24,7 +24,7 @@ public class GroupChatController {
 
     @PostMapping("/send/message/{chatRoomId}")
     public ResponseEntity sendMessage(@RequestBody ChatMessage chatMessage) {
-        try{
+        try {
             groupChatMessageService.sendMessage(chatMessage);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException | InterruptedException e) {
@@ -42,8 +42,14 @@ public class GroupChatController {
         }
     }
 
+    @PostMapping("/exit/{chatRoomId}")
+    public ResponseEntity exitChat() {
+        exitService.leave();
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
     @PostMapping("/remove/users/{chatRoomId}")
-    public ResponseEntity<Boolean> exitChat(@RequestBody List<String> userIds) {
+    public ResponseEntity removeUsers(@RequestBody List<String> userIds) {
         try {
             exitService.leave(userIds);
             return new ResponseEntity(HttpStatus.NO_CONTENT);

@@ -26,7 +26,7 @@ public class UserContextFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             User user = userService.getLoggedInUser();
-            userContext.setUser(user);
+            userContext.setAndTransitUser(user);
         } catch (Exception e) {
         }
         filterChain.doFilter(request, response);

@@ -23,7 +23,7 @@ public class StateFactoryService {
         if(user.getState()==null) {
             return getOfflineState(user);
         }
-        return getOnlineState(user);
+        return user.getState();
     }
 
     private Online getOnlineState(User user) {
