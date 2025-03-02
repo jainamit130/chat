@@ -14,13 +14,15 @@ import java.util.Set;
 @SuperBuilder
 public abstract class MessageMetaData {
 
+    private boolean isEncrypted;
+    private Set<String> deletedForUsers;
+
     public MessageMetaData() {
         this.isEncrypted = false;
         this.deletedForUsers = new HashSet<>();
     }
 
-    private boolean isEncrypted;
-    private Set<String> deletedForUsers;
+    public abstract void clearMessageMetadata();
 
     public abstract Integer readMessage(String timestamp,String userId);
 

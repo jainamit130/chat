@@ -26,6 +26,13 @@ public class ChatMessageMetaData extends MessageMetaData {
     private Map<String, Set<String>> deliveryReceiptsByTime;
     private Map<String, Set<String>> readReceiptsByTime;
 
+    public void clearMessageMetadata() {
+        this.deletedForEveryone = true;
+        this.deliveredRecipients = new HashSet<>();
+        this.readRecipients = new HashSet<>();
+        this.deliveryReceiptsByTime = new HashMap<>();
+        this.readReceiptsByTime = new HashMap<>();
+    }
 
     @Override
     public Integer readMessage(String timestamp,String userId) {

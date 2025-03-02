@@ -8,6 +8,8 @@ import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.MessageService.NotificationMessageService;
 import com.amit.converse.chat.service.MessageService.SaveMessageService;
+import com.amit.converse.chat.service.User.UserChatService;
+import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,21 +20,21 @@ import java.util.List;
 public abstract class NotifyGroupTransactionService {
 
     @Autowired
-    protected ChatContext<ITransactable> chatContext;
+    private ChatContext<ITransactable> chatContext;
 
     @Autowired
-    protected UserContext userContext;
+    private UserChatService userChatService;
 
     @Autowired
-    protected ChatNotificationService chatNotificationService;
+    private ChatNotificationService chatNotificationService;
 
     @Autowired
-    protected SaveMessageService saveMessageService;
+    private SaveMessageService saveMessageService;
 
     protected abstract String getTransactionMessage();
 
     protected final String generateMessage(User joinedUser) {
-        String message = userContext.getUser().getUsername() + " " + getTransactionMessage() + " " + joinedUser.getUsername();
+        String message = userChatService.getContextUser().getUsername() + " " + getTransactionMessage() + " " + joinedUser.getUsername();
         saveMessageService.saveMessage(NotificationMessageService.generateNotificationMessage(chatContext.getChatRoomId(),message));
         return message;
     }

@@ -4,11 +4,11 @@ import com.amit.converse.chat.model.MetaData.MessageMetaData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -38,6 +38,8 @@ public abstract class Message {
     public void deleteMessage(String userId) {
         messageMetaData.addUserToDeletedForUsers(userId);
     }
+
+    public Set<String> getDeletedForUsers() { return messageMetaData.getDeletedForUsers(); }
 
     public Integer getDeletedForMembersCount() {
         return messageMetaData.getDeletedForUsersCount();

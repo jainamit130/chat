@@ -19,8 +19,4 @@ public class ChatNotificationService extends NotificationService {
         webSocketMessageService.sendNotification(getAddress(chatRoomId),notification);
     }
 
-    // Message Delete Notification
-    // Message Notification
-    // Message Marked Notification
-
 }

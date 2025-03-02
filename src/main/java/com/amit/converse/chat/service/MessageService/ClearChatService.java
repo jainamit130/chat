@@ -1,4 +1,4 @@
-package com.amit.converse.chat.service;
+package com.amit.converse.chat.service.MessageService;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.context.ChatContext;
@@ -7,6 +7,7 @@ import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService;
+import com.amit.converse.chat.service.MessageService.IDeleteMessageService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

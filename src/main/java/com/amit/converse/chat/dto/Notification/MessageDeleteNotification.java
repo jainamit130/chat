@@ -6,5 +6,5 @@ import java.util.List;
 
 @Builder
 public class MessageDeleteNotification implements IChatNotification {
-    private List<String> messageId;
+    private String messageId;
 }

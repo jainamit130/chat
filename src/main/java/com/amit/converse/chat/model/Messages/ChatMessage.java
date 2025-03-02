@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "messages")
 @CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
-public class ChatMessage extends Message {
+public class ChatMessage extends Message implements IDeletableMessage {
     private String senderId;
     private MessageStatus status;
 
@@ -42,5 +42,12 @@ public class ChatMessage extends Message {
     @Override
     public Integer deliverMessage(String timestamp,String userId) {
         return messageMetaData.deliverMessage(timestamp,userId);
+    }
+
+    @Override
+    public void deleteForEveryone() {
+        this.content = "This message was deleted!";
+        this.status = MessageStatus.DELETED;
+        messageMetaData.clearMessageMetadata();
     }
 }
