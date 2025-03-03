@@ -4,6 +4,9 @@ import com.amit.converse.chat.service.User.UserChatService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 @AllArgsConstructor
 public class RedisWriteService implements IRedisUserService,IRedisChatroomService{
@@ -28,8 +31,11 @@ public class RedisWriteService implements IRedisUserService,IRedisChatroomServic
 
     @Override
     public void removeUser(String userId) {
-        // Remove any chatRoomId: userId that might be present in redis
-        redisChatRoomService.removeUserFromChatRoom(userChatService.getContextChatRoom().getId(),userId);
+        // In almost all cases it will be a single key
+        List<String> userChatRoomKeys = redisUserService.getAllKeysWithPrefix(userId);
+        for(String userChatRoomKey: userChatRoomKeys) {
+
+        }
         redisUserService.removeUser(userId);
     }
 }

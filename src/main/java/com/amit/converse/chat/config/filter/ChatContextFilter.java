@@ -40,6 +40,7 @@ public class ChatContextFilter extends OncePerRequestFilter {
             }
         }
         filterChain.doFilter(request, response);
+        chatContext.clearContext();
     }
 
 }

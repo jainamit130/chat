@@ -26,7 +26,7 @@ public class StateFactoryService {
         return user.getState();
     }
 
-    private Online getOnlineState(User user) {
+    public Online getOnlineState(User user) {
         return new Online(user,userService,deliveryProcessingService,redisSessionTransitionFactory);
     }
 

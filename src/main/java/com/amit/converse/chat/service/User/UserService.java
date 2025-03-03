@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.State.Offline;
+import com.amit.converse.chat.State.State;
 import com.amit.converse.chat.State.StateFactoryService;
 import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.UserDetails;
@@ -26,6 +27,10 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private AuthService authService;
+
+    public State getUserState(User user) {
+        return userContext.getState(user);
+    }
 
     private void updateContext(User user) {
         userContext.setUser(user);
@@ -72,8 +77,7 @@ public class UserService {
             updateContext(getContextUserIfPresent.get());
     }
 
-    public void transit() {
-        User user = userContext.getUser();
+    public void transit(User user) {
         user.transit();
         processUserToDB(user);
     }

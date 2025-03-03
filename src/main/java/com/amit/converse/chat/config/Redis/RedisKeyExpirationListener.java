@@ -1,8 +1,9 @@
 package com.amit.converse.chat.config.Redis;
 
+import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Redis.RedisWriteService;
-import com.amit.converse.chat.service.User.UserChatService;
+import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.Message;
@@ -13,7 +14,12 @@ import org.springframework.stereotype.Service;
 public class RedisKeyExpirationListener implements MessageListener {
 
     @Autowired
-    private UserChatService userChatService;
+    @Lazy
+    private UserService userService;
+
+    @Autowired
+    @Lazy
+    private UserContext userContext;
 
     @Autowired
     @Lazy
@@ -21,10 +27,12 @@ public class RedisKeyExpirationListener implements MessageListener {
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
-        String expiredKey = new String(message.getBody());
-        User user = userChatService.getContextUser();
-        String expectedKey = redisWriteService.getUserKey(user.getUserId());
-        if(expectedKey.equals(expiredKey)) {
+        String key = new String(message.getBody());
+        String userId = redisWriteService.extractUserIdFromUserKey(key);
+        if(userId!=null) {
+            User user = userService.getUserById(userId);
+            user.setState(userContext.getOnlineState(user));
+            userContext.setUser(user);
             user.getState().transit();
         }
     }

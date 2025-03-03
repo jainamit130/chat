@@ -30,5 +30,6 @@ public class UserContextFilter extends OncePerRequestFilter {
         } catch (Exception e) {
         }
         filterChain.doFilter(request, response);
+        userContext.clearContext();
     }
 }

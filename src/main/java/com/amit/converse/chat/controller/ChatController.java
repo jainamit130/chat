@@ -2,14 +2,17 @@ package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
-import com.amit.converse.chat.service.MessageService.ClearChatService;
+import com.amit.converse.chat.service.MessageService.DeleteMessageService.ClearChatService;
 import com.amit.converse.chat.service.DeleteChatService;
-import com.amit.converse.chat.service.MessageService.IDeleteMessageService;
+import com.amit.converse.chat.service.MessageService.DeleteMessageService.DeleteMessageForEveryoneService;
+import com.amit.converse.chat.service.MessageService.DeleteMessageService.DeleteMessageForMeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,7 +20,8 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
     private final ClearChatService clearChatService;
     private final DeleteChatService deleteChatService;
-    private final IDeleteMessageService deleteMessageService;
+    private final DeleteMessageForMeService deleteMessageForMeService;
+    private final DeleteMessageForEveryoneService deleteMessageForEveryoneService;
     private final ChatService chatService;
 
     @QueryMapping
@@ -25,20 +29,20 @@ public class ChatController {
         return chatService.getChatRoomData();
     }
 
-    @PostMapping("/delete/messages/me/{messageId}")
-    public ResponseEntity deleteMessage() {
+    @PostMapping("/delete/messages/me")
+    public ResponseEntity deleteMessage(@RequestBody List<String> messageIds) {
         try {
-            deleteMessageService.deleteMessageForMe();
+            deleteMessageForMeService.deleteMessageForMe(messageIds);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
 
-    @PostMapping("delete/messages/everyone/{messageId}")
-    public ResponseEntity deleteMessageForEveryone() {
+    @PostMapping("delete/messages/everyone")
+    public ResponseEntity deleteMessageForEveryone(@RequestBody List<String> messageIds) {
         try {
-            deleteMessageService.deleteMessageForEveryone();
+            deleteMessageForEveryoneService.deleteMessageForEveryone(messageIds);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

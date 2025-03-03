@@ -14,7 +14,7 @@ public class Offline extends State {
 
     @Override
     public void transit() {
-        userService.transit();
+        userService.transit(user);
         user.setState(new Online(user,userService,deliveryProcessingService,redisSessionTransitionFactory));
         deliveryProcessingService.deliver(user);
     }
