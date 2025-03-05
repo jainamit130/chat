@@ -27,8 +27,7 @@ public abstract class ChatRoomRedisTransitionService implements ITransition {
     public void transit() {
         User user = userChatService.getContextUser();
         ChatRoom chatRoom = userChatService.getContextChatRoom();
-        redisChatRoomService.removeUserFromChatRoom(chatRoom.getId(),user.getUserId());
-        redisChatRoomService.addUserIdToChatRoom(chatRoom.getId(),user.getUserId());
+        redisChatRoomService.addUserToChatRoom(chatRoom,user);
         readProcessingService.read(user);
     }
 }

@@ -12,15 +12,13 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class DeleteChatService {
-    private final UserContext userContext;
     private final ChatService chatService;
     private final UserChatService userChatService;
     private final RedisChatRoomService redisChatRoomService;
-    private final ClearChatService clearChatService;
 
     public void deleteChat() {
         ChatRoom chatRoom = chatService.getContextChatRoom();
         userChatService.deleteChat(chatRoom);
-        redisChatRoomService.removeUserFromChatRoom(chatRoom.getId(),userContext.getUserId());
+        redisChatRoomService.removeUserFromChatRoom(chatRoom,userChatService.getContextUser());
     }
 }

@@ -1,31 +1,34 @@
 package com.amit.converse.chat.service.Redis;
 
 import java.util.concurrent.TimeUnit;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
+import com.amit.converse.chat.model.User;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RedisChatRoomService implements IRedisChatroomService{
+public class RedisChatRoomService extends RedisService {
 
-    @Autowired
-    protected RedisTemplate<String, String> redisTemplate;
-
-    private boolean isValid(String chatRoomId, String userId) {
-        return chatRoomId != null && userId != null;
+    public RedisChatRoomService(RedisTemplate<String, String> redisTemplate) {
+        super(redisTemplate);
     }
 
-    public void addUserIdToChatRoom(String chatRoomId, String userId) {
-        if(!isValid(chatRoomId,userId)) return;
-        String key = getChatRoomUserKey(chatRoomId, userId);
-        redisTemplate.opsForValue().set(key, "",60,TimeUnit.SECONDS);
+    @Override
+    protected String getPrefix() { return "chatRoomId:"; }
+
+    @Override
+    protected String getKey(String chatRoomId) { return getPrefix()+chatRoomId+":"; }
+
+    @Override
+    protected String getKeyValue(String chatRoomId, String userId) {
+        return getKey(chatRoomId)+":"+userId;
     }
 
-    public void removeUserFromChatRoom(String chatRoomId,String userId) {
-        if(!isValid(chatRoomId,userId)) return;
-        String key = getChatRoomUserKey(chatRoomId,userId);
-        if(redisTemplate.hasKey(key)) {
-            redisTemplate.delete(key);
-        }
+    public void removeUserFromChatRoom(ChatRoom chatRoom, User user) {
+        
+    }
+
+    public void addUserToChatRoom(ChatRoom chatRoom, User user) {
     }
 }

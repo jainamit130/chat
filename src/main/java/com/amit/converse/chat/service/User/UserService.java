@@ -9,6 +9,8 @@ import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
 import com.amit.converse.chat.service.AuthService;
+import com.amit.converse.chat.service.Redis.RedisUserService;
+import com.amit.converse.chat.service.Redis.RedisWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +29,12 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private AuthService authService;
+    @Autowired
+    private RedisWriteService redisWriteService;
+
+    public void clearRedisChatRoomOfUser() {
+        redisWriteService.remove
+    }
 
     public State getUserState(User user) {
         return userContext.getState(user);

@@ -11,6 +11,7 @@ import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
 import com.amit.converse.chat.service.ChatRoom.FilfillmentService.ChatRoomFulfilmentServiceFactory;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
+import com.amit.converse.chat.service.MessageService.DeleteMessageService.ClearChatService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ public class ChatService<T extends ChatRoom> {
     protected ChatMessageService chatMessageService;
     @Autowired
     protected IChatRoomRepository chatRoomRepository;
+    @Autowired
+    private ClearChatService clearChatService;
     @Autowired
     private ChatRoomFulfilmentServiceFactory chatRoomFulfilmentServiceFactory;
     @Autowired
@@ -65,15 +68,12 @@ public class ChatService<T extends ChatRoom> {
 
     public void processChatRoomToDB(T chatRoom) {
         if (chatRoom.isDeletable()) {
+            clearChatService.clearChat();
             chatRoomRepository.deleteById(chatRoom.getId());
             updateChatRoomContext(null);
         } else {
             updateChatRoomContext(saveChat(chatRoom));
         }
-    }
-
-    public void deleteChat() {
-        processChatRoomToDB(context.getChatRoom());
     }
 
     public List<String> getOnlineUserIdsOfChat() {

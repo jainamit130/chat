@@ -113,6 +113,7 @@ public class UserChatService<T extends ChatRoom> {
 
     public List<ChatRoom> getChatRoomsOfUser() {
         User user = userService.getUserContext();
+        userService.
         return chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()),user.getUserId());
     }
 
