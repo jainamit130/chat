@@ -1,7 +1,8 @@
 package com.amit.converse.chat.service.Redis;
 
-import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -11,6 +12,8 @@ import java.util.List;
 @Service
 public class RedisUserService extends RedisService {
 
+    @Autowired
+    @Lazy
     private RedisChatRoomService redisChatRoomService;
 
     public RedisUserService(RedisChatRoomService redisChatRoomService, RedisTemplate<String,String> redisTemplate) {
@@ -32,21 +35,20 @@ public class RedisUserService extends RedisService {
     // Set userKey without any chatRoom as value => from not existing to existing as userId:{userId}:
     // To already existing userKey remove chatRoom as value => from userId:{userId}:{chatRoomId} to userId:{userId}:
     public void setUserKey(User user) {
+        removeUserKey(user);
         setKeyValue(user.getUserId(),"");
-    }
-
-    public void removeChatRoomFromUserKey(ChatRoom chatRoom) {
-
     }
 
     // remove already existing userKey => from userId:{userId}:{...} to not existing
     public void removeUserKey(User user) {
         List<String> keyValues = getAllKeyValuesWithPrefix(getKey(user.getUserId()));
-        for(String keyValue:keyValues) {
-            String chatRoomId = extractValue(keyValue);
-            redisChatRoomService.removeKeyValue(chatRoomId,user.getUserId());
-            removeKeyValue(user.getUserId(), chatRoomId);
-        }
+        redisChatRoomService.removeUserFromChatRoomFromKeys(keyValues,user);
+        redisTemplate.delete(keyValues);
+    }
+
+    protected void removeUserFromAllChatRoom(User user) {
+        List<String> keyValues = getAllKeyValuesWithPrefix(getKey(user.getUserId()));
+        redisChatRoomService.removeUserFromChatRoomFromKeys(keyValues,user);
     }
 
 }

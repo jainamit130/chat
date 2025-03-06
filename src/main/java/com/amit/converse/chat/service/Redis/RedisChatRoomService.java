@@ -1,14 +1,20 @@
 package com.amit.converse.chat.service.Redis;
 
-import java.util.concurrent.TimeUnit;
+import java.util.List;
 
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RedisChatRoomService extends RedisService {
+
+    @Autowired
+    @Lazy
+    private RedisUserService redisUserService;
 
     public RedisChatRoomService(RedisTemplate<String, String> redisTemplate) {
         super(redisTemplate);
@@ -25,10 +31,15 @@ public class RedisChatRoomService extends RedisService {
         return getKey(chatRoomId)+":"+userId;
     }
 
-    public void removeUserFromChatRoom(ChatRoom chatRoom, User user) {
-        
+    protected void removeUserFromChatRoomFromKeys(List<String> keyValues,User user) {
+        for(String keyValue:keyValues) {
+            String chatRoomId = extractValue(keyValue);
+            removeKeyValue(chatRoomId,user.getUserId());
+        }
     }
 
     public void addUserToChatRoom(ChatRoom chatRoom, User user) {
+        redisUserService.removeUserFromAllChatRoom(user);
+        addValueToKey(chatRoom.getId(),user.getUserId());
     }
 }
