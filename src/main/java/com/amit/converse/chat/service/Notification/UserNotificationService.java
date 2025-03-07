@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserNotificationService extends NotificationService {
+public class UserNotificationService extends NotificationService<IUserNotification> {
 
     @Autowired
     private ChatNotificationService chatNotificationService;
@@ -21,6 +21,7 @@ public class UserNotificationService extends NotificationService {
         return "/user";
     }
 
+    @Override
     public void sendNotification(String userId,IUserNotification notification) {
         webSocketMessageService.sendNotification(getAddress(userId),notification);
     }

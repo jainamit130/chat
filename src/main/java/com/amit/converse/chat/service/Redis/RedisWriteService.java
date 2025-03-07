@@ -1,38 +1,37 @@
 package com.amit.converse.chat.service.Redis;
 
+import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.Redis.Interface.IRedisWriteService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class RedisWriteService {
+public class RedisWriteService implements IRedisWriteService {
 
+    protected final RedisUserService redisUserService;
+    protected final RedisChatRoomService redisChatRoomService;
+
+    @Override
+    public void addUserToChatRoom(User user, IChatRoom chatRoom) {
+        removeUserFromChatRoom(user);
+        redisChatRoomService.addUserToChatRoom(user,chatRoom);
+    }
+
+    @Override
+    public void removeUserFromChatRoom(User user) {
+        redisUserService.removeUserFromAllChatRoom(user);
+    }
+
+    @Override
+    public void setUser(User user) {
+        redisUserService.setUserKey(user);
+    }
+
+    @Override
+    public void removeUser(User user) {
+        redisUserService.removeUserKey(user);
+    }
 
 }
-
-
-/*
-*
-*
-*     public void addUserToChatRoom(String chatRoomId, String userId) {
-        redisChatRoomService.addUserToChatRoom(userId,chatRoomId);
-    }
-
-    public void removeUserFromChatRoom(String chatRoomId,String userId) {
-        redisChatRoomService.removeUserFromChatRoom(chatRoomId,userId);
-    }
-
-    public void setUser(String userId) {
-        redisUserService.setUser(userId);
-    }
-
-    public void removeUser(String userId) {
-        // In almost all cases it will be a single key userId:{userId}:{chatRoomId}
-        List<String> userChatRoomKeys = redisUserService.getAllKeysWithPrefix(userId);
-        for(String userChatRoomKey: userChatRoomKeys) {
-            String chatRoomKey = extractChatRoomIdFromUserKey(userChatRoomKey)
-        }
-        redisUserService.removeUser(userId);
-    }
-*
-* */

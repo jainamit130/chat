@@ -1,14 +1,18 @@
 package com.amit.converse.chat.service.Notification;
 
+import com.amit.converse.chat.dto.Notification.INotification;
+import com.amit.converse.chat.dto.Notification.IUserNotification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public abstract class NotificationService {
+public abstract class NotificationService<T extends INotification> {
+
     protected final WebSocketMessageService webSocketMessageService;
     protected abstract String getBaseAddress();
     protected String getAddress(String id) {
         return getBaseAddress() + "/" + id;
     }
+    public abstract void sendNotification(String userId, T notification);
 }

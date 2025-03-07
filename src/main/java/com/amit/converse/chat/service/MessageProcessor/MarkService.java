@@ -51,7 +51,7 @@ public abstract class MarkService {
     public abstract List<String> getActiveUserIds(IChatRoom chatRoom);
 
     private void sendMessageMarkedNotificationToSender(IChatRoom chatRoom, String senderId, List<String> messageIds) {
-        if(redisReadService.isUserOnline(senderId))
+        if(redisReadService.isUserOnline(User.builder().userId(senderId).build()))
             chatMessageService.sendMessageMarkedNotification(chatRoom.getId(),senderId,messageIds);
     }
 

@@ -113,7 +113,8 @@ public class UserChatService<T extends ChatRoom> {
 
     public List<ChatRoom> getChatRoomsOfUser() {
         User user = userService.getUserContext();
-        userService.
+        // Redis clears the state of any active chatRoom of the user
+        userService.clearRedisChatRoomOfUser();
         return chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()),user.getUserId());
     }
 

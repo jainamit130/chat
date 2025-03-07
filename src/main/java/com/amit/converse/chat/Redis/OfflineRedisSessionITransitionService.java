@@ -15,6 +15,6 @@ public class OfflineRedisSessionITransitionService extends RedisSessionITransiti
     // Remove User Id Key from Redis
     @Override
     public void alterUser() {
-        redisWriteService.removeUser(userChatService.getContextUser().getUserId());
+        redisWriteService.removeUser(userChatService.getContextUser());
     }
 }

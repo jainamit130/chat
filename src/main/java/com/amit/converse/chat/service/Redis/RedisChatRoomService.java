@@ -2,15 +2,17 @@ package com.amit.converse.chat.service.Redis;
 
 import java.util.List;
 
-import com.amit.converse.chat.model.ChatRooms.ChatRoom;
+import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.Redis.Interface.IRedisChatroomService;
+import com.amit.converse.chat.service.Redis.Interface.IRedisKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RedisChatRoomService extends RedisService {
+public class RedisChatRoomService extends RedisService implements IRedisKeyService, IRedisChatroomService {
 
     @Autowired
     @Lazy
@@ -21,25 +23,31 @@ public class RedisChatRoomService extends RedisService {
     }
 
     @Override
-    protected String getPrefix() { return "chatRoomId:"; }
+    public String getPrefix() { return "chatRoomId:"; }
 
     @Override
-    protected String getKey(String chatRoomId) { return getPrefix()+chatRoomId+":"; }
+    public String getKey(String chatRoomId) { return getPrefix()+chatRoomId+":"; }
 
     @Override
-    protected String getKeyValue(String chatRoomId, String userId) {
+    public String getKeyValue(String chatRoomId, String userId) {
         return getKey(chatRoomId)+":"+userId;
     }
 
-    protected void removeUserFromChatRoomFromKeys(List<String> keyValues,User user) {
+    @Override
+    public void removeUserFromChatRoomFromKeys(List<String> keyValues, User user) {
         for(String keyValue:keyValues) {
             String chatRoomId = extractValue(keyValue);
-            removeKeyValue(chatRoomId,user.getUserId());
+            removeKeyValue(getKeyValue(chatRoomId,user.getUserId()));
         }
     }
 
-    public void addUserToChatRoom(ChatRoom chatRoom, User user) {
-        redisUserService.removeUserFromAllChatRoom(user);
+    @Override
+    public void addUserToChatRoom(User user, IChatRoom chatRoom) {
         addValueToKey(chatRoom.getId(),user.getUserId());
+    }
+
+    @Override
+    public Boolean isKeyExisting(IChatRoom chatRoom, User user) {
+        return hasKeyValue(getKeyValue(chatRoom.getId(), user.getUserId()));
     }
 }

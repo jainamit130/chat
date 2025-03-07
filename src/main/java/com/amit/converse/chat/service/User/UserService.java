@@ -1,15 +1,12 @@
 package com.amit.converse.chat.service.User;
 
-import com.amit.converse.chat.State.Offline;
 import com.amit.converse.chat.State.State;
-import com.amit.converse.chat.State.StateFactoryService;
 import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.UserRepository;
 import com.amit.converse.chat.service.AuthService;
-import com.amit.converse.chat.service.Redis.RedisUserService;
 import com.amit.converse.chat.service.Redis.RedisWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,7 +30,7 @@ public class UserService {
     private RedisWriteService redisWriteService;
 
     public void clearRedisChatRoomOfUser() {
-        redisWriteService.remove
+        redisWriteService.removeUserFromChatRoom(getUserContext());
     }
 
     public State getUserState(User user) {

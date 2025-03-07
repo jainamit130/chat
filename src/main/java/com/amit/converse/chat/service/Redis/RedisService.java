@@ -10,31 +10,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public abstract class RedisService {
+public class RedisService {
 
     @Value("${Redis.Key.Timeout}")
     private long redisExpiryDuration;
 
-    protected RedisTemplate<String,String> redisTemplate;
+    private RedisTemplate<String,String> redisTemplate;
 
     public RedisService(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
-    protected abstract String getPrefix();
-
-    protected abstract String getKey(String keyValue);
-
-    protected abstract String getKeyValue(String keyValue, String value);
-
-    public String extractValue(String keyValue) {
-        int lastIndexOfDelimiter = keyValue.lastIndexOf(':');
-        if(keyValue.length()<=lastIndexOfDelimiter+1) throw new ConverseException("No Value found in Redis keyValue: "+keyValue);
-        return keyValue.substring(lastIndexOfDelimiter+1);
+    public Boolean hasKeyValue(String keyValue) {
+        return redisTemplate.hasKey(keyValue);
     }
 
     protected void setKeyValue(String key, String value) {
-        redisTemplate.opsForValue().set(getKey(key),value,redisExpiryDuration,TimeUnit.SECONDS);
+        redisTemplate.opsForValue().set(key,value,redisExpiryDuration,TimeUnit.SECONDS);
     }
 
     // To already existing userKey add chatRoom as value => from userId:{userId}: to userId:{userId}:{chatRoomId}
@@ -43,8 +35,12 @@ public abstract class RedisService {
         setKeyValue(key,value);
     }
 
-    public void removeKeyValue(String keyValue,String value) {
-        redisTemplate.delete(getKeyValue(keyValue,value));
+    public void removeKeyValue(String keyValue) {
+        redisTemplate.delete(keyValue);
+    }
+
+    public void removeKeyValues(List<String> keyValues) {
+        redisTemplate.delete(keyValues);
     }
 
     public List<String> getAllKeyValuesWithPrefix(String prefixKey) {

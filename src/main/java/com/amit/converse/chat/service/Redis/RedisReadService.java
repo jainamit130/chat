@@ -1,8 +1,9 @@
 package com.amit.converse.chat.service.Redis;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.Redis.Interface.IRedisReadService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,14 +15,15 @@ import java.util.Set;
 @AllArgsConstructor
 public class RedisReadService implements IRedisReadService {
 
-    protected final RedisTemplate<String, Object> redisTemplate;
+    protected final RedisUserService redisUserService;
+    protected final RedisChatRoomService redisChatRoomService;
 
-    public Boolean isUserInChatRoom(String chatRoomId, String userId) {
-        return redisTemplate.hasKey(chatRoomId+ ":" + userId);
+    public Boolean isUserInChatRoom(IChatRoom chatRoom, User user) {
+        return redisChatRoomService.isKeyExisting(chatRoom,user);
     }
 
-    public Boolean isUserOnline(String userId) {
-        return redisTemplate.hasKey(userId);
+    public Boolean isUserOnline(User user) {
+        return redisUserService.isKeyExisting(user);
     }
 
     // Active Users - meaning users online and inside the chatRoom
@@ -30,7 +32,7 @@ public class RedisReadService implements IRedisReadService {
         Set<String> activeUsers = new HashSet<>();
 
         for (String userId : onlineUserIds) {
-            if (isUserInChatRoom(chatRoom.getId(),userId)) {
+            if (isUserInChatRoom(chatRoom, User.builder().userId(userId).build())) {
                 activeUsers.add(userId);
             }
         }
@@ -42,7 +44,7 @@ public class RedisReadService implements IRedisReadService {
         Set<String> activeUsers = new HashSet<>();
 
         for (String userId : onlineUserIds) {
-            if (isUserInChatRoom(chatRoom.getId(),userId)) {
+            if (isUserInChatRoom(chatRoom,User.builder().userId(userId).build())) {
                 activeUsers.add(userId);
             }
         }
@@ -54,7 +56,7 @@ public class RedisReadService implements IRedisReadService {
         Set<String> onlineUsers = new HashSet<>();
 
         for (String userId : chatRoom.getUserIds()) {
-            if (isUserOnline(userId)) {
+            if (isUserOnline(User.builder().userId(userId).build())) {
                 onlineUsers.add(userId);
             }
         }

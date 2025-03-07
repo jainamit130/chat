@@ -4,7 +4,7 @@ import com.amit.converse.chat.dto.Notification.IChatNotification;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ChatNotificationService extends NotificationService {
+public class ChatNotificationService extends NotificationService<IChatNotification> {
 
     public ChatNotificationService(WebSocketMessageService webSocketMessageService) {
         super(webSocketMessageService);
