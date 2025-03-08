@@ -1,7 +1,7 @@
 package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.Interface.ITransactable;
-import com.amit.converse.chat.context.UserContext;
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import org.springframework.beans.factory.annotation.Autowired;

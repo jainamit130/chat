@@ -26,7 +26,11 @@ public class ChatController {
 
     @QueryMapping
     public ChatRoomData getChatRoomData(){
-        return chatService.getChatRoomData();
+        try {
+            return chatService.getChatRoomData();
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     @PostMapping("/delete/messages/me")

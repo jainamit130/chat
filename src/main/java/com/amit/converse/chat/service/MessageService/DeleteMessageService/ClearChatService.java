@@ -1,8 +1,8 @@
 package com.amit.converse.chat.service.MessageService.DeleteMessageService;
 
 import com.amit.converse.chat.Interface.IChatRoom;
-import com.amit.converse.chat.context.ChatContext;
-import com.amit.converse.chat.context.UserContext;
+import com.amit.converse.chat.context.ChatRoom.ChatContext;
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -3,6 +3,7 @@ package com.amit.converse.chat.model;
 import com.amit.converse.chat.Redis.RedisSessionITransitionService;
 import com.amit.converse.chat.State.Offline;
 import com.amit.converse.chat.State.State;
+import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.service.MessageProcessor.IDeliverableEntity;
 import lombok.*;
 import org.springframework.data.annotation.Id;
@@ -57,6 +58,10 @@ public class User implements IDeliverableEntity {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public ConnectionStatus getConnectionStatus() {
+        return getState().getConnectionStatus();
     }
 
     public void disconnectChat(String chatRoomId, Integer unreadMessageCount) {

@@ -15,6 +15,6 @@ public class OnlineRedisSessionITransitionService extends RedisSessionITransitio
     // Save User Id Key from Redis
     @Override
     public void alterUser() {
-        redisWriteService.setUser(userChatService.getContextUser());
+        redisWriteService.setUser(userChatService.getContextUser(), userChatService.getContextChatRoom());
     }
 }

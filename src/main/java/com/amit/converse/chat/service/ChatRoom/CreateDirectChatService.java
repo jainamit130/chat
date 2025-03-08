@@ -1,17 +1,13 @@
 package com.amit.converse.chat.service.ChatRoom;
 
-import com.amit.converse.chat.context.ChatContext;
-import com.amit.converse.chat.context.UserContext;
+import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.CreateDirectChatRequest;
 import com.amit.converse.chat.model.ChatRooms.DirectChat;
-import com.amit.converse.chat.model.Enums.ChatRoomType;
 import com.amit.converse.chat.model.User;
-import com.amit.converse.chat.service.Notification.UserNotificationService;
 import com.amit.converse.chat.service.User.DirectChatUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.HashSet;
 
 @Service

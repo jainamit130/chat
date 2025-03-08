@@ -2,6 +2,7 @@ package com.amit.converse.chat.config.Redis;
 
 import com.amit.converse.chat.service.Redis.Factory.RedisKeyExpirationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 public class RedisKeyExpirationListener implements MessageListener {
 
     @Autowired
+    @Lazy
     private RedisKeyExpirationFactory redisKeyExpirationFactory;
 
     // Three different things can expire
@@ -19,6 +21,6 @@ public class RedisKeyExpirationListener implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         String key = new String(message.getBody());
-        redisKeyExpirationFactory.getRedisExpirationService(key);
+        redisKeyExpirationFactory.getRedisExpirationService(key).expire(key);
     }
 }

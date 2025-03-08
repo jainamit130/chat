@@ -1,7 +1,6 @@
 package com.amit.converse.chat.service.User;
 
-import com.amit.converse.chat.State.State;
-import com.amit.converse.chat.context.UserContext;
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
@@ -31,10 +30,6 @@ public class UserService {
 
     public void clearRedisChatRoomOfUser() {
         redisWriteService.removeUserFromChatRoom(getUserContext());
-    }
-
-    public State getUserState(User user) {
-        return userContext.getState(user);
     }
 
     private void updateContext(User user) {

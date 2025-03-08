@@ -1,15 +1,12 @@
 package com.amit.converse.chat.service.Notification;
 
 import com.amit.converse.chat.Interface.ITransactable;
-import com.amit.converse.chat.context.ChatContext;
-import com.amit.converse.chat.context.UserContext;
+import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.Notification.ChatTransactionNotification;
 import com.amit.converse.chat.model.User;
-import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.MessageService.NotificationMessageService;
 import com.amit.converse.chat.service.MessageService.SaveMessageService;
 import com.amit.converse.chat.service.User.UserChatService;
-import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

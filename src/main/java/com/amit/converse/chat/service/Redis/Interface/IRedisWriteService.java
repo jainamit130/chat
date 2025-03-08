@@ -9,7 +9,7 @@ public interface IRedisWriteService {
 
     void removeUserFromChatRoom(User user);
 
-    void setUser(User user);
+    void setUser(User user,IChatRoom chatRoom);
 
     void removeUser(User user);
 }

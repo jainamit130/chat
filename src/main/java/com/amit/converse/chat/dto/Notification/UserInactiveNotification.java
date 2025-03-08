@@ -4,6 +4,6 @@ import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import lombok.Builder;
 
 @Builder
-public class InactiveChatRoomNotification implements IUserNotification {
+public class UserInactiveNotification implements IUserNotification {
     ConnectionStatus status;
 }

@@ -1,9 +1,11 @@
 package com.amit.converse.chat.service.Redis;
 
+import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Redis.Interface.IRedisKeyService;
 import com.amit.converse.chat.service.Redis.Interface.IRedisUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,14 +18,12 @@ import java.util.List;
 @Primary
 public class RedisUserService extends RedisService implements IRedisKeyService, IRedisUserService {
 
+    @Value("${Redis.Key.Timeout}")
+    private long redisExpiryDuration;
+
     @Autowired
     @Lazy
     private RedisChatRoomService redisChatRoomService;
-
-    public RedisUserService(RedisChatRoomService redisChatRoomService, RedisTemplate<String,String> redisTemplate) {
-        super(redisTemplate);
-        this.redisChatRoomService = redisChatRoomService;
-    }
 
     public Boolean isKeyExisting(User user) {
         return getAllKeyValuesWithPrefix(getKey(user.getUserId())).size()>0;
@@ -43,9 +43,10 @@ public class RedisUserService extends RedisService implements IRedisKeyService, 
     // Set userKey without any chatRoom as value => from not existing to existing as userId:{userId}:
     // To already existing userKey remove chatRoom as value => from userId:{userId}:{chatRoomId} to userId:{userId}:
     @Override
-    public void setUserKey(User user) {
+    public void setUserKey(User user, IChatRoom chatRoom) {
+        String chatRoomId = chatRoom==null?"":chatRoom.getId();
         removeUserKey(user);
-        setKeyValue(getKey(user.getUserId()),"");
+        setKeyValue(getKey(user.getUserId()),chatRoomId,redisExpiryDuration);
     }
 
     // remove already existing userKey => from userId:{userId}:{...} to not existing

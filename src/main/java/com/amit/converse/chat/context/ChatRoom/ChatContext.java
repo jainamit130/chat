@@ -1,6 +1,7 @@
-package com.amit.converse.chat.context;
+package com.amit.converse.chat.context.ChatRoom;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.context.IContext;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 

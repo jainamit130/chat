@@ -1,8 +1,7 @@
 package com.amit.converse.chat.service.ChatRoom;
 
 import com.amit.converse.chat.Interface.IChatRoom;
-import com.amit.converse.chat.Redis.ChatRoomRedisTransitionServiceFactory;
-import com.amit.converse.chat.context.ChatContext;
+import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
@@ -14,6 +13,7 @@ import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.ClearChatService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ public class ChatService<T extends ChatRoom> {
     @Autowired
     protected IChatRoomRepository chatRoomRepository;
     @Autowired
+    @Lazy
     private ClearChatService clearChatService;
     @Autowired
     private ChatRoomFulfilmentServiceFactory chatRoomFulfilmentServiceFactory;

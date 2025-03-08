@@ -25,8 +25,8 @@ public class RedisWriteService implements IRedisWriteService {
     }
 
     @Override
-    public void setUser(User user) {
-        redisUserService.setUserKey(user);
+    public void setUser(User user,IChatRoom chatRoom) {
+        redisUserService.setUserKey(user,chatRoom);
     }
 
     @Override

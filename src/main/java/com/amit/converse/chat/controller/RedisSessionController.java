@@ -2,37 +2,28 @@ package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.Redis.DirectChatRedisTransitionService;
 import com.amit.converse.chat.Redis.GroupChatRedisTransitionService;
-import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
-import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.UserService;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/converse/users/")
 public class RedisSessionController {
     private final UserService userService;
     private final DirectChatRedisTransitionService directChatRedisTransitionService;
     private final GroupChatRedisTransitionService groupChatRedisTransitionService;
+    @Value("${Redis.Key.Timeout}")
+    private Long redisKeyTimeout;
 
     @PostMapping("/state/active")
     public ResponseEntity activateUser() {
-        System.out.println(userService.getUserContext().getUsername() + " is active with a TTL of 60 seconds");
+        System.out.println(userService.getUserContext().getUsername() + " is active with a TTL of "+redisKeyTimeout+" seconds");
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
-
-    @PostMapping("/save/direct/active/{chatRoomId}")
-    public ResponseEntity<IOnlineUsersDTO> saveActiveDirectChat(@RequestParam String chatRoomId) {
-        return new ResponseEntity<IOnlineUsersDTO>(directChatRedisTransitionService.transitAndGetOnlineUsers(), HttpStatus.OK);
-    }
-
-    @PostMapping("/save/group/active/{chatRoomId}")
-    public ResponseEntity<IOnlineUsersDTO> saveActiveGroupChat(@RequestParam String chatRoomId) {
-        return new ResponseEntity<IOnlineUsersDTO>(groupChatRedisTransitionService.transitAndGetOnlineUsers(), HttpStatus.OK);
-    }
-
 }

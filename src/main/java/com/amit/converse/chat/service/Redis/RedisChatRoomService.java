@@ -4,11 +4,11 @@ import java.util.List;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.Notification.UserInactiveNotificationService;
 import com.amit.converse.chat.service.Redis.Interface.IRedisChatroomService;
 import com.amit.converse.chat.service.Redis.Interface.IRedisKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,9 +18,8 @@ public class RedisChatRoomService extends RedisService implements IRedisKeyServi
     @Lazy
     private RedisUserService redisUserService;
 
-    public RedisChatRoomService(RedisTemplate<String, String> redisTemplate) {
-        super(redisTemplate);
-    }
+    @Autowired
+    private UserInactiveNotificationService userInactiveNotificationService;
 
     @Override
     public String getPrefix() { return "chatRoomId:"; }
@@ -43,7 +42,7 @@ public class RedisChatRoomService extends RedisService implements IRedisKeyServi
 
     @Override
     public void addUserToChatRoom(User user, IChatRoom chatRoom) {
-        addValueToKey(chatRoom.getId(),user.getUserId());
+        setKeyValue(chatRoom.getId(),user.getUserId());
     }
 
     @Override

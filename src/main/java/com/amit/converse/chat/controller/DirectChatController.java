@@ -1,9 +1,7 @@
 package com.amit.converse.chat.controller;
 
-import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.service.ChatRoom.DirectChatMessageService;
-import com.amit.converse.chat.service.ChatRoom.DirectChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -1,7 +1,7 @@
 package com.amit.converse.chat.config.filter;
 
 
-import com.amit.converse.chat.context.UserContext;
+import com.amit.converse.chat.context.User.OfflineSetUserContextService;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.UserService;
 import jakarta.servlet.FilterChain;
@@ -18,7 +18,7 @@ import java.io.IOException;
 @AllArgsConstructor
 public class UserContextFilter extends OncePerRequestFilter {
 
-    private final UserContext userContext;
+    private final OfflineSetUserContextService userContext;
     private final UserService userService;
 
     @Override
@@ -26,7 +26,7 @@ public class UserContextFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             User user = userService.getLoggedInUser();
-            userContext.setAndTransitUser(user);
+            userContext.setUser(user);
         } catch (Exception e) {
         }
         filterChain.doFilter(request, response);

@@ -1,6 +1,5 @@
 package com.amit.converse.chat.service.User;
 
-import com.amit.converse.chat.context.UserContext;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.model.User;
 import org.springframework.beans.factory.annotation.Autowired;

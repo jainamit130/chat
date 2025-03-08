@@ -1,7 +1,6 @@
 package com.amit.converse.chat.service.MessageService;
 
 import com.amit.converse.chat.Interface.IChatRoom;
-import com.amit.converse.chat.context.ChatContext;
 import com.amit.converse.chat.dto.Notification.MessageMarkedNotification;
 import com.amit.converse.chat.dto.Notification.MessageNotification;
 import com.amit.converse.chat.exceptions.ConverseException;
