@@ -5,7 +5,7 @@ import com.amit.converse.chat.model.User;
 
 public interface IRedisWriteService {
 
-    void addUserToChatRoom(User user, IChatRoom chatRoom);
+    void addUserToChatRoom(IChatRoom chatRoom,User user);
 
     void removeUserFromChatRoom(User user);
 

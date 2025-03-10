@@ -26,8 +26,13 @@ public class UserController {
 
     @QueryMapping
     public List<ChatRoom> getChatRoomsOfUser() {
-        List<ChatRoom> chatRooms=userChatService.getChatRoomsOfUser();
-        return chatRooms;
+        try {
+            List<ChatRoom> chatRooms=userChatService.getChatRoomsOfUser();
+            return chatRooms;
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+            return null;
+        }
     }
 
     @GetMapping("/get/profile/{userId}")

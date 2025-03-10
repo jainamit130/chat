@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -37,7 +36,7 @@ public class RedisUserService extends RedisService implements IRedisKeyService, 
 
     @Override
     public String getKeyValue(String userId, String chatRoomId) {
-        return getKey(userId)+":"+chatRoomId;
+        return getKey(userId)+chatRoomId;
     }
 
     // Set userKey without any chatRoom as value => from not existing to existing as userId:{userId}:
@@ -46,7 +45,7 @@ public class RedisUserService extends RedisService implements IRedisKeyService, 
     public void setUserKey(User user, IChatRoom chatRoom) {
         String chatRoomId = chatRoom==null?"":chatRoom.getId();
         removeUserKey(user);
-        setKeyValue(getKey(user.getUserId()),chatRoomId,redisExpiryDuration);
+        setKeyValue(getKeyValue(user.getUserId(),chatRoomId),redisExpiryDuration);
     }
 
     // remove already existing userKey => from userId:{userId}:{...} to not existing
@@ -62,4 +61,7 @@ public class RedisUserService extends RedisService implements IRedisKeyService, 
         redisChatRoomService.removeUserFromChatRoomFromKeys(keyValues,user);
     }
 
+    public void addChatRoomToUser(User user, IChatRoom chatRoom) {
+        setUserKey(user,chatRoom);
+    }
 }

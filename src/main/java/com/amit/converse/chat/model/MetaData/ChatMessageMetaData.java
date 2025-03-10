@@ -13,6 +13,7 @@ import java.util.Set;
 public class ChatMessageMetaData extends MessageMetaData {
 
     public ChatMessageMetaData() {
+        super();
         this.deletedForEveryone = false;
         this.deliveredRecipients = new HashSet<>();
         this.readRecipients = new HashSet<>();

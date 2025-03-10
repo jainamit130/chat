@@ -10,6 +10,15 @@ import org.springframework.stereotype.Component;
 public class ChatContext<T extends IChatRoom> implements IContext {
     protected T chatRoom;
 
+    public void updateContext(T chatRoom) {
+        this.chatRoom=chatRoom;
+    }
+
+    public void setChatRoom(T chatRoom) {
+        this.chatRoom = chatRoom;
+        if(chatRoom!=null) chatRoom.transit();
+    }
+
     public String getChatRoomId() {
         return chatRoom.getId();
     }

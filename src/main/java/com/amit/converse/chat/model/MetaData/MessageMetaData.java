@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.Set;
 public abstract class MessageMetaData {
 
     private boolean isEncrypted;
+    @Field("deletedForUsers")
     private Set<String> deletedForUsers;
 
     public MessageMetaData() {

@@ -1,5 +1,6 @@
 package com.amit.converse.chat.config.Redis;
 
+import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.service.Redis.Factory.RedisKeyExpirationFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -21,6 +22,10 @@ public class RedisKeyExpirationListener implements MessageListener {
     @Override
     public void onMessage(Message message, byte[] pattern) {
         String key = new String(message.getBody());
-        redisKeyExpirationFactory.getRedisExpirationService(key).expire(key);
+        try {
+            redisKeyExpirationFactory.getRedisExpirationService(key).expire(key);
+        } catch (ConverseException exception) {
+            System.out.println("No expiry service found because : "+exception.getMessage());
+        }
     }
 }

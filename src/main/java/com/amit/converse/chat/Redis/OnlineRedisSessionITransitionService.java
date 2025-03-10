@@ -1,6 +1,7 @@
 package com.amit.converse.chat.Redis;
 
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
+import com.amit.converse.chat.service.Redis.RedisReadService;
 import com.amit.converse.chat.service.Redis.RedisWriteService;
 import com.amit.converse.chat.service.User.UserChatService;
 import org.springframework.stereotype.Service;
@@ -8,8 +9,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class OnlineRedisSessionITransitionService extends RedisSessionITransitionService {
 
-    public OnlineRedisSessionITransitionService(UserChatService userChatService, RedisWriteService redisWriteService) {
-        super(ConnectionStatus.ONLINE,userChatService,redisWriteService);
+    public OnlineRedisSessionITransitionService(UserChatService userChatService, RedisWriteService redisWriteService, RedisReadService redisReadService) {
+        super(ConnectionStatus.ONLINE,userChatService,redisWriteService,redisReadService);
     }
 
     // Save User Id Key from Redis

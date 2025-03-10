@@ -26,8 +26,13 @@ public class RedisKeyExpirationFactory {
     private String chatRoomPrefix;
 
     public RedisExpirationService getRedisExpirationService(String key) {
-        String prefix = redisKeyService.extractPrefix(key);
-        if(userPrefix.equals(prefix)) return redisUserKeyExpirationService;
+        String prefix = null;
+        try {
+            prefix = redisKeyService.extractPrefix(key);
+            if(userPrefix.equals(prefix)) return redisUserKeyExpirationService;
+        } catch (ConverseException exception) {
+            System.out.println(exception.getMessage());
+        }
         throw new ConverseException("Invalid prefix : "+ prefix +"found in Redis key!");
     }
 }

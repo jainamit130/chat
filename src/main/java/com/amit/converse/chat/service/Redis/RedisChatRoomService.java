@@ -3,6 +3,7 @@ package com.amit.converse.chat.service.Redis;
 import java.util.List;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Notification.UserInactiveNotificationService;
 import com.amit.converse.chat.service.Redis.Interface.IRedisChatroomService;
@@ -29,20 +30,24 @@ public class RedisChatRoomService extends RedisService implements IRedisKeyServi
 
     @Override
     public String getKeyValue(String chatRoomId, String userId) {
-        return getKey(chatRoomId)+":"+userId;
+        return getKey(chatRoomId)+userId;
     }
 
     @Override
     public void removeUserFromChatRoomFromKeys(List<String> keyValues, User user) {
         for(String keyValue:keyValues) {
-            String chatRoomId = extractValue(keyValue);
-            removeKeyValue(getKeyValue(chatRoomId,user.getUserId()));
+            try {
+                String chatRoomId = extractValue(keyValue);
+                removeKeyValue(getKeyValue(chatRoomId,user.getUserId()));
+            } catch (ConverseException exception) {
+                System.out.println(exception.getMessage());
+            }
         }
     }
 
     @Override
-    public void addUserToChatRoom(User user, IChatRoom chatRoom) {
-        setKeyValue(chatRoom.getId(),user.getUserId());
+    public void addUserToChatRoom(IChatRoom chatRoom,User user) {
+        setKeyValue(getKeyValue(chatRoom.getId(),user.getUserId()));
     }
 
     @Override

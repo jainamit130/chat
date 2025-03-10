@@ -12,6 +12,8 @@ public class UserContext implements IContext {
 
     public String getUserId() { return user.getUserId(); }
 
+    public void updateContext(User user) { this.user=user; }
+
     public void setUser(User user) {
         this.user = user;
         this.user.getState().transit();

@@ -1,8 +1,6 @@
 package com.amit.converse.chat.service.Redis;
 
-import com.amit.converse.chat.exceptions.ConverseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -20,12 +18,16 @@ public class RedisService {
         return redisTemplate.hasKey(keyValue);
     }
 
-    protected void setKeyValue(String key, String value, long redisExpiryTimeout) {
-        redisTemplate.opsForValue().set(key,value,redisExpiryTimeout,TimeUnit.SECONDS);
+    protected void setKeyValue(String keyValue, long redisExpiryTimeout) {
+        redisTemplate.opsForValue().set(keyValue,"",redisExpiryTimeout,TimeUnit.SECONDS);
     }
 
-    protected void setKeyValue(String key, String value) {
-        redisTemplate.opsForValue().set(key,value);
+    protected String getValueOfKey(String key) {
+        return redisTemplate.opsForValue().get(key);
+    }
+
+    protected void setKeyValue(String keyValue) {
+        redisTemplate.opsForValue().set(keyValue,"");
     }
 
     public void removeKeyValue(String keyValue) {

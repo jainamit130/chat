@@ -14,9 +14,10 @@ public class RedisWriteService implements IRedisWriteService {
     protected final RedisChatRoomService redisChatRoomService;
 
     @Override
-    public void addUserToChatRoom(User user, IChatRoom chatRoom) {
+    public void addUserToChatRoom(IChatRoom chatRoom,User user) {
         removeUserFromChatRoom(user);
-        redisChatRoomService.addUserToChatRoom(user,chatRoom);
+        redisUserService.addChatRoomToUser(user,chatRoom);
+        redisChatRoomService.addUserToChatRoom(chatRoom,user);
     }
 
     @Override

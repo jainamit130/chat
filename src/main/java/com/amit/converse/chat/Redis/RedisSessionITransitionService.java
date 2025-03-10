@@ -18,21 +18,23 @@ public abstract class RedisSessionITransitionService implements ITransition {
     protected RedisWriteService redisWriteService;
     private RedisReadService redisReadService;
 
-    public RedisSessionITransitionService(ConnectionStatus status, UserChatService userChatService, RedisWriteService redisWriteService) {
+    public RedisSessionITransitionService(ConnectionStatus status, UserChatService userChatService, RedisWriteService redisWriteService, RedisReadService redisReadService) {
         this.status = status;
         this.userChatService = userChatService;
         this.redisWriteService = redisWriteService;
+        this.redisReadService = redisReadService;
     }
 
-    private boolean isNotifiable() {
+    private boolean isTransitable() {
         User user = userChatService.getContextUser();
         return !redisReadService.isUserOnline(user) && user.getConnectionStatus().equals(ConnectionStatus.OFFLINE) ||
                 !redisReadService.isUserOnline(user) && user.getConnectionStatus().equals(ConnectionStatus.ONLINE);
     }
 
     public final void transit() {
+        boolean isNotifiable = isTransitable();
         alterUser();
-        if(isNotifiable()) {
+        if(isNotifiable) {
             notifyStatusToChatRooms();
         }
     }

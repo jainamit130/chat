@@ -5,7 +5,7 @@ import com.amit.converse.chat.model.User;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OnlineSetUserContextService extends SerUserContextService {
+public class OnlineSetUserContextService extends SetUserContextService {
     @Override
     public State getState(User user) {
         return stateFactoryService.getOnlineState(user);

@@ -33,7 +33,7 @@ public class UserService {
     }
 
     private void updateContext(User user) {
-        userContext.setUser(user);
+        userContext.updateContext(user);
     }
 
     public User getUserContext() {

@@ -38,7 +38,7 @@ public class ChatService<T extends ChatRoom> {
     public T getContextChatRoom() { return context.getChatRoom(); }
 
     public void updateChatRoomContext(T chatRoom) {
-        context.setChatRoom(chatRoom);
+        context.updateContext(chatRoom);
     }
 
     public void readMessages(User user) {

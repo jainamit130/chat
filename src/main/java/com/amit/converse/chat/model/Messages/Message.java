@@ -39,8 +39,6 @@ public abstract class Message {
         messageMetaData.addUserToDeletedForUsers(userId);
     }
 
-    public Set<String> getDeletedForUsers() { return messageMetaData.getDeletedForUsers(); }
-
     public Integer getDeletedForMembersCount() {
         return messageMetaData.getDeletedForUsersCount();
     }
