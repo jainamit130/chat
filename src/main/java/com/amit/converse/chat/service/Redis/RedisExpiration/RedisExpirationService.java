@@ -13,10 +13,6 @@ public abstract class RedisExpirationService {
     @Lazy
     protected IRedisKeyService redisKeyService;
 
-    @Autowired
-    @Lazy
-    protected UserService userService;
-
     public abstract void expire(String keyValue);
 
 }

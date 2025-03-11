@@ -14,6 +14,11 @@ public class RedisWriteService implements IRedisWriteService {
     protected final RedisChatRoomService redisChatRoomService;
 
     @Override
+    public void setKey(String key) {
+        redisUserService.setKeyValue(key);
+    }
+
+    @Override
     public void addUserToChatRoom(IChatRoom chatRoom,User user) {
         removeUserFromChatRoom(chatRoom,user);
         redisUserService.addChatRoomToUser(user,chatRoom);

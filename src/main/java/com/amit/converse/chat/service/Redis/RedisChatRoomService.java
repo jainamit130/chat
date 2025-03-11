@@ -5,7 +5,6 @@ import java.util.List;
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
-import com.amit.converse.chat.service.Notification.UserInactiveNotificationService;
 import com.amit.converse.chat.service.Redis.Interface.IRedisChatroomService;
 import com.amit.converse.chat.service.Redis.Interface.IRedisKeyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +17,6 @@ public class RedisChatRoomService extends RedisService implements IRedisKeyServi
     @Autowired
     @Lazy
     private RedisUserService redisUserService;
-
-    @Autowired
-    private UserInactiveNotificationService userInactiveNotificationService;
 
     @Override
     public String getPrefix() { return "chatRoomId:"; }

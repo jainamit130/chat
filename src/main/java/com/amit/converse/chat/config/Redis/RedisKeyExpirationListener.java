@@ -1,8 +1,8 @@
 package com.amit.converse.chat.config.Redis;
 
 import com.amit.converse.chat.exceptions.ConverseException;
-import com.amit.converse.chat.service.Redis.RedisExpiration.RedisChatRoomKeyExpirationService;
-import com.amit.converse.chat.service.Redis.RedisExpiration.RedisUserKeyExpirationService;
+import com.amit.converse.chat.service.Redis.Factory.RedisKeyExpirationFactory;
+import com.amit.converse.chat.service.Redis.RedisWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.Message;
@@ -14,16 +14,12 @@ public class RedisKeyExpirationListener implements MessageListener {
 
     @Autowired
     @Lazy
-    private RedisUserKeyExpirationService redisUserKeyExpirationService;
+    private RedisKeyExpirationFactory redisKeyExpirationFactory;
 
     @Autowired
     @Lazy
-    private RedisChatRoomKeyExpirationService redisChatRoomKeyExpirationService;
+    private RedisWriteService redisWriteService;
 
-    private final void expire(String key) {
-        redisUserKeyExpirationService.expire(key);
-        redisChatRoomKeyExpirationService.expire(key);
-    }
 
     // Three different things can expire
     // user:{userId}:{chatRoomId} => update chatRoom and user context and transit both
@@ -31,9 +27,12 @@ public class RedisKeyExpirationListener implements MessageListener {
     // chatRoomId:{chatRoomId}:{userId} => send inactiveChatRoomNotification to user
     @Override
     public void onMessage(Message message, byte[] pattern) {
+        // Get key expiry notification
         String key = new String(message.getBody());
         try {
-            expire(key);
+            // refresh the key and expire it
+            redisWriteService.setKey(key);
+            redisKeyExpirationFactory.getRedisExpirationService(key).expire(key);
         } catch (ConverseException exception) {
             System.out.println("No expiry service found because : "+exception.getMessage());
         }

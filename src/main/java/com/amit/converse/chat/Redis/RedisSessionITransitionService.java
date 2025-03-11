@@ -27,9 +27,11 @@ public abstract class RedisSessionITransitionService implements ITransition {
 
     private boolean isTransitable() {
         User user = userChatService.getContextUser();
-        return !redisReadService.isUserOnline(user) && user.getConnectionStatus().equals(ConnectionStatus.INACTIVE) ||
-                !redisReadService.isUserOnline(user) && user.getConnectionStatus().equals(ConnectionStatus.ACTIVE);
+        boolean isUserOffline = !redisReadService.isUserOnline(user);
+        ConnectionStatus status = user.getConnectionStatus();
+        return isUserOffline && (status.equals(ConnectionStatus.INACTIVE) || status.equals(ConnectionStatus.ACTIVE));
     }
+
 
     public final void transit() {
         boolean isNotifiable = isTransitable();
