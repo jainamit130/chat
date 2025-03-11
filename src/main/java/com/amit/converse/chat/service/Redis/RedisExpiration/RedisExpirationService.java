@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.Redis.RedisExpiration;
 
 import com.amit.converse.chat.service.Redis.Interface.IRedisKeyService;
+import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,10 @@ public abstract class RedisExpirationService {
     @Autowired
     @Lazy
     protected IRedisKeyService redisKeyService;
+
+    @Autowired
+    @Lazy
+    protected UserService userService;
 
     public abstract void expire(String keyValue);
 

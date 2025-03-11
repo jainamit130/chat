@@ -12,6 +12,6 @@ public class UserInactiveNotificationService extends UserNotificationService {
     }
 
     public void sendNotification(String userId) {
-        super.sendNotification(userId, UserInactiveNotification.builder().status(ConnectionStatus.OFFLINE).build());
+        super.sendNotification(userId, UserInactiveNotification.builder().status(ConnectionStatus.INACTIVE).build());
     }
 }

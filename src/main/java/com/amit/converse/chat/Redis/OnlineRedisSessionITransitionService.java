@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class OnlineRedisSessionITransitionService extends RedisSessionITransitionService {
 
     public OnlineRedisSessionITransitionService(UserChatService userChatService, RedisWriteService redisWriteService, RedisReadService redisReadService) {
-        super(ConnectionStatus.ONLINE,userChatService,redisWriteService,redisReadService);
+        super(ConnectionStatus.ACTIVE,userChatService,redisWriteService,redisReadService);
     }
 
     // Save User Id Key from Redis

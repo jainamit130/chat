@@ -10,7 +10,7 @@ public class Offline extends State {
 
     @Override
     public ConnectionStatus getConnectionStatus() {
-        return ConnectionStatus.OFFLINE;
+        return ConnectionStatus.INACTIVE;
     }
 
     public Offline(User user, UserService userService, DeliveryProcessingService deliveryProcessingService, RedisSessionTransitionFactory redisSessionTransitionFactory) {

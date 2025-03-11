@@ -46,6 +46,11 @@ public class RedisChatRoomService extends RedisService implements IRedisKeyServi
     }
 
     @Override
+    public void removeUserFromChatRoom(IChatRoom chatRoom,User user) {
+        removeKeyValue(getKeyValue(chatRoom.getId(),user.getUserId()));
+    }
+
+    @Override
     public void addUserToChatRoom(IChatRoom chatRoom,User user) {
         setKeyValue(getKeyValue(chatRoom.getId(),user.getUserId()));
     }

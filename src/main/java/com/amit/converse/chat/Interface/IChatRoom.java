@@ -1,6 +1,7 @@
 package com.amit.converse.chat.Interface;
 
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
+import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import org.springframework.data.mongodb.core.mapping.Document;
 

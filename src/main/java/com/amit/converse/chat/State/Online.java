@@ -10,7 +10,7 @@ public class Online extends State {
 
     @Override
     public ConnectionStatus getConnectionStatus() {
-        return ConnectionStatus.ONLINE;
+        return ConnectionStatus.ACTIVE;
     }
 
     public Online(User user, UserService userService, DeliveryProcessingService deliveryProcessingService, RedisSessionTransitionFactory redisSessionTransitionFactory) {

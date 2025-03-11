@@ -39,6 +39,6 @@ public class RedisService {
     }
 
     public List<String> getAllKeyValuesWithPrefix(String prefixKey) {
-        return new ArrayList<>(redisTemplate.keys(prefixKey));
+        return new ArrayList<>(redisTemplate.keys(prefixKey+"*"));
     }
 }

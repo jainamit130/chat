@@ -7,6 +7,9 @@ import java.util.List;
 
 public interface IRedisChatroomService  {
     void removeUserFromChatRoomFromKeys(List<String> keyValues, User user);
-    void addUserToChatRoom(IChatRoom chatRoom,User user);
+
+    void removeUserFromChatRoom(IChatRoom chatRoom, User user);
+
+    void addUserToChatRoom(IChatRoom chatRoom, User user);
     Boolean isKeyExisting(IChatRoom chatRoom, User user);
 }

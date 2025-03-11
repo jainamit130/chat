@@ -1,7 +1,8 @@
 package com.amit.converse.chat.config.Redis;
 
 import com.amit.converse.chat.exceptions.ConverseException;
-import com.amit.converse.chat.service.Redis.Factory.RedisKeyExpirationFactory;
+import com.amit.converse.chat.service.Redis.RedisExpiration.RedisChatRoomKeyExpirationService;
+import com.amit.converse.chat.service.Redis.RedisExpiration.RedisUserKeyExpirationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.connection.Message;
@@ -13,7 +14,16 @@ public class RedisKeyExpirationListener implements MessageListener {
 
     @Autowired
     @Lazy
-    private RedisKeyExpirationFactory redisKeyExpirationFactory;
+    private RedisUserKeyExpirationService redisUserKeyExpirationService;
+
+    @Autowired
+    @Lazy
+    private RedisChatRoomKeyExpirationService redisChatRoomKeyExpirationService;
+
+    private final void expire(String key) {
+        redisUserKeyExpirationService.expire(key);
+        redisChatRoomKeyExpirationService.expire(key);
+    }
 
     // Three different things can expire
     // user:{userId}:{chatRoomId} => update chatRoom and user context and transit both
@@ -23,7 +33,7 @@ public class RedisKeyExpirationListener implements MessageListener {
     public void onMessage(Message message, byte[] pattern) {
         String key = new String(message.getBody());
         try {
-            redisKeyExpirationFactory.getRedisExpirationService(key).expire(key);
+            expire(key);
         } catch (ConverseException exception) {
             System.out.println("No expiry service found because : "+exception.getMessage());
         }

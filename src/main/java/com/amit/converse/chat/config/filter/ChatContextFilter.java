@@ -1,7 +1,6 @@
 package com.amit.converse.chat.config.filter;
 
-import com.amit.converse.chat.Interface.IChatRoom;
-import com.amit.converse.chat.context.ChatRoom.ChatContext;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,7 +16,6 @@ import java.io.IOException;
 @AllArgsConstructor
 public class ChatContextFilter extends OncePerRequestFilter {
 
-    private final ChatContext chatContext;
     private final ChatService chatService;
 
     @Override
@@ -32,15 +30,15 @@ public class ChatContextFilter extends OncePerRequestFilter {
         }
         if (chatRoomId != null) {
             try {
-                IChatRoom chatRoom = chatService.getChatRoomById(chatRoomId);
+                ChatRoom chatRoom = chatService.getChatRoomById(chatRoomId);
                 if (chatRoom != null) {
-                    chatContext.setChatRoom(chatRoom);
+                    chatService.updateChatRoomContext(chatRoom);
                 }
             } catch (Exception e) {
             }
         }
         filterChain.doFilter(request, response);
-        chatContext.clearContext();
+        chatService.clearContext();
     }
 
 }

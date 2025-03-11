@@ -17,10 +17,6 @@ public class RedisUserKeyExpirationService extends RedisExpirationService {
     @Lazy
     private OnlineSetUserContextService onlineSetUserContextService;
 
-    @Autowired
-    @Lazy
-    private UserService userService;
-
     @Override
     public void expire(String keyValue) {
         try {

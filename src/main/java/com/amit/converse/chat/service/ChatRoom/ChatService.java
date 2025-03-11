@@ -41,6 +41,10 @@ public class ChatService<T extends ChatRoom> {
         context.updateContext(chatRoom);
     }
 
+    public void clearContext() {
+        context.clearContext();
+    }
+
     public void readMessages(User user) {
         getContextChatRoom().readMessages(user.getUserId());
         processChatRoomToDB(getContextChatRoom());
@@ -55,7 +59,7 @@ public class ChatService<T extends ChatRoom> {
         return chatRooms;
     }
 
-    public IChatRoom getChatRoomById(String chatRoomId) {
+    public ChatRoom getChatRoomById(String chatRoomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ConverseChatRoomNotFoundException(chatRoomId));
         chatRoom.setChatRoomFulfilmentService(chatRoomFulfilmentServiceFactory.getFulfilmentService(chatRoom.getChatRoomType()));
@@ -104,4 +108,5 @@ public class ChatService<T extends ChatRoom> {
                 onlineUsersDTO(chatRoom.transit())
                 .build();
     }
+
 }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class OfflineRedisSessionITransitionService extends RedisSessionITransitionService {
 
     public OfflineRedisSessionITransitionService(UserChatService userChatService, RedisWriteService redisWriteService, RedisReadService redisReadService) {
-        super(ConnectionStatus.OFFLINE,userChatService,redisWriteService,redisReadService);
+        super(ConnectionStatus.INACTIVE,userChatService,redisWriteService,redisReadService);
     }
 
     // Remove User Id Key from Redis

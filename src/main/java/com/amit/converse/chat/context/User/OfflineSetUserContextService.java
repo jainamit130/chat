@@ -1,7 +1,7 @@
 package com.amit.converse.chat.context.User;
 
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class OfflineSetUserContextService extends SetUserContextService {
 }
