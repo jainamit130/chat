@@ -17,7 +17,7 @@ public interface IMessageRepository extends MongoRepository<Message,String> {
     Message findLatestMessage(String chatRoomId, String userId);
 
     @Aggregation(pipeline = {
-            "{ $match: {'chatRoomId' : ?0 }, 'deletedForUsers': { $nin: [?1] }, 'timestamp': { $gt: ?2 } }",
+            "{ $match: {'chatRoomId' : ?0 }, 'messageMetaData.deletedForUsers': { $nin: [?1] }, 'timestamp': { $gt: ?2 } }",
             "{ $sort: { 'timestamp': 1 } }"
     })
     List<Message> findMessagesOfChatForUserFrom(String chatRoomId, String userId, Instant from);

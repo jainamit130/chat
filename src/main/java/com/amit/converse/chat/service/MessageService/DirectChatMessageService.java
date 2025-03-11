@@ -1,4 +1,4 @@
-package com.amit.converse.chat.service.ChatRoom;
+package com.amit.converse.chat.service.MessageService;
 
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import org.springframework.stereotype.Service;

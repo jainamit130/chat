@@ -27,6 +27,7 @@ public class IReadProcessingService implements IReadProcessor {
         markReadService.mark(chatRoom,user);
         markReadService.saveAllMarkedMessages();
         chatService.readMessages(user);
+        markReadService.clearMarkService();
     }
 
     @Override

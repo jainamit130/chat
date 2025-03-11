@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +28,7 @@ public class DeleteMessageForEveryoneService extends DeleteMessageService {
 
     private boolean checkMessageValidity(ChatMessage message) {
         Instant messageSentTimestamp = message.getTimestamp();
-        int timeDiff = Instant.now().compareTo(messageSentTimestamp);
+        long timeDiff = Duration.between(messageSentTimestamp, Instant.now()).toMillis();
         return timeDiff<=thresholdTimeDiff;
     }
 

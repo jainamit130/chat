@@ -23,6 +23,9 @@ public interface IChatRoom {
     Integer getUnreadMessageCount(String userId);
     Instant getCreatedAt();
     Set<String> getDeletedForUsers();
+
+    void connectChat(String userId);
+
     void clearChat(String userId);
     void deleteChat(String userId);
     IOnlineUsersDTO transit();

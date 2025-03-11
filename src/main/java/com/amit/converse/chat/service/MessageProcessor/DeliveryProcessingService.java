@@ -33,6 +33,7 @@ public class DeliveryProcessingService implements IDeliveryProcessor {
             markDeliveredService.mark(chatRoom,user);
         }
         markDeliveredService.saveAllMarkedMessages();
+        markDeliveredService.clearMarkService();
     }
 
     @Override

@@ -95,6 +95,7 @@ public class UserChatService<T extends ChatRoom> {
     }
 
     public void connectChat(User user,IChatRoom chatRoom) {
+        chatRoom.connectChat(user.getUserId());
         user.connectChat(chatRoom.getId());
     }
 

@@ -28,6 +28,7 @@ public class UserContextFilter extends OncePerRequestFilter {
             User user = userService.getLoggedInUser();
             userContext.setUser(user);
         } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
         filterChain.doFilter(request, response);
         userContext.clearContext();

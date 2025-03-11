@@ -2,7 +2,7 @@ package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.model.Messages.ChatMessage;
-import com.amit.converse.chat.service.ChatRoom.GroupChatMessageService;
+import com.amit.converse.chat.service.MessageService.GroupChatMessageService;
 import com.amit.converse.chat.service.ExitService;
 import com.amit.converse.chat.service.JoinService;
 import com.amit.converse.chat.service.User.GroupChatUserService;
@@ -18,19 +18,8 @@ import java.util.List;
 @RequestMapping("/converse/chat/group/")
 public class GroupChatController {
     private final GroupChatUserService groupChatUserService;
-    private final GroupChatMessageService groupChatMessageService;
     private final JoinService joinService;
     private final ExitService exitService;
-
-    @PostMapping("/send/message/{chatRoomId}")
-    public ResponseEntity sendMessage(@RequestBody ChatMessage chatMessage) {
-        try {
-            groupChatMessageService.sendMessage(chatMessage);
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
-        } catch (IllegalArgumentException | InterruptedException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-    }
 
     @PostMapping("/add/users/{chatRoomId}")
     public ResponseEntity joinChat(@RequestBody List<String> userIds) {

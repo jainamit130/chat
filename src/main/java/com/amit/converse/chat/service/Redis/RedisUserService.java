@@ -1,6 +1,9 @@
 package com.amit.converse.chat.service.Redis;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.exceptions.ConverseException;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
+import com.amit.converse.chat.model.ChatRooms.DirectChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Redis.Interface.IRedisKeyService;
 import com.amit.converse.chat.service.Redis.Interface.IRedisUserService;
@@ -42,7 +45,15 @@ public class RedisUserService extends RedisService implements IRedisKeyService, 
     // Set userKey without any chatRoom as value => from not existing to existing as userId:{userId}:
     // To already existing userKey remove chatRoom as value => from userId:{userId}:{chatRoomId} to userId:{userId}:
     @Override
-    public void setUserKey(User user, IChatRoom chatRoom) {
+    public void setUserKey(User user) {
+        String chatRoomId = getActiveChatRoom(user);
+        removeUserKey(user);
+        if(chatRoomId!="") setKeyValue(redisChatRoomService.getKeyValue(chatRoomId, user.getUserId()));
+        setKeyValue(getKeyValue(user.getUserId(),chatRoomId),redisExpiryDuration);
+    }
+
+    @Override
+    public void setUserKey(User user,IChatRoom chatRoom) {
         String chatRoomId = chatRoom==null?"":chatRoom.getId();
         removeUserKey(user);
         setKeyValue(getKeyValue(user.getUserId(),chatRoomId),redisExpiryDuration);
@@ -62,6 +73,13 @@ public class RedisUserService extends RedisService implements IRedisKeyService, 
     }
 
     public void addChatRoomToUser(User user, IChatRoom chatRoom) {
-        setUserKey(user,chatRoom);
+        if(chatRoom.getId()!=null && chatRoom.getId()!="")  setUserKey(user,chatRoom);
+    }
+
+    public String getActiveChatRoom(User user) {
+        List<String> keyValues = getAllKeyValuesWithPrefix(getKey(user.getUserId()));
+        if(keyValues.size()==0) return "";
+        if(keyValues.size()==1) return extractValue(keyValues.getFirst());
+        throw new ConverseException("Multiple Active chatRooms found!");
     }
 }

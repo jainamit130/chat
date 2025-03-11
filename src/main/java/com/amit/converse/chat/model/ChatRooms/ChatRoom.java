@@ -3,8 +3,6 @@ package com.amit.converse.chat.model.ChatRooms;
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.Redis.ChatRoomRedisTransitionService;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
-import com.amit.converse.chat.dto.OnlineUsersDto;
-import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
 import com.amit.converse.chat.service.ChatRoom.FilfillmentService.ChatRoomFulfilmentService;
@@ -12,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -73,6 +70,10 @@ public abstract class ChatRoom implements IChatRoom {
         this.userIds = new ArrayList<>(userIdsSet);
     }
 
+    private void addUserId(String userId) {
+        this.userIds.add(userId);
+    }
+
     public void setName(String name) {
         this.chatRoomName = name;
     }
@@ -88,7 +89,7 @@ public abstract class ChatRoom implements IChatRoom {
     public abstract Boolean isDeletable();
 
     public Integer getMemberCount() {
-        return userIds.size();
+        return userIds.size()+deletedForUsers.size();
     }
 
     public Integer getTotalMemberCount() {
@@ -102,6 +103,13 @@ public abstract class ChatRoom implements IChatRoom {
     public void deleteChat(String userId) {
         userIds.remove(userId);
         deletedForUsers.add(userId);
+    }
+
+    @Override
+    public void connectChat(String userId) {
+        addUserId(userId);
+        setUserIds(this.userIds);
+        deletedForUsers.remove(userId);
     }
 
     @Override

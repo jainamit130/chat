@@ -1,7 +1,9 @@
 package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.ChatRoomData;
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.service.ChatRoom.ChatService;
+import com.amit.converse.chat.service.MessageService.ChatMessageServiceFactory;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.ClearChatService;
 import com.amit.converse.chat.service.DeleteChatService;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.DeleteMessageForEveryoneService;
@@ -23,6 +25,7 @@ public class ChatController {
     private final DeleteMessageForMeService deleteMessageForMeService;
     private final DeleteMessageForEveryoneService deleteMessageForEveryoneService;
     private final ChatService chatService;
+    private final ChatMessageServiceFactory chatMessageServiceFactory;
 
     @QueryMapping
     public ChatRoomData getChatRoomData(){
@@ -33,7 +36,17 @@ public class ChatController {
         }
     }
 
-    @PostMapping("/delete/messages/me")
+    @PostMapping("/send/message/{chatRoomId}")
+    public ResponseEntity sendMessage(@RequestBody ChatMessage message) {
+        try {
+            chatMessageServiceFactory.getMessageServiceFactory().sendMessage(message);
+            return new ResponseEntity(HttpStatus.NO_CONTENT);
+        } catch (IllegalArgumentException | InterruptedException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+    }
+
+    @PostMapping("/delete/messages/me/{chatRoomId}")
     public ResponseEntity deleteMessage(@RequestBody List<String> messageIds) {
         try {
             deleteMessageForMeService.deleteMessageForMe(messageIds);
@@ -43,7 +56,7 @@ public class ChatController {
         }
     }
 
-    @PostMapping("delete/messages/everyone")
+    @PostMapping("delete/messages/everyone/{chatRoomId}")
     public ResponseEntity deleteMessageForEveryone(@RequestBody List<String> messageIds) {
         try {
             deleteMessageForEveryoneService.deleteMessageForEveryone(messageIds);
