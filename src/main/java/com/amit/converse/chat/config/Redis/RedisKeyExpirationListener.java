@@ -20,7 +20,6 @@ public class RedisKeyExpirationListener implements MessageListener {
     @Lazy
     private RedisWriteService redisWriteService;
 
-
     // Three different things can expire
     // user:{userId}:{chatRoomId} => update chatRoom and user context and transit both
     // user:{userId}: => update user context and transit

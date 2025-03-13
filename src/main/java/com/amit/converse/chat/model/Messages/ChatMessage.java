@@ -4,6 +4,7 @@ import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.MetaData.ChatMessageMetaData;
 import com.amit.converse.chat.model.MetaData.MessageMetaData;
 import lombok.*;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,6 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class ChatMessage extends Message implements IDeletableMessage {
     private String senderId;
     private MessageStatus status;
+    private String name;
 
     public ChatMessage() {
         super("There are no messages!",new ChatMessageMetaData());

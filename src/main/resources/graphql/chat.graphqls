@@ -9,6 +9,8 @@ type ChatRoom {
 
 type latestMessage {
     content: String!
+    timestamp: String!
+    name: String
 }
 
 type ChatMessage {
@@ -16,7 +18,7 @@ type ChatMessage {
     senderId: String!
     content: String!
     timestamp: String!
-    status: MessageStatus!
+    status: MessageStatus
 }
 
 enum MessageStatus {
