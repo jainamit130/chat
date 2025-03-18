@@ -28,8 +28,12 @@ public class UserService {
     @Autowired
     private RedisWriteService redisWriteService;
 
-    public void clearRedisChatRoomOfUser() {
+    void clearRedisChatRoomOfUser() {
         redisWriteService.removeUserFromChatRoom(getUserContext());
+    }
+
+    public void activateUser() {
+        clearRedisChatRoomOfUser();
     }
 
     private void updateContext(User user) {

@@ -5,6 +5,11 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public class TypingNotification implements IChatNotification {
+public class TypingNotification extends IChatNotification {
     List<String> typingUsernames;
+
+    @Override
+    public NotificationType getNotificationType() {
+        return NotificationType.TYPING;
+    }
 }

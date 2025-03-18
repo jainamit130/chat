@@ -6,6 +6,11 @@ import lombok.Data;
 
 @AllArgsConstructor
 @Data
-public class MessageNotification implements IChatNotification {
+public class MessageNotification extends IChatNotification {
     private ChatMessage message;
+
+    @Override
+    public NotificationType getNotificationType() {
+        return NotificationType.MESSAGE;
+    }
 }

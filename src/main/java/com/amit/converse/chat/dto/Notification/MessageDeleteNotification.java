@@ -7,6 +7,11 @@ import java.util.List;
 
 @Builder
 @Data
-public class MessageDeleteNotification implements IChatNotification {
-    private String messageId;
+public class MessageDeleteNotification extends IChatNotification {
+    private List<String> messageIds;
+
+    @Override
+    public NotificationType getNotificationType() {
+        return NotificationType.MESSAGE_DELETED;
+    }
 }

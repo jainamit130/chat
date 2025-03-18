@@ -2,7 +2,7 @@ package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.dto.Notification.NewChatNotification;
-import com.amit.converse.chat.dto.Notification.UserOnlineStatusNotification;
+import com.amit.converse.chat.dto.Notification.UserStatusNotification;
 import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDTO;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
@@ -107,8 +107,8 @@ public class UserChatService<T extends ChatRoom> {
     // Notify All ChatRooms of a user about status: went online or went offline
     public void notifyStatus(ConnectionStatus status) {
         User user = userService.getUserContext();
-        UserOnlineStatusNotification userOnlineStatusNotification = UserOnlineStatusNotification.builder().status(status).username(user.getUsername()).build();
-        userNotificationService.sendNotificationToUserChats(user, userOnlineStatusNotification);
+        UserStatusNotification userStatusNotification = UserStatusNotification.builder().status(status).username(user.getUsername()).build();
+        userNotificationService.sendNotificationToUserChats(user, userStatusNotification);
         return;
     }
 

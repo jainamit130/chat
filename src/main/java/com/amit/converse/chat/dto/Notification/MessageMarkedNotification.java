@@ -11,7 +11,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class MessageMarkedNotification implements IUserNotification {
+public class MessageMarkedNotification extends IUserNotification {
     private String chatRoomId;
     private List<String> messageIds;
+
+    @Override
+    public NotificationType getNotificationType() {
+        return NotificationType.MESSAGE_MARKED;
+    }
 }

@@ -13,7 +13,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonSerialize
 @JsonDeserialize
-public class NewChatNotification implements IUserNotification {
+public class NewChatNotification extends IUserNotification {
     @JsonProperty("chatRoom")
     private IChatRoom chatRoom;
+
+    @Override
+    public NotificationType getNotificationType() {
+        return NotificationType.NEW_CHAT;
+    }
 }

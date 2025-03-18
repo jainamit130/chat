@@ -23,7 +23,7 @@ public class RedisSessionController {
 
     @PostMapping("/state/active")
     public ResponseEntity activateUser() {
-        userService.clearRedisChatRoomOfUser();
+        userService.activateUser();
         System.out.println(userService.getUserContext().getUsername() + " is active with a TTL of "+redisKeyTimeout+" seconds");
         return new ResponseEntity(HttpStatus.NO_CONTENT);
     }

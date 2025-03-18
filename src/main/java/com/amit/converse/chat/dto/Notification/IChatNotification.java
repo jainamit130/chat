@@ -1,4 +1,9 @@
 package com.amit.converse.chat.dto.Notification;
 
-public interface IChatNotification extends INotification{
+public abstract class IChatNotification implements INotification{
+    protected NotificationType notificationType;
+
+    public IChatNotification() {
+        this.notificationType = getNotificationType();
+    }
 }

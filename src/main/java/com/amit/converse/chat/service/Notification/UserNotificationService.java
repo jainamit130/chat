@@ -1,7 +1,7 @@
 package com.amit.converse.chat.service.Notification;
 
 import com.amit.converse.chat.dto.Notification.IUserNotification;
-import com.amit.converse.chat.dto.Notification.UserOnlineStatusNotification;
+import com.amit.converse.chat.dto.Notification.UserStatusNotification;
 import com.amit.converse.chat.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,9 +26,9 @@ public class UserNotificationService extends NotificationService<IUserNotificati
         webSocketMessageService.sendNotification(getAddress(userId),notification);
     }
 
-    public void sendNotificationToUserChats(User user, UserOnlineStatusNotification userOnlineStatusNotification) {
+    public void sendNotificationToUserChats(User user, UserStatusNotification userStatusNotification) {
         for(String chatId:user.getChatRoomIds()) {
-            chatNotificationService.sendNotification(chatId, userOnlineStatusNotification);
+            chatNotificationService.sendNotification(chatId, userStatusNotification);
         }
     }
 

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public abstract class NotificationService<T extends INotification> {
-
     protected final WebSocketMessageService webSocketMessageService;
     protected abstract String getBaseAddress();
     protected String getAddress(String id) {

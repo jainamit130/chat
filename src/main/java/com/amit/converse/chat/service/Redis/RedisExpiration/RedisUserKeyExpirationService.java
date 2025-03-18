@@ -3,7 +3,6 @@ package com.amit.converse.chat.service.Redis.RedisExpiration;
 import com.amit.converse.chat.context.User.OnlineSetUserContextService;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
-import com.amit.converse.chat.service.Notification.UserInactiveNotificationService;
 import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -19,9 +18,6 @@ public class RedisUserKeyExpirationService extends RedisExpirationService {
     private OnlineSetUserContextService onlineSetUserContextService;
 
     @Autowired
-    private UserInactiveNotificationService userInactiveNotificationService;
-
-    @Autowired
     @Lazy
     private UserService userService;
 
@@ -31,7 +27,6 @@ public class RedisUserKeyExpirationService extends RedisExpirationService {
             String userId = redisKeyService.extractKey(keyValue);
             User user = userService.getUserById(userId);
             onlineSetUserContextService.setUser(user);
-            userInactiveNotificationService.sendNotification(userId);
         } catch (ConverseException exception) {
             System.out.println("Invalid key found. Hence no user key to expire");
         }
