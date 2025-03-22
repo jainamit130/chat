@@ -27,7 +27,7 @@ public class SecurityConfig {
                         .disable()
                 )
                 .authorizeHttpRequests(authorization -> authorization
-//                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/converse/users/newUser").permitAll()
                         .requestMatchers("/chatRoom/admin/**").hasRole(Role.ADMIN.toString())
                         .anyRequest().authenticated()

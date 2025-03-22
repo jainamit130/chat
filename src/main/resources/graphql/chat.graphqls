@@ -8,8 +8,11 @@ type ChatRoom {
 }
 
 type latestMessage {
+    id: String
+    senderId: String
+    status: MessageStatus
     content: String!
-    timestamp: String!
+    timestamp: String
     name: String
 }
 
