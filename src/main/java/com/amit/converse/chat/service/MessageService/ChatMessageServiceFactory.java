@@ -3,7 +3,7 @@ package com.amit.converse.chat.service.MessageService;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
-import com.amit.converse.chat.service.ChatRoom.ChatService;
+import com.amit.converse.chat.service.chatRoom.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;

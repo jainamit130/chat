@@ -1,6 +1,5 @@
-package com.amit.converse.chat.service.ChatRoom;
+package com.amit.converse.chat.service.chatRoom;
 
-import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
@@ -8,7 +7,7 @@ import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
-import com.amit.converse.chat.service.ChatRoom.FilfillmentService.ChatRoomFulfilmentServiceFactory;
+import com.amit.converse.chat.service.chatRoom.filfillmentService.factory.ChatRoomFulfilmentServiceFactory;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.ClearChatService;
 import com.amit.converse.chat.service.Redis.RedisReadService;

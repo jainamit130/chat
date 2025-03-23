@@ -2,8 +2,8 @@ package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.CreateDirectChatRequest;
 import com.amit.converse.chat.dto.CreateGroupRequest;
-import com.amit.converse.chat.service.ChatRoom.CreateDirectChatService;
-import com.amit.converse.chat.service.ChatRoom.CreateGroupChatService;
+import com.amit.converse.chat.service.chatRoom.CreateDirectChatService;
+import com.amit.converse.chat.service.chatRoom.CreateGroupChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

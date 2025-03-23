@@ -8,7 +8,7 @@ import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.Message.IChatMessageRepository;
-import com.amit.converse.chat.service.ChatRoom.ChatService;
+import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.amit.converse.chat.service.MessageProcessor.MessageProcessingService;
 import com.amit.converse.chat.service.Notification.ChatNotificationService;
 import com.amit.converse.chat.service.Notification.UserNotificationService;

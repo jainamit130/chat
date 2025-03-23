@@ -1,6 +1,5 @@
-package com.amit.converse.chat.service.ChatRoom.FilfillmentService;
+package com.amit.converse.chat.service.chatRoom.filfillmentService;
 
-import com.amit.converse.chat.Redis.ChatRoomRedisTransitionService;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.User.UserChatService;

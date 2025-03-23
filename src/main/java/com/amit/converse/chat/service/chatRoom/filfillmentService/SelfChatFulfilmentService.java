@@ -1,9 +1,8 @@
-package com.amit.converse.chat.service.ChatRoom.FilfillmentService;
+package com.amit.converse.chat.service.chatRoom.filfillmentService;
 
 import com.amit.converse.chat.Redis.SelfChatRedisTransitionService;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 

@@ -2,7 +2,7 @@ package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.ChatRooms.SelfChat;
-import com.amit.converse.chat.service.ChatRoom.SelfChatService;
+import com.amit.converse.chat.service.chatRoom.SelfChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

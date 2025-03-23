@@ -2,7 +2,7 @@ package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.model.Messages.ChatMessage;
-import com.amit.converse.chat.service.ChatRoom.ChatService;
+import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.amit.converse.chat.service.MessageService.ChatMessageServiceFactory;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.ClearChatService;
 import com.amit.converse.chat.service.DeleteChatService;

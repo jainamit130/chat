@@ -4,7 +4,7 @@ import com.amit.converse.chat.dto.OnlineUsers.DirectChatOnlineUsersDTO;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRooms.DirectChat;
 import com.amit.converse.chat.model.User;
-import com.amit.converse.chat.service.ChatRoom.DirectChatService;
+import com.amit.converse.chat.service.chatRoom.DirectChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

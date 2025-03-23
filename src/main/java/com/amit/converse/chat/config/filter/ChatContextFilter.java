@@ -1,7 +1,7 @@
 package com.amit.converse.chat.config.filter;
 
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
-import com.amit.converse.chat.service.ChatRoom.ChatService;
+import com.amit.converse.chat.service.chatRoom.ChatService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

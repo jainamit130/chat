@@ -1,7 +1,7 @@
 package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
-import com.amit.converse.chat.service.ChatRoom.ChatService;
+import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.amit.converse.chat.service.Redis.RedisWriteService;
 import com.amit.converse.chat.service.User.UserChatService;
 import lombok.AllArgsConstructor;

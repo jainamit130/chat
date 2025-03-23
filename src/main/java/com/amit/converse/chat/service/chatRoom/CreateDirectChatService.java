@@ -1,6 +1,5 @@
-package com.amit.converse.chat.service.ChatRoom;
+package com.amit.converse.chat.service.chatRoom;
 
-import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.CreateDirectChatRequest;
 import com.amit.converse.chat.model.ChatRooms.DirectChat;
 import com.amit.converse.chat.model.User;
@@ -14,7 +13,6 @@ import java.util.HashSet;
 @AllArgsConstructor
 public class CreateDirectChatService {
 
-    private final ChatContext chatContext;
     private final DirectChatService directChatService;
     private final DirectChatUserService directChatUserService;
 
@@ -35,6 +33,6 @@ public class CreateDirectChatService {
         User counterPartUser = directChatUserService.getUserFromRepo(counterPartUserId);
         directChatService.processCreation(primaryUser,counterPartUser,directChatRequest);
         directChatUserService.processCreation();
-        return chatContext.getChatRoom().getId();
+        return directChatService.getContextChatRoom().getId();
     }
 }

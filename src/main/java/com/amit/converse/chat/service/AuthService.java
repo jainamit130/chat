@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthService {
-    public static boolean isAuthenticated() {
+    private static boolean isAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication!=null && authentication.getPrincipal() instanceof UserDetailsImpl) {
             return true;

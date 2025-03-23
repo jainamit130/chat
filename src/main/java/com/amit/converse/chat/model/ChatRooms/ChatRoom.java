@@ -5,7 +5,7 @@ import com.amit.converse.chat.Redis.ChatRoomRedisTransitionService;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
-import com.amit.converse.chat.service.ChatRoom.FilfillmentService.ChatRoomFulfilmentService;
+import com.amit.converse.chat.service.chatRoom.filfillmentService.ChatRoomFulfilmentService;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;

@@ -4,7 +4,7 @@ import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.User;
-import com.amit.converse.chat.service.ChatRoom.GroupChatService;
+import com.amit.converse.chat.service.chatRoom.GroupChatService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

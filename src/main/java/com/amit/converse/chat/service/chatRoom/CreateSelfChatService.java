@@ -1,4 +1,4 @@
-package com.amit.converse.chat.service.ChatRoom;
+package com.amit.converse.chat.service.chatRoom;
 
 import com.amit.converse.chat.model.ChatRooms.SelfChat;
 import lombok.AllArgsConstructor;
