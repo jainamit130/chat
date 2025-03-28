@@ -25,11 +25,21 @@ public abstract class RedisSessionITransitionService implements ITransition {
         this.redisReadService = redisReadService;
     }
 
+
+    // Scenarios
+    /*
+    *
+    * User is online and status is inactive - don't notify
+    * User is online and status is active - notify
+    * user is offline and status is active - not possible
+    * user is offline and status is inactive - notify
+    *
+    * */
     private boolean isTransitable() {
         User user = userChatService.getContextUser();
-        boolean isUserOffline = !redisReadService.isUserOnline(user);
+        boolean isUserOnline = redisReadService.isUserOnline(user);
         ConnectionStatus status = user.getConnectionStatus();
-        return isUserOffline && (status.equals(ConnectionStatus.INACTIVE) || status.equals(ConnectionStatus.ACTIVE));
+        return (isUserOnline && status.equals(ConnectionStatus.ACTIVE)) || !isUserOnline;
     }
 
 

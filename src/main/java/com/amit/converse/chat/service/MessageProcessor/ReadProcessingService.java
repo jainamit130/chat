@@ -9,13 +9,13 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
-public class IReadProcessingService implements IReadProcessor {
+public class ReadProcessingService implements IReadProcessor {
 
     private final ChatService chatService;
     private final MarkReadService markReadService;
 
     @Autowired
-    public IReadProcessingService(@Lazy ChatService chatService, MarkReadService markReadService) {
+    public ReadProcessingService(@Lazy ChatService chatService, MarkReadService markReadService) {
         this.chatService = chatService;
         this.markReadService = markReadService;
     }

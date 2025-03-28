@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -62,7 +63,9 @@ public abstract class ChatRoom implements IChatRoom {
     protected transient String chatRoomName;
     protected transient Integer unreadMessageCount;
     protected transient ChatMessage latestMessage;
+    @Transient
     protected ChatRoomFulfilmentService chatRoomFulfilmentService;
+    @Transient
     protected ChatRoomRedisTransitionService chatRoomRedisTransitionService;
 
     public void setUserIds(List<String> userIds) {
