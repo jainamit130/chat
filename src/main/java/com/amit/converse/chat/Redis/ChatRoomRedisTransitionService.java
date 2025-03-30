@@ -23,18 +23,6 @@ public abstract class ChatRoomRedisTransitionService implements ITransition {
 
     public abstract IOnlineUsersDTO transitAndGetOnlineUsers();
 
-    /*
-    *
-    * if user is in redis chatRoom
-    * and the key expire that means chatRoom is active then false
-    *
-    * if user is in redis chatRoom
-    * and the reuqest with chatRoom is made then?
-    *
-    *
-    * */
-
-
     @Override
     public void transit() {
         User user = userChatService.getContextUser();

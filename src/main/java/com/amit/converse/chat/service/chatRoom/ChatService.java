@@ -101,7 +101,8 @@ public class ChatService<T extends ChatRoom> {
         processChatRoomToDB(chatRoom);
     }
 
-    public ChatRoomData getChatRoomData() {
+    public ChatRoomData getChatRoomData(String chatRoomId) {
+        updateChatRoomContext((T) getChatRoomById(chatRoomId));
         ChatRoom chatRoom = getContextChatRoom();
         return ChatRoomData.builder().messages(getMessagesOfChatRoom()).
                 onlineUsersDTO(chatRoom.transit())

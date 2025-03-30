@@ -79,7 +79,12 @@ public class RedisUserService extends RedisService implements IRedisKeyService, 
     public String getActiveChatRoom(User user) {
         List<String> keyValues = getAllKeyValuesWithPrefix(getKey(user.getUserId()));
         if(keyValues.size()==0) return "";
-        if(keyValues.size()==1) return extractValue(keyValues.getFirst());
-        throw new ConverseException("Multiple Active chatRooms found!");
+        try {
+            if(keyValues.size()==1) return extractValue(keyValues.getFirst());
+            throw new ConverseException("Multiple Active chatRooms found!");
+        } catch (Exception exception) {
+            System.out.println(exception.getMessage());
+        }
+        return "";
     }
 }

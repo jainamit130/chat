@@ -1,6 +1,7 @@
 package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.dto.ChatRoomData;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.amit.converse.chat.service.MessageService.ChatMessageServiceFactory;
@@ -9,6 +10,7 @@ import com.amit.converse.chat.service.DeleteChatService;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.DeleteMessageForEveryoneService;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.DeleteMessageForMeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +30,9 @@ public class ChatController {
     private final ChatMessageServiceFactory chatMessageServiceFactory;
 
     @QueryMapping
-    public ChatRoomData getChatRoomData(){
+    public ChatRoomData getChatRoomData(@Argument String chatRoomId){
         try {
-            return chatService.getChatRoomData();
+            return chatService.getChatRoomData(chatRoomId);
         } catch (IllegalArgumentException e) {
             return null;
         }

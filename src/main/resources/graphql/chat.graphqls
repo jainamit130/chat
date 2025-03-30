@@ -67,6 +67,6 @@ type ChatRoomData {
 
 type Query {
     getChatRoomsOfUser: [ChatRoom!]!
-    getChatRoomData: ChatRoomData!
+    getChatRoomData(chatRoomId: String!): ChatRoomData!
 }
 

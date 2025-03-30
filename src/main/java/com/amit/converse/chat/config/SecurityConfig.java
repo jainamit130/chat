@@ -2,7 +2,6 @@ package com.amit.converse.chat.config;
 
 import com.amit.converse.chat.config.filter.ChatContextFilter;
 import com.amit.converse.chat.config.filter.JwtAuthenticationFilter;
-import com.amit.converse.chat.config.filter.UserContextFilter;
 import com.amit.converse.chat.model.Enums.Role;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,7 +17,6 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final ChatContextFilter chatContextFilter;
-    private final UserContextFilter userContextFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -34,8 +32,7 @@ public class SecurityConfig {
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class) // First
-                .addFilterAfter(userContextFilter, JwtAuthenticationFilter.class)           // Second
-                .addFilterAfter(chatContextFilter, UserContextFilter.class);
+                .addFilterAfter(chatContextFilter, JwtAuthenticationFilter.class);        // Second
         return http.build();
     }
 }

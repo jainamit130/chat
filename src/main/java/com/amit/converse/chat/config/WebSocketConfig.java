@@ -55,10 +55,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                     if (token != null && token.startsWith("Bearer ")) {
                         String jwt = token.substring(7);
                         if (jwtService.isTokenValid(jwt)) {
-                            String username = jwtService.extractId(jwt);
+                            String userId = jwtService.extractId(jwt);
+                            UserDetailsImpl userDetails = userDetailsService.loadUserByUserId(userId);
                             // Here you would set the authentication in your SecurityContext
                             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                                    username, null, Collections.emptyList()
+                                    userDetails, null, Collections.emptyList()
                             );
                             accessor.setUser(authenticationToken);
                         }
