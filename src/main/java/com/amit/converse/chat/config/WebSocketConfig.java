@@ -51,22 +51,28 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    String token = accessor.getFirstNativeHeader("token");
-                    if (token != null && token.startsWith("Bearer ")) {
-                        String jwt = token.substring(7);
-                        if (jwtService.isTokenValid(jwt)) {
-                            String userId = jwtService.extractId(jwt);
-                            UserDetailsImpl userDetails = userDetailsService.loadUserByUserId(userId);
-                            // Here you would set the authentication in your SecurityContext
-                            UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                                    userDetails, null, Collections.emptyList()
-                            );
-                            accessor.setUser(authenticationToken);
-                        }
+                    handleTokenValidationAndSetUser(accessor);
+                } else {
+                    if (accessor.getUser() == null) {
+                        handleTokenValidationAndSetUser(accessor);
                     }
                 }
-
                 return message;
+            }
+
+            private void handleTokenValidationAndSetUser(StompHeaderAccessor accessor) {
+                String token = accessor.getFirstNativeHeader("token");
+                if (token != null && token.startsWith("Bearer ")) {
+                    String jwt = token.substring(7);
+                    if (jwtService.isTokenValid(jwt)) {
+                        String userId = jwtService.extractId(jwt);
+                        UserDetailsImpl userDetails = userDetailsService.loadUserByUserId(userId);
+                        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, Collections.emptyList()
+                        );
+                        accessor.setUser(authenticationToken);
+                    }
+                }
             }
         });
     }

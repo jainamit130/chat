@@ -4,8 +4,11 @@ import com.amit.converse.chat.context.User.OfflineSetUserContextService;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.IUserRepository;
+import com.amit.converse.chat.service.User.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -13,7 +16,9 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 @Configuration
 @AllArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final IUserRepository userRepository;
+    @Autowired
+    @Lazy
+    private UserService userService;
     private final OfflineSetUserContextService setUserContextService;
 
     @Override
@@ -22,14 +27,22 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     public UserDetailsImpl loadUserByUserId(String userId) throws UsernameNotFoundException {
-        User loadedUser = userRepository.findByUserId(userId)
-                .orElseThrow(() -> new ConverseException("User Id : " + userId + " not found!"));
-
+        User loadedUser = userService.getUserById(userId);
         setUserContextService.setUser(loadedUser);
         return new UserDetailsImpl(
                 loadedUser.getUserId(),
                 loadedUser.getPassword()
         );
+    }
+
+    public void clearContext() {
+        User user = userService.getUserContext();
+        if(user!=null) {
+            userService.processUserToDB(user);
+            setUserContextService.clearContext();
+        } else {
+            System.out.println("Broo!!");
+        }
     }
 
 }

@@ -71,6 +71,7 @@ public class UserService {
     }
 
     public void processUserToDB(User user) {
+        user.updateLastSeenToNow();
         updateContext(userRepository.save(user));
     }
 

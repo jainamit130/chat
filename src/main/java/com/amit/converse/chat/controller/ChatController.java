@@ -14,11 +14,14 @@ import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequiredArgsConstructor
 @RequestMapping("/converse/chat/")
 public class ChatController {
@@ -38,13 +41,13 @@ public class ChatController {
         }
     }
 
-    @PostMapping("/send/message/{chatRoomId}")
-    public ResponseEntity sendMessage(@RequestBody ChatMessage message) {
+    @MessageMapping("/chat/send/message/{chatRoomId}")
+    public void sendMessage(@DestinationVariable String chatRoomId,ChatMessage message) {
         try {
+            message.setChatRoomId(chatRoomId);
             chatMessageServiceFactory.getMessageServiceFactory().sendMessage(message);
-            return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException | InterruptedException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            System.err.println("Error sending message: " + e.getMessage());
         }
     }
 

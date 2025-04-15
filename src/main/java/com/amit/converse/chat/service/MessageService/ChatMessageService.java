@@ -55,7 +55,7 @@ public class ChatMessageService<T extends IChatRoom> {
         message.setStatus(MessageStatus.PENDING);
     }
 
-    public void saveMessages(List<ChatMessage> messages) {
+    public synchronized void saveMessages(List<ChatMessage> messages) {
         chatMessageRepository.saveAll(messages);
     }
 
@@ -84,7 +84,7 @@ public class ChatMessageService<T extends IChatRoom> {
 
     public final void sendMessage(ChatMessage message) throws InterruptedException {
         fulfilMessage(message);
-        IChatRoom chatRoom = chatService.getContextChatRoom();
+        IChatRoom chatRoom = chatService.getContextChatRoom(message.getChatRoomId());
         authoriseSender();
         ChatMessage savedMessage = saveMessage(message);
         sendMessageNotification(chatRoom.getId(),savedMessage);

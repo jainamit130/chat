@@ -34,6 +34,14 @@ public class ChatService<T extends ChatRoom> {
     @Autowired
     private RedisReadService redisReadService;
 
+    public T getContextChatRoom(String chatRoomId) {
+        T chatRoom = context.getChatRoom();
+        if(chatRoom==null) {
+            updateChatRoomContext((T) getChatRoomById(chatRoomId));
+        }
+        return getContextChatRoom();
+    }
+
     public T getContextChatRoom() { return context.getChatRoom(); }
 
     public void updateChatRoomContext(T chatRoom) {

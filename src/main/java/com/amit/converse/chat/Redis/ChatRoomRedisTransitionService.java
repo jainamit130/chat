@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 @Service
 public abstract class ChatRoomRedisTransitionService implements ITransition {
     @Autowired
-    @Lazy
     private UserChatService userChatService;
     @Autowired
     private RedisWriteService redisWriteService;

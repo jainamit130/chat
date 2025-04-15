@@ -3,6 +3,7 @@ package com.amit.converse.chat.service.User;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -11,12 +12,15 @@ import java.util.ArrayList;
 public class UserDetailsService {
 
     @Autowired
+    @Lazy
     private DirectChatUserService directChatUserService;
 
     @Autowired
+    @Lazy
     private GroupChatUserService groupChatUserService;
 
     @Autowired
+    @Lazy
     private SelfChatUserService selfChatUserService;
 
     private UserDetails getInitializedUserDetails(User user) {
