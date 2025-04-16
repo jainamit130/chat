@@ -16,7 +16,6 @@ public class DeleteMessageNotificationService {
     private ChatNotificationService chatNotificationService;
 
     @Autowired
-    @Lazy
     private ChatService chatService;
 
     public void sendMessageDeletedNotification(List<ChatMessage> messages) {

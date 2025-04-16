@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 public class StateFactoryService {
 
     @Autowired
-    @Lazy
     private UserService userService;
     @Autowired
     private DeliveryProcessingService deliveryProcessingService;

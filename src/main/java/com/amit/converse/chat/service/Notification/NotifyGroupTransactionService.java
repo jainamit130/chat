@@ -17,7 +17,7 @@ import java.util.List;
 public abstract class NotifyGroupTransactionService {
 
     @Autowired
-    private ChatContext<ITransactable> chatContext;
+    private ChatContext chatContext;
 
     @Autowired
     private UserChatService userChatService;
@@ -37,7 +37,7 @@ public abstract class NotifyGroupTransactionService {
     }
 
     public final void notifyGroup(List<User> joinedUsers) {
-        ITransactable chatRoom = chatContext.getChatRoom();
+        ITransactable chatRoom = (ITransactable)chatContext.getChatRoom();
         List<String> joinNotifications = new ArrayList<>();
         for(User joinedUser : joinedUsers) {
             joinNotifications.add(generateMessage(joinedUser));

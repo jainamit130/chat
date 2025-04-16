@@ -13,11 +13,9 @@ import org.springframework.stereotype.Service;
 public class RedisKeyExpirationListener implements MessageListener {
 
     @Autowired
-    @Lazy
     private RedisKeyExpirationFactory redisKeyExpirationFactory;
 
     @Autowired
-    @Lazy
     private RedisWriteService redisWriteService;
 
     // Three different things can expire

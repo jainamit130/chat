@@ -15,7 +15,7 @@ public class ReadProcessingService implements IReadProcessor {
     private final MarkReadService markReadService;
 
     @Autowired
-    public ReadProcessingService(@Lazy ChatService chatService, MarkReadService markReadService) {
+    public ReadProcessingService( ChatService chatService, MarkReadService markReadService) {
         this.chatService = chatService;
         this.markReadService = markReadService;
     }

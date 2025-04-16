@@ -21,10 +21,8 @@ import java.util.List;
 @Service
 public class UserChatService<T extends ChatRoom> {
     @Autowired
-    @Lazy
     private UserService userService;
     @Autowired
-    @Lazy
     protected ChatService<T> chatService;
     @Autowired
     private UserNotificationService userNotificationService;

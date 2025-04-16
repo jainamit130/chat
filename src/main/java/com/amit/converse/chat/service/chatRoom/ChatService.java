@@ -21,8 +21,6 @@ import java.util.List;
 @Service
 public class ChatService<T extends ChatRoom> {
     @Autowired
-    protected ChatContext<T> context;
-    @Autowired
     protected ChatMessageService chatMessageService;
     @Autowired
     protected IChatRoomRepository chatRoomRepository;
@@ -35,21 +33,21 @@ public class ChatService<T extends ChatRoom> {
     private RedisReadService redisReadService;
 
     public T getContextChatRoom(String chatRoomId) {
-        T chatRoom = context.getChatRoom();
+        T chatRoom = (T) ChatContext.getChatRoom();
         if(chatRoom==null) {
             updateChatRoomContext((T) getChatRoomById(chatRoomId));
         }
         return getContextChatRoom();
     }
 
-    public T getContextChatRoom() { return context.getChatRoom(); }
+    public T getContextChatRoom() { return (T) ChatContext.getChatRoom(); }
 
     public void updateChatRoomContext(T chatRoom) {
-        context.updateContext(chatRoom);
+        ChatContext.updateChatRoom(chatRoom);
     }
 
     public void clearContext() {
-        context.clearContext();
+        ChatContext.clearContext();
     }
 
     public void readMessages(User user) {
@@ -89,18 +87,18 @@ public class ChatService<T extends ChatRoom> {
     }
 
     public List<String> getOnlineUserIdsOfChat() {
-        List<String> onlineUserIds = new ArrayList<>(redisReadService.filterOnlineUsers(context.getChatRoom()));
+        List<String> onlineUserIds = new ArrayList<>(redisReadService.filterOnlineUsers(ChatContext.getChatRoom()));
         return onlineUserIds;
     }
 
     public void clearChat(String userId) {
-        T chatRoom = context.getChatRoom();
+        T chatRoom = (T) ChatContext.getChatRoom();
         chatRoom.clearChat(userId);
         processChatRoomToDB(chatRoom);
     }
 
     public List<ChatMessage> getMessagesOfChatRoom() {
-        return chatMessageService.getMessagesOfChatFrom(context.getChatRoom());
+        return chatMessageService.getMessagesOfChatFrom(ChatContext.getChatRoom());
     }
 
     public void processSentMessage() {

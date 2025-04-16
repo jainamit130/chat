@@ -18,7 +18,7 @@ public class DeliveryProcessingService implements IDeliveryProcessor {
     private final MarkDeliveredService markDeliveredService;
 
     @Autowired
-    public DeliveryProcessingService(@Lazy ChatService chatService, MarkDeliveredService markDeliveredService) {
+    public DeliveryProcessingService(@Lazy ChatService chatService, @Lazy MarkDeliveredService markDeliveredService) {
         this.chatService = chatService;
         this.markDeliveredService = markDeliveredService;
     }

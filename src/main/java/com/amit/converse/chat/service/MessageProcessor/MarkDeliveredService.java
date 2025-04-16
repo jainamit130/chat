@@ -18,7 +18,7 @@ import java.util.Map;
 public class MarkDeliveredService extends MarkService {
 
     @Autowired
-    public MarkDeliveredService(RedisReadService redisReadService, @Lazy ChatMessageService chatMessageService) {
+    public MarkDeliveredService(RedisReadService redisReadService, ChatMessageService chatMessageService) {
         super(redisReadService, chatMessageService);
     }
 

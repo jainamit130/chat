@@ -6,25 +6,30 @@ import lombok.Data;
 import org.springframework.stereotype.Component;
 
 @Component
-@Data
-public class ChatContext<T extends IChatRoom> implements IContext {
-    protected T chatRoom;
+public class ChatContext {
 
-    public void updateContext(T chatRoom) {
-        this.chatRoom=chatRoom;
+    private static final ThreadLocal<IChatRoom> chatContextHolder = new ThreadLocal<>();
+
+    public static void setChatRoom(IChatRoom chatRoom) {
+        chatContextHolder.set(chatRoom);
+        if (chatRoom != null) chatRoom.transit();
     }
 
-    public void setChatRoom(T chatRoom) {
-        this.chatRoom = chatRoom;
-        if(chatRoom!=null) chatRoom.transit();
+    public static void updateChatRoom(IChatRoom chatRoom) {
+        chatContextHolder.set(chatRoom);
     }
 
-    public String getChatRoomId() {
-        return chatRoom.getId();
+    public static IChatRoom getChatRoom() {
+        return chatContextHolder.get();
     }
 
-    @Override
-    public void clearContext() {
-        this.setChatRoom(null);
+    public static String getChatRoomId() {
+        IChatRoom chatRoom = chatContextHolder.get();
+        return chatRoom != null ? chatRoom.getId() : null;
+    }
+
+    public static void clearContext() {
+        chatContextHolder.remove();
     }
 }
+

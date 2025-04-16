@@ -29,12 +29,14 @@ public class ChatMessageService<T extends IChatRoom> {
     @Lazy
     protected ChatService chatService;
     @Autowired
+    @Lazy
     protected MessageProcessingService messageProcessingService;
     @Autowired
     protected ChatNotificationService chatNotificationService;
     @Autowired
     protected UserNotificationService userNotificationService;
     @Autowired
+    @Lazy
     private UserChatService userChatService;
     @Autowired
     private IChatMessageRepository chatMessageRepository;

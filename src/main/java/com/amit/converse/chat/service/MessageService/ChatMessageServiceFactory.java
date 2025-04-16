@@ -17,7 +17,6 @@ public class ChatMessageServiceFactory {
     private GroupChatMessageService groupChatMessageService;
 
     @Autowired
-    @Lazy
     private ChatService chatService;
 
     public ChatMessageService getMessageServiceFactory() {

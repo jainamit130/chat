@@ -14,11 +14,9 @@ import org.springframework.stereotype.Service;
 public class RedisUserKeyExpirationService extends RedisExpirationService {
 
     @Autowired
-    @Lazy
     private OnlineSetUserContextService onlineSetUserContextService;
 
     @Autowired
-    @Lazy
     private UserService userService;
 
     @Override

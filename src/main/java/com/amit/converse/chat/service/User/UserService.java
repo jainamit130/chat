@@ -18,8 +18,6 @@ import java.util.stream.Collectors;
 public class UserService {
 
     @Autowired
-    private UserContext userContext;
-    @Autowired
     private UserDetailsService userDetailsService;
     @Autowired
     private IUserRepository userRepository;
@@ -37,16 +35,16 @@ public class UserService {
     }
 
     private void updateContext(User user) {
-        userContext.updateContext(user);
+        UserContext.updateContext(user);
     }
 
     public User getUserContext() {
-        return userContext.getUser();
+        return UserContext.getUser();
     }
 
     private Optional<User> getContextUserIfPresentInUsers(List<User> users) {
         Optional<User> matchingUser = users.stream()
-                .filter(user -> user.getUserId().equals(userContext.getUserId()))
+                .filter(user -> user.getUserId().equals(UserContext.getUserId()))
                 .findFirst();
         return matchingUser;
     }
@@ -105,7 +103,7 @@ public class UserService {
 
 
     public UserDetails getProfileDetails(String userId) {
-        if(userContext.getUserId().equals(userId)) return userDetailsService.getProfileDetails(userContext.getUser());
+        if(UserContext.getUserId().equals(userId)) return userDetailsService.getProfileDetails(UserContext.getUser());
         return userDetailsService.getUserDetails(getUserById(userId));
     }
 

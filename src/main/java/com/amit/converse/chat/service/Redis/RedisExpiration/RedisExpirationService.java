@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 public abstract class RedisExpirationService {
 
     @Autowired
-    @Lazy
     protected IRedisKeyService redisKeyService;
 
     public abstract void expire(String keyValue);

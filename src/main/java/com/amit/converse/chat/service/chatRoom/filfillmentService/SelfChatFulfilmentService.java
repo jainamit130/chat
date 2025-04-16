@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 public class SelfChatFulfilmentService extends ChatRoomFulfilmentService {
 
     @Autowired
-    @Lazy
     private SelfChatRedisTransitionService selfChatRedisTransitionService;
 
     @Override

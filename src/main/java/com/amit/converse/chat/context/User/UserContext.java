@@ -7,20 +7,26 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Data
-public class UserContext implements IContext {
-    protected User user;
+public class UserContext {
+    private static final ThreadLocal<User> userContextHolder = new ThreadLocal<>();
 
-    public String getUserId() { return user.getUserId(); }
-
-    public void updateContext(User user) { this.user=user; }
-
-    public void setUser(User user) {
-        this.user = user;
-        this.user.getState().transit();
+    public static String getUserId() {
+        User user = userContextHolder.get();
+        return user != null ? user.getUserId() : null;
     }
 
-    @Override
-    public void clearContext() {
-        this.user = null;
+    public static User getUser() {
+        return userContextHolder.get();
+    }
+
+    public static void updateContext(User user) { userContextHolder.set(user); }
+
+    public static void setUser(User user) {
+        userContextHolder.set(user);
+        userContextHolder.get().transit();
+    }
+
+    public static void clearContext() {
+        userContextHolder.remove();
     }
 }

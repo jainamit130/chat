@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 public class RedisKeyExpirationFactory {
 
     @Autowired
-    @Lazy
     private IRedisKeyService redisKeyService;
 
     @Autowired

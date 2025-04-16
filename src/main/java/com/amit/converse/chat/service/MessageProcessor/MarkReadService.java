@@ -16,7 +16,7 @@ import java.util.List;
 public class MarkReadService extends MarkService {
 
     @Autowired
-    public MarkReadService(RedisReadService redisReadService, @Lazy ChatMessageService chatMessageService) {
+    public MarkReadService(RedisReadService redisReadService, ChatMessageService chatMessageService) {
         super(redisReadService, chatMessageService);
     }
 

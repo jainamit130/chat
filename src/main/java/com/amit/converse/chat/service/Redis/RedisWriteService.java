@@ -4,14 +4,19 @@ import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Redis.Interface.IRedisWriteService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
 public class RedisWriteService implements IRedisWriteService {
 
-    protected final RedisUserService redisUserService;
-    protected final RedisChatRoomService redisChatRoomService;
+    @Autowired
+    @Lazy
+    protected RedisUserService redisUserService;
+    @Autowired
+    protected RedisChatRoomService redisChatRoomService;
 
     @Override
     public void setKey(String key) {

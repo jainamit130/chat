@@ -23,7 +23,6 @@ public class RedisConfig {
     private RedisKeyExpirationListener redisKeyExpirationListener;
 
     @Bean
-    @Lazy
     public RedisMessageListenerContainer redisMessageListenerContainer(RedisConnectionFactory connectionFactory) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);

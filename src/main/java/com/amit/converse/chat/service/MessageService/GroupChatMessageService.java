@@ -10,12 +10,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class GroupChatMessageService extends ChatMessageService<ITransactable> {
 
-    @Autowired
-    private UserContext userContext;
-
     @Override
     protected void authoriseSender() {
-        if(userContext.getUser().isExited(chatService.getContextChatRoom().getId()))
+        if(UserContext.getUser().isExited(chatService.getContextChatRoom().getId()))
             throw new ConverseException("User is not part of the group!");
     }
 }

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 public class RedisChatRoomService extends RedisService implements IRedisKeyService, IRedisChatroomService {
 
     @Autowired
-    @Lazy
     private RedisUserService redisUserService;
 
     @Override

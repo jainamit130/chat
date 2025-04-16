@@ -12,11 +12,9 @@ import org.springframework.stereotype.Service;
 public class DirectChatFulfilmentService extends ChatRoomFulfilmentService {
 
     @Autowired
-    @Lazy
     private DirectChatUserService directChatUserService;
 
     @Autowired
-    @Lazy
     private DirectChatRedisTransitionService directChatRedisTransitionService;
 
     @Override
