@@ -11,14 +11,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReadProcessingService implements IReadProcessor {
 
-    private final ChatService chatService;
-    private final MarkReadService markReadService;
-
     @Autowired
-    public ReadProcessingService( ChatService chatService, MarkReadService markReadService) {
-        this.chatService = chatService;
-        this.markReadService = markReadService;
-    }
+    @Lazy
+    private ChatService chatService;
+    @Autowired
+    @Lazy
+    private MarkReadService markReadService;
 
     @Override
     public void read(User user) {

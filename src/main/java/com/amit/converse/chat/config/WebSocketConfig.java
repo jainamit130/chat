@@ -55,6 +55,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 } else {
                     if (accessor.getUser() == null) {
                         handleTokenValidationAndSetUser(accessor);
+                    } else {
+                        userDetailsService.loadUserByUserId(accessor.getUser().getName());
                     }
                 }
                 return message;

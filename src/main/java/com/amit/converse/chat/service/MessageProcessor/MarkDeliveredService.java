@@ -18,6 +18,11 @@ import java.util.Map;
 public class MarkDeliveredService extends MarkService {
 
     @Autowired
+    private RedisReadService redisReadService;
+
+    @Autowired
+    private ChatMessageService chatMessageService;
+
     public MarkDeliveredService(RedisReadService redisReadService, ChatMessageService chatMessageService) {
         super(redisReadService, chatMessageService);
     }

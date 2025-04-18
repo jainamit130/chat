@@ -14,14 +14,12 @@ import java.util.List;
 @Service
 public class DeliveryProcessingService implements IDeliveryProcessor {
 
-    private final ChatService chatService;
-    private final MarkDeliveredService markDeliveredService;
-
     @Autowired
-    public DeliveryProcessingService(@Lazy ChatService chatService, @Lazy MarkDeliveredService markDeliveredService) {
-        this.chatService = chatService;
-        this.markDeliveredService = markDeliveredService;
-    }
+    @Lazy
+    private ChatService chatService;
+    @Autowired
+    @Lazy
+    private MarkDeliveredService markDeliveredService;
 
     @Override
     public void deliver(User user) {

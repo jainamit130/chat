@@ -19,8 +19,8 @@ public class ChatMessageServiceFactory {
     @Autowired
     private ChatService chatService;
 
-    public ChatMessageService getMessageServiceFactory() {
-        ChatRoom contextChatRoom = chatService.getContextChatRoom();
+    public ChatMessageService getMessageServiceFactory(String chatRoomId) {
+        ChatRoom contextChatRoom = chatService.getContextChatRoom(chatRoomId);
         if(contextChatRoom.getChatRoomType().equals(ChatRoomType.GROUP)) {
             return groupChatMessageService;
         } else if(contextChatRoom.getChatRoomType().equals(ChatRoomType.SELF)

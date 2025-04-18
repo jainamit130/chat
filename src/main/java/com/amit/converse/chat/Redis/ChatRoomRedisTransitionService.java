@@ -1,6 +1,8 @@
 package com.amit.converse.chat.Redis;
 
 import com.amit.converse.chat.Interface.ITransition;
+import com.amit.converse.chat.context.ChatRoom.ChatContext;
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.User;
@@ -14,8 +16,6 @@ import org.springframework.stereotype.Service;
 @Service
 public abstract class ChatRoomRedisTransitionService implements ITransition {
     @Autowired
-    private UserChatService userChatService;
-    @Autowired
     private RedisWriteService redisWriteService;
     @Autowired
     private ReadProcessingService readProcessingService;
@@ -24,8 +24,8 @@ public abstract class ChatRoomRedisTransitionService implements ITransition {
 
     @Override
     public void transit() {
-        User user = userChatService.getContextUser();
-        ChatRoom chatRoom = userChatService.getContextChatRoom();
+        User user = UserContext.getUser();
+        ChatRoom chatRoom = (ChatRoom) ChatContext.getChatRoom();
         redisWriteService.addUserToChatRoom(chatRoom,user);
         readProcessingService.read(user);
     }

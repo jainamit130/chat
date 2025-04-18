@@ -1,6 +1,5 @@
 package com.amit.converse.chat.context.User;
 
-import com.amit.converse.chat.context.IContext;
 import com.amit.converse.chat.model.User;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -8,25 +7,25 @@ import org.springframework.stereotype.Component;
 @Component
 @Data
 public class UserContext {
-    private static final ThreadLocal<User> userContextHolder = new ThreadLocal<>();
+    private static User USER_CONTEXT = null;
 
     public static String getUserId() {
-        User user = userContextHolder.get();
+        User user = USER_CONTEXT;
         return user != null ? user.getUserId() : null;
     }
 
     public static User getUser() {
-        return userContextHolder.get();
+        return USER_CONTEXT;
     }
 
-    public static void updateContext(User user) { userContextHolder.set(user); }
+    public static void updateContext(User user) { USER_CONTEXT = user; }
 
     public static void setUser(User user) {
-        userContextHolder.set(user);
-        userContextHolder.get().transit();
+        updateContext(user);
+        USER_CONTEXT.transit();
     }
 
     public static void clearContext() {
-        userContextHolder.remove();
+        USER_CONTEXT=null;
     }
 }

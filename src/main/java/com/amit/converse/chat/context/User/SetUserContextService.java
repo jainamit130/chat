@@ -12,20 +12,17 @@ public class SetUserContextService implements IContext {
     @Autowired
     protected StateFactoryService stateFactoryService;
 
-    @Autowired
-    private UserContext userContext;
-
     public State getState(User user) {
         return stateFactoryService.getOfflineState(user);
     }
 
     public void setUser(User user) {
         user.setState(getState(user));
-        userContext.setUser(user);
+        UserContext.setUser(user);
     }
 
     @Override
     public void clearContext() {
-        this.userContext.clearContext();
+        UserContext.clearContext();
     }
 }

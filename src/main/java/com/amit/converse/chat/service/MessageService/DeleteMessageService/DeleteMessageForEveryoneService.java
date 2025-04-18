@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.MessageService.DeleteMessageService;
 
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.service.Notification.DeleteMessageNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ public class DeleteMessageForEveryoneService extends DeleteMessageService {
 
     private boolean checkMessageBelonging(ChatMessage message) {
         String senderId = message.getSenderId();
-        String userId = userChatService.getContextUser().getUserId();
+        String userId = UserContext.getUserId();
         return senderId.equals(userId);
     }
 

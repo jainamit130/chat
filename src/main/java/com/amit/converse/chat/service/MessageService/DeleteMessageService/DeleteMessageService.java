@@ -22,8 +22,6 @@ public class DeleteMessageService {
 
     @Autowired
     protected IChatMessageRepository messageRepository;
-    @Autowired
-    protected UserChatService userChatService;
 
     protected void deleteMessageForUser(IChatRoom chatRoom, String userId, ChatMessage message, List<ChatMessage> messagesToSave) {
         message.deleteMessage(userId);

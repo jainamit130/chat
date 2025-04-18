@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.User;
 
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
@@ -57,6 +58,6 @@ public class GroupChatUserService extends UserChatService<GroupChat> {
     }
 
     public List<String> getCommonChatIds(String userId) {
-        return groupChatService.getCommonChats(getContextUser().getUserId(),userId).stream().map(groupChat -> groupChat.getId()).collect(Collectors.toList());
+        return groupChatService.getCommonChats(UserContext.getUserId(),userId).stream().map(groupChat -> groupChat.getId()).collect(Collectors.toList());
     }
 }

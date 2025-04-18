@@ -1,5 +1,6 @@
 package com.amit.converse.chat.Redis;
 
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import com.amit.converse.chat.service.Redis.RedisWriteService;
@@ -16,6 +17,6 @@ public class OfflineRedisSessionITransitionService extends RedisSessionITransiti
     // Remove User Id Key from Redis
     @Override
     public void alterUser() {
-        redisWriteService.removeUser(userChatService.getContextUser());
+        redisWriteService.removeUser(UserContext.getUser());
     }
 }

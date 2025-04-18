@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.Notification.UserStatusNotification;
 import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDTO;
@@ -36,13 +37,6 @@ public class UserChatService<T extends ChatRoom> {
         user.disconnectChat(chatRoom.getId(), chatRoom.getUnreadMessageCount(user.getUserId()));
     }
 
-    public User getContextUser() {
-        return userService.getUserContext();
-    }
-    public ChatRoom getContextChatRoom() {
-        return chatService.getContextChatRoom();
-    }
-
     public IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat) {
         List<User> onlineUsers = getUsersFromRepo(onlineUserIdsOfChat);
         return GroupChatOnlineUsersDTO.builder().onlineUsers(processUsersToUsernames(onlineUsers)).build();
@@ -53,7 +47,7 @@ public class UserChatService<T extends ChatRoom> {
     }
 
     public Integer getUnreadMessageCount(IChatRoom chatRoom) {
-        return chatRoom.getUnreadMessageCount(getContextUser().getUserId());
+        return chatRoom.getUnreadMessageCount(UserContext.getUserId());
     }
 
     public void processChatRoomToDB(T chatRoom) {
@@ -119,6 +113,6 @@ public class UserChatService<T extends ChatRoom> {
 
     public User createUser(User user) {
         userService.createUser(user);
-        return getContextUser();
+        return UserContext.getUser();
     }
 }

@@ -2,6 +2,7 @@ package com.amit.converse.chat.service.Notification;
 
 import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.Notification.ChatTransactionNotification;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageService.NotificationMessageService;
@@ -20,9 +21,6 @@ public abstract class NotifyGroupTransactionService {
     private ChatContext chatContext;
 
     @Autowired
-    private UserChatService userChatService;
-
-    @Autowired
     private ChatNotificationService chatNotificationService;
 
     @Autowired
@@ -31,7 +29,7 @@ public abstract class NotifyGroupTransactionService {
     protected abstract String getTransactionMessage();
 
     protected final String generateMessage(User joinedUser) {
-        String message = userChatService.getContextUser().getUsername() + " " + getTransactionMessage() + " " + joinedUser.getUsername();
+        String message = UserContext.getUser().getUsername() + " " + getTransactionMessage() + " " + joinedUser.getUsername();
         saveMessageService.saveMessage(NotificationMessageService.generateNotificationMessage(chatContext.getChatRoomId(),message));
         return message;
     }

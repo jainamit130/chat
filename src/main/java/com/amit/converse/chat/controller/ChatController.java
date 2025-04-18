@@ -1,5 +1,6 @@
 package com.amit.converse.chat.controller;
 
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
@@ -45,7 +46,7 @@ public class ChatController {
     public void sendMessage(@DestinationVariable String chatRoomId,ChatMessage message) {
         try {
             message.setChatRoomId(chatRoomId);
-            chatMessageServiceFactory.getMessageServiceFactory().sendMessage(message);
+            chatMessageServiceFactory.getMessageServiceFactory(chatRoomId).sendMessage(message);
         } catch (IllegalArgumentException | InterruptedException e) {
             System.err.println("Error sending message: " + e.getMessage());
         }

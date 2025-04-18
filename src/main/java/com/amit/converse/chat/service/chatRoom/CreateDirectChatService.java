@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.chatRoom;
 
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.CreateDirectChatRequest;
 import com.amit.converse.chat.model.ChatRooms.DirectChat;
 import com.amit.converse.chat.model.User;
@@ -29,7 +30,7 @@ public class CreateDirectChatService {
 
     // Returns the DirectChat userId
     public String create(String counterPartUserId,CreateDirectChatRequest directChatRequest) throws InterruptedException {
-        User primaryUser = directChatUserService.getContextUser();
+        User primaryUser = UserContext.getUser();
         User counterPartUser = directChatUserService.getUserFromRepo(counterPartUserId);
         directChatService.processCreation(primaryUser,counterPartUser,directChatRequest);
         directChatUserService.processCreation();

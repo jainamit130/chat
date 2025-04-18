@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.MessageService;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.Notification.MessageMarkedNotification;
 import com.amit.converse.chat.dto.Notification.MessageNotification;
 import com.amit.converse.chat.exceptions.ConverseException;
@@ -27,17 +28,17 @@ public class ChatMessageService<T extends IChatRoom> {
 
     @Autowired
     @Lazy
-    protected ChatService chatService;
+    protected UserChatService userChatService;
     @Autowired
     @Lazy
+    protected ChatService chatService;
+    @Autowired
     protected MessageProcessingService messageProcessingService;
     @Autowired
     protected ChatNotificationService chatNotificationService;
     @Autowired
     protected UserNotificationService userNotificationService;
-    @Autowired
-    @Lazy
-    private UserChatService userChatService;
+
     @Autowired
     private IChatMessageRepository chatMessageRepository;
 
@@ -51,9 +52,9 @@ public class ChatMessageService<T extends IChatRoom> {
 
     private void fulfilMessage(ChatMessage message) {
         message.setTimestamp(Instant.now());
-        message.setName(userChatService.getContextUser().getUsername());
+        message.setName(UserContext.getUser().getUsername());
         message.setChatRoomId(chatService.getContextChatRoom().getId());
-        message.setSenderId(userChatService.getContextUser().getUserId());
+        message.setSenderId(UserContext.getUserId());
         message.setStatus(MessageStatus.PENDING);
     }
 
@@ -62,7 +63,7 @@ public class ChatMessageService<T extends IChatRoom> {
     }
 
     public List<ChatMessage> getMessagesOfChatFrom(IChatRoom chatRoom) {
-        User user = userChatService.getContextUser();
+        User user = UserContext.getUser();
         Instant fromInstant = chatRoom.getUserFetchStartTime(user.getUserId());
         return getMessagesOfChatFrom(chatRoom,user,fromInstant);
     }
@@ -86,7 +87,7 @@ public class ChatMessageService<T extends IChatRoom> {
 
     public final void sendMessage(ChatMessage message) throws InterruptedException {
         fulfilMessage(message);
-        IChatRoom chatRoom = chatService.getContextChatRoom(message.getChatRoomId());
+        IChatRoom chatRoom = chatService.getContextChatRoom();
         authoriseSender();
         ChatMessage savedMessage = saveMessage(message);
         sendMessageNotification(chatRoom.getId(),savedMessage);
@@ -96,7 +97,7 @@ public class ChatMessageService<T extends IChatRoom> {
     }
 
     public ChatMessage getLatestMessage(IChatRoom chatRoom) {
-        Optional<ChatMessage> latestMessage = chatMessageRepository.findLatestMessage(chatRoom.getId(),userChatService.getContextUser().getUserId());
+        Optional<ChatMessage> latestMessage = chatMessageRepository.findLatestMessage(chatRoom.getId(),UserContext.getUserId());
         if(latestMessage.isPresent()) {
             return latestMessage.get();
         }

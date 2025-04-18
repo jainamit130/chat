@@ -1,35 +1,33 @@
 package com.amit.converse.chat.context.ChatRoom;
 
 import com.amit.converse.chat.Interface.IChatRoom;
-import com.amit.converse.chat.context.IContext;
-import lombok.Data;
 import org.springframework.stereotype.Component;
 
 @Component
 public class ChatContext {
 
-    private static final ThreadLocal<IChatRoom> chatContextHolder = new ThreadLocal<>();
+    private static IChatRoom chatContext;
 
     public static void setChatRoom(IChatRoom chatRoom) {
-        chatContextHolder.set(chatRoom);
+        updateChatRoom(chatRoom);
         if (chatRoom != null) chatRoom.transit();
     }
 
     public static void updateChatRoom(IChatRoom chatRoom) {
-        chatContextHolder.set(chatRoom);
+        chatContext=chatRoom;
     }
 
     public static IChatRoom getChatRoom() {
-        return chatContextHolder.get();
+        return chatContext;
     }
 
     public static String getChatRoomId() {
-        IChatRoom chatRoom = chatContextHolder.get();
+        IChatRoom chatRoom = chatContext;
         return chatRoom != null ? chatRoom.getId() : null;
     }
 
     public static void clearContext() {
-        chatContextHolder.remove();
+        chatContext=null;
     }
 }
 

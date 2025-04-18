@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.User;
 
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.OnlineUsers.DirectChatOnlineUsersDTO;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRooms.DirectChat;
@@ -33,7 +34,7 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
 
     public User getCounterPartUser(List<String> userIds) {
         if(userIds.size()!=2) throw new ConverseException("Invalid Chat!");
-        String counterPartUserId = userIds.stream().filter(userId -> !userId.equals(getContextUser().getUserId())).findFirst().get();
+        String counterPartUserId = userIds.stream().filter(userId -> !userId.equals(UserContext.getUser())).findFirst().get();
         return getUserFromRepo(counterPartUserId);
     }
 
@@ -42,7 +43,7 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
         DirectChatOnlineUsersDTO.DirectChatOnlineUsersDTOBuilder directChatOnlineUsersDTOBuilder = DirectChatOnlineUsersDTO.builder();
         List<User> onlineUsers = getUsersFromRepo(onlineUserIds);
         Optional<User> optionalCounterPartUser = onlineUsers.stream()
-                .filter(user -> !user.getUserId().equals(getContextUser().getUserId()))
+                .filter(user -> !user.getUserId().equals(UserContext.getUser()))
                 .findFirst();
         if(optionalCounterPartUser.isPresent()) {
             User counterPartUser = optionalCounterPartUser.get();
@@ -52,7 +53,7 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
     }
 
     public String getCommonChatId(String userId) {
-        Optional<DirectChat> directChat = directChatService.getCommonChat(getContextUser().getUserId(),userId);
+        Optional<DirectChat> directChat = directChatService.getCommonChat(UserContext.getUserId(),userId);
         if(directChat.isPresent()) {
             return directChat.get().getId();
         }
