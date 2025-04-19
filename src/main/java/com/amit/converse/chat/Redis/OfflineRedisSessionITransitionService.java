@@ -14,6 +14,11 @@ public class OfflineRedisSessionITransitionService extends RedisSessionITransiti
         super(ConnectionStatus.INACTIVE,userChatService,redisWriteService,redisReadService);
     }
 
+    @Override
+    public boolean isTransitable() {
+        return redisReadService.isUserOnline(UserContext.getUser());
+    }
+
     // Remove User Id Key from Redis
     @Override
     public void alterUser() {

@@ -15,15 +15,22 @@ public class StateFactoryService {
     @Autowired
     private UserService userService;
     @Autowired
+    private RedisReadService redisReadService;
+    @Autowired
     private DeliveryProcessingService deliveryProcessingService;
     @Autowired
     private RedisSessionTransitionFactory redisSessionTransitionFactory;
 
-    public Online getOnlineState(User user) {
+    public State getState(User user) {
+        if(redisReadService.isUserOnline(user)) return getOnlineState(user);
+        return getOfflineState(user);
+    }
+
+    private Online getOnlineState(User user) {
         return new Online(user,userService,deliveryProcessingService,redisSessionTransitionFactory);
     }
 
-    public Offline getOfflineState(User user) {
+    private Offline getOfflineState(User user) {
         return new Offline(user,userService,deliveryProcessingService,redisSessionTransitionFactory);
     }
 }

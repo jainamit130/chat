@@ -1,6 +1,6 @@
 package com.amit.converse.chat.config;
 
-import com.amit.converse.chat.context.User.OfflineSetUserContextService;
+import com.amit.converse.chat.context.User.SetUserContextService;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.UserService;
 import lombok.AllArgsConstructor;
@@ -15,7 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserService userService;
-    private final OfflineSetUserContextService setUserContextService;
+    private final SetUserContextService setUserContextService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
