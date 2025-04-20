@@ -80,6 +80,11 @@ public class UserService {
             updateContext(getContextUserIfPresent.get());
     }
 
+    public void commit(User user) {
+        user.commit();
+        processUserToDB(user);
+    }
+
     public void transit(User user) {
         user.transit();
         processUserToDB(user);

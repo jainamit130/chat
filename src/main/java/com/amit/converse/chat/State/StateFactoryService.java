@@ -27,10 +27,10 @@ public class StateFactoryService {
     }
 
     private Online getOnlineState(User user) {
-        return new Online(user,userService,deliveryProcessingService,redisSessionTransitionFactory);
+        return new Online(user,userService,redisReadService,deliveryProcessingService,redisSessionTransitionFactory);
     }
 
     private Offline getOfflineState(User user) {
-        return new Offline(user,userService,deliveryProcessingService,redisSessionTransitionFactory);
+        return new Offline(user,userService,redisReadService,deliveryProcessingService,redisSessionTransitionFactory);
     }
 }

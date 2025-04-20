@@ -14,11 +14,6 @@ public class OnlineRedisSessionITransitionService extends RedisSessionITransitio
         super(ConnectionStatus.ACTIVE,userChatService,redisWriteService,redisReadService);
     }
 
-    @Override
-    public boolean isTransitable() {
-        return !redisReadService.isUserOnline(UserContext.getUser());
-    }
-
     // Save User Id Key from Redis
     @Override
     public void alterUser() {

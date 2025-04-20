@@ -5,6 +5,7 @@ import com.amit.converse.chat.State.StateFactoryService;
 import com.amit.converse.chat.context.IContext;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Redis.RedisReadService;
+import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,8 @@ import org.springframework.stereotype.Service;
 public class SetUserContextService implements IContext {
     @Autowired
     private StateFactoryService stateFactoryService;
+    @Autowired
+    private UserService userService;
 
     public State getState(User user) {
         return stateFactoryService.getState(user);
@@ -26,4 +29,5 @@ public class SetUserContextService implements IContext {
     public void clearContext() {
         UserContext.clearContext();
     }
+
 }

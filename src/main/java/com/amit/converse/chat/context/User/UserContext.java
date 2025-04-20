@@ -10,7 +10,7 @@ public class UserContext {
     private static User USER_CONTEXT = null;
 
     public static String getUserId() {
-        User user = USER_CONTEXT;
+        User user = getUser();
         return user != null ? user.getUserId() : null;
     }
 
@@ -22,7 +22,7 @@ public class UserContext {
 
     public static void setUser(User user) {
         updateContext(user);
-        USER_CONTEXT.transit();
+        USER_CONTEXT.process();
     }
 
     public static void clearContext() {

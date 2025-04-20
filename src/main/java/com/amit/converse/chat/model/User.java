@@ -80,7 +80,16 @@ public class User implements IDeliverableEntity {
         lastSeenTimestamp = Instant.now();
     }
 
+    public void process() {
+        state.process();
+    }
+
     public void transit() {
         redisSessionTransition.transit();
     }
+
+    public void commit() {
+        redisSessionTransition.commit();
+    }
+
 }

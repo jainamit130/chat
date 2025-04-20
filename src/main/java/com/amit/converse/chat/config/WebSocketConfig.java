@@ -1,6 +1,8 @@
 package com.amit.converse.chat.config;
 
+import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.service.JwtService;
+import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.AllArgsConstructor;
@@ -30,6 +32,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
+    private ChatService chatService;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -49,7 +52,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-
+                handleSetChatRoom(accessor);
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     handleTokenValidationAndSetUser(accessor);
                 } else {
@@ -74,6 +77,14 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         );
                         accessor.setUser(authenticationToken);
                     }
+                }
+            }
+
+            private void handleSetChatRoom(StompHeaderAccessor accessor) {
+                String destination = accessor.getFirstNativeHeader("destination");
+                if(destination!=null && destination.startsWith("/app/chat")) {
+                    String chatRoomId = (destination.substring(destination.lastIndexOf('/')+1));
+                    ChatContext.setChatRoom(chatService.getChatRoomById(chatRoomId));
                 }
             }
         });

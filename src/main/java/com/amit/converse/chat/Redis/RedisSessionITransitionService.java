@@ -26,14 +26,13 @@ public abstract class RedisSessionITransitionService implements ITransition {
         this.redisReadService = redisReadService;
     }
 
-    public abstract boolean isTransitable();
+    public final void commit() {
+        alterUser();
+    }
 
     public final void transit() {
-        boolean isNotifiable = isTransitable();
         alterUser();
-        if(isNotifiable) {
-            notifyStatusToChatRooms();
-        }
+        notifyStatusToChatRooms();
     }
 
     public abstract void alterUser();
