@@ -20,11 +20,6 @@ public class Offline extends State {
     }
 
     @Override
-    public boolean isTransitable() {
-        return redisReadService.isUserOnline(user);
-    }
-
-    @Override
     public void transit() {
         userService.transit(user);
         user.setState(new Online(user,userService,redisReadService,deliveryProcessingService,redisSessionTransitionFactory));

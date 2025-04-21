@@ -14,6 +14,12 @@ public class OfflineRedisSessionITransitionService extends RedisSessionITransiti
         super(ConnectionStatus.INACTIVE,userChatService,redisWriteService,redisReadService);
     }
 
+    @Override
+    public void commitUser() {
+        redisWriteService.setUser(UserContext.getUser());
+    }
+
+
     // Remove User Id Key from Redis
     @Override
     public void alterUser() {

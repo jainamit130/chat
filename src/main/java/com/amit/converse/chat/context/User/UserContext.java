@@ -1,5 +1,6 @@
 package com.amit.converse.chat.context.User;
 
+import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -22,7 +23,13 @@ public class UserContext {
 
     public static void setUser(User user) {
         updateContext(user);
-        USER_CONTEXT.process();
+        if(user.getConnectionStatus().equals(ConnectionStatus.ACTIVE)) USER_CONTEXT.commit();
+        else USER_CONTEXT.transit();
+    }
+
+    public static void setUserAndTransit(User user) {
+        updateContext(user);
+        USER_CONTEXT.transit();
     }
 
     public static void clearContext() {

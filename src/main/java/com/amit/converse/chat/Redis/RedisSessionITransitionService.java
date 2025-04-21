@@ -26,8 +26,10 @@ public abstract class RedisSessionITransitionService implements ITransition {
         this.redisReadService = redisReadService;
     }
 
+    public abstract void commitUser();
+
     public final void commit() {
-        alterUser();
+        commitUser();
     }
 
     public final void transit() {

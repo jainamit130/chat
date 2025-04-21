@@ -17,7 +17,7 @@ public abstract class State implements ITransition, ICommit {
     protected RedisSessionTransitionFactory redisSessionTransitionFactory;
 
     public abstract ConnectionStatus getConnectionStatus();
-    public abstract boolean isTransitable();
+
     public State(User user, UserService userService, RedisReadService redisReadService, DeliveryProcessingService deliveryProcessingService, RedisSessionTransitionFactory redisSessionTransitionFactory) {
         this.user = user;
         this.userService = userService;
@@ -27,8 +27,7 @@ public abstract class State implements ITransition, ICommit {
     }
 
     public final void process() {
-        if(isTransitable()) transit();
-        else commit();
+        transit();
     }
 }
 

@@ -30,4 +30,8 @@ public class SetUserContextService implements IContext {
         UserContext.clearContext();
     }
 
+    public void setUserAndTransit(User user) {
+        user.setState(getState(user));
+        UserContext.setUserAndTransit(user);
+    }
 }

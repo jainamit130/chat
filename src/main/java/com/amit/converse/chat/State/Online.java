@@ -1,6 +1,5 @@
 package com.amit.converse.chat.State;
 
-import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageProcessor.DeliveryProcessingService;
@@ -13,11 +12,6 @@ public class Online extends State {
     @Override
     public ConnectionStatus getConnectionStatus() {
         return ConnectionStatus.ACTIVE;
-    }
-
-    @Override
-    public boolean isTransitable() {
-        return !redisReadService.isUserOnline(user);
     }
 
     public Online(User user, UserService userService, RedisReadService redisReadService, DeliveryProcessingService deliveryProcessingService, RedisSessionTransitionFactory redisSessionTransitionFactory) {
@@ -34,6 +28,6 @@ public class Online extends State {
 
     @Override
     public void commit() {
-        user.commit();
+        userService.commit(user);
     }
 }

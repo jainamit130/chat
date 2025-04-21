@@ -23,7 +23,7 @@ public class RedisUserKeyExpirationService extends RedisExpirationService {
         try {
             String userId = redisKeyService.extractKey(keyValue);
             User user = userService.getUserById(userId);
-            setUserContextService.setUser(user);
+            setUserContextService.setUserAndTransit(user);
             setUserContextService.clearContext();
         } catch (ConverseException exception) {
             System.out.println("Invalid key found. Hence no user key to expire");
