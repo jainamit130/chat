@@ -52,6 +52,11 @@ public class User implements IDeliverableEntity {
         return status;
     }
 
+    public Instant getLastSeenTimestamp() {
+        if(lastSeenTimestamp==null) lastSeenTimestamp = creationDate;
+        return lastSeenTimestamp;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }

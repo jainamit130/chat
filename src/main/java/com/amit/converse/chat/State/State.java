@@ -2,6 +2,7 @@ package com.amit.converse.chat.State;
 
 import com.amit.converse.chat.Interface.ICommit;
 import com.amit.converse.chat.Interface.ITransition;
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageProcessor.DeliveryProcessingService;
@@ -27,7 +28,8 @@ public abstract class State implements ITransition, ICommit {
     }
 
     public final void process() {
-        transit();
+        if(redisReadService.isUserOnline(UserContext.getUser())) commit();
+        else transit();
     }
 }
 

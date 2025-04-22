@@ -23,8 +23,7 @@ public class UserContext {
 
     public static void setUser(User user) {
         updateContext(user);
-        if(user.getConnectionStatus().equals(ConnectionStatus.ACTIVE)) USER_CONTEXT.commit();
-        else USER_CONTEXT.transit();
+        USER_CONTEXT.process();
     }
 
     public static void setUserAndTransit(User user) {

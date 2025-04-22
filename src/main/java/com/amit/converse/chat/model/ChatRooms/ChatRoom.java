@@ -128,7 +128,7 @@ public abstract class ChatRoom implements IChatRoom {
 
     @Override
     public Instant getLastVisitedTimestamp(String userId) {
-        return lastVisitedTimestamp.getOrDefault(userId,Instant.now());
+        return lastVisitedTimestamp.getOrDefault(userId,createdAt);
     }
 
     private Integer getReadMessageCount(String userId) {

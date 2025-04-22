@@ -52,7 +52,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-                handleSetChatRoom(accessor);
+
                 if (StompCommand.CONNECT.equals(accessor.getCommand())) {
                     handleTokenValidationAndSetUser(accessor);
                 } else {
@@ -62,6 +62,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         userDetailsService.loadUserByUserId(accessor.getUser().getName());
                     }
                 }
+                handleSetChatRoom(accessor);
                 return message;
             }
 
