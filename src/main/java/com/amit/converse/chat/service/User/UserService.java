@@ -85,7 +85,7 @@ public class UserService {
     }
 
     public void transit(User user) {
-        user.transit();
+        user.transitSession();
         processUserToDB(user);
     }
 

@@ -77,8 +77,8 @@ public class ChatMessageService<T extends IChatRoom> {
         return;
     };
 
-    public void sendMessageMarkedNotification(String chatRoomId, String senderId, List<String> messageIds) {
-        userNotificationService.sendNotification(senderId, new MessageMarkedNotification(chatRoomId,messageIds));
+    public void sendMessageMarkedNotification(String senderId,MessageMarkedNotification messageMarkedNotification) {
+        userNotificationService.sendNotification(senderId, messageMarkedNotification);
     }
 
     public void sendMessageNotification(String chatRoomId, ChatMessage message) {

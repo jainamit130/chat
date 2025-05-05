@@ -5,11 +5,6 @@ import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.Redis.RedisReadService;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -50,9 +45,11 @@ public abstract class MarkService {
 
     public abstract List<String> getActiveUserIds(IChatRoom chatRoom);
 
+    public abstract void sendMessageMarkedNotification(String chatRoomId, String senderId, List<String> messageIds);
+
     private void sendMessageMarkedNotificationToSender(IChatRoom chatRoom, String senderId, List<String> messageIds) {
         if(redisReadService.isUserOnline(User.builder().userId(senderId).build()))
-            chatMessageService.sendMessageMarkedNotification(chatRoom.getId(),senderId,messageIds);
+            sendMessageMarkedNotification(chatRoom.getId(),senderId,messageIds);
     }
 
     private void sendSenderSpecificMessageMarkedNotification(IChatRoom chatRoom, Map<String, List<String>> senderSpecificMessageIds) {
@@ -72,6 +69,8 @@ public abstract class MarkService {
 
     public abstract void processMessage(ChatMessage message);
 
+    public abstract Instant getLastVisitedTimestamp(IChatRoom chatRoom,User user);
+
     private void markMessages(List<ChatMessage> messages, String userId, Integer memberCount) {
         String currentTimestampStr = Instant.now().toString();
         messages.stream().forEach(message -> {
@@ -82,10 +81,10 @@ public abstract class MarkService {
     }
 
     protected void mark(IChatRoom chatRoom, User user) {
-        Instant lastDeliveredTimestamp = user.getLastSeenTimestamp();
-        List<ChatMessage> toBeDeliveredChatRoomMessages = chatMessageService.getMessagesOfChatFrom(chatRoom, user,lastDeliveredTimestamp);
-        markMessages(toBeDeliveredChatRoomMessages,user.getUserId(),chatRoom.getMemberCount());
-        markedMessages.addAll(toBeDeliveredChatRoomMessages);
+        Instant lastVisitedTimestamp = getLastVisitedTimestamp(chatRoom,user);
+        List<ChatMessage> toBeMarkedChatRoomMessages = chatMessageService.getMessagesOfChatFrom(chatRoom, user,lastVisitedTimestamp);
+        markMessages(toBeMarkedChatRoomMessages,user.getUserId(),chatRoom.getMemberCount());
+        markedMessages.addAll(toBeMarkedChatRoomMessages);
         sendSenderSpecificMessageMarkedNotification(chatRoom,senderSpecificMessageIds);
     }
 

@@ -1,22 +1,22 @@
 package com.amit.converse.chat.dto.Notification;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.List;
 
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@Data
-public class MessageMarkedNotification extends IUserNotification {
-    private String chatRoomId;
-    private List<String> messageIds;
+public abstract class MessageMarkedNotification extends IUserNotification {
+    protected String chatRoomId;
+    protected List<String> messageIds;
 
-    @Override
-    public NotificationType getNotificationType() {
-        return NotificationType.MESSAGE_MARKED;
+    public MessageMarkedNotification(String chatRoomId, List<String> messageIds) {
+        this.chatRoomId = chatRoomId;
+        this.messageIds = messageIds;
     }
+
+    public String getChatRoomId() {
+        return chatRoomId;
+    }
+
+    public List<String> getMessageIds() {
+        return messageIds;
+    }
+
 }

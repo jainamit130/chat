@@ -90,6 +90,10 @@ public class User implements IDeliverableEntity {
     }
 
     public void transit() {
+        state.transit();
+    }
+
+    public void transitSession() {
         redisSessionTransition.transit();
     }
 

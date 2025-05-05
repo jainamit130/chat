@@ -1,16 +1,9 @@
 package com.amit.converse.chat.service.MessageService.DeleteMessageService;
 
 import com.amit.converse.chat.Interface.IChatRoom;
-import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
-import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.repository.Message.IChatMessageRepository;
-import com.amit.converse.chat.repository.Message.IMessageRepository;
-import com.amit.converse.chat.service.Notification.DeleteMessageNotificationService;
-import com.amit.converse.chat.service.User.UserChatService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
