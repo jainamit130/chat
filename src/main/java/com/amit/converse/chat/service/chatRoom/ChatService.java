@@ -98,7 +98,7 @@ public class ChatService<T extends ChatRoom> {
     }
 
     public List<ChatMessage> getMessagesOfChatRoom() {
-        return chatMessageService.getMessagesOfChatFrom(ChatContext.getChatRoom());
+        return chatMessageService.getMessagesToBeMarked(ChatContext.getChatRoom());
     }
 
     public void processSentMessage() {

@@ -2,6 +2,7 @@ package com.amit.converse.chat.service.MessageProcessor;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.dto.Notification.MessageReadNotification;
+import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
@@ -19,6 +20,11 @@ public class MarkReadService extends MarkService {
     @Autowired
     public MarkReadService(RedisReadService redisReadService, ChatMessageService chatMessageService) {
         super(redisReadService, chatMessageService);
+    }
+
+    @Override
+    public List<ChatMessage> getToBeMarkedMessages(IChatRoom chatRoom, User user) {
+        return chatMessageService.getMessagesToBeMarked(chatRoom,user,List.of(MessageStatus.PENDING,MessageStatus.DELIVERED),List.of(MessageStatus.READ,MessageStatus.DELETED));
     }
 
     @Override

@@ -62,14 +62,14 @@ public class ChatMessageService<T extends IChatRoom> {
         chatMessageRepository.saveAll(messages);
     }
 
-    public List<ChatMessage> getMessagesOfChatFrom(IChatRoom chatRoom) {
+    public List<ChatMessage> getMessagesToBeMarked(IChatRoom chatRoom) {
         User user = UserContext.getUser();
         Instant fromInstant = chatRoom.getUserFetchStartTime(user.getUserId());
-        return getMessagesOfChatFrom(chatRoom,user,fromInstant);
+        return chatMessageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
     }
 
-    public List<ChatMessage> getMessagesOfChatFrom(IChatRoom chatRoom, User user, Instant fromInstant) {
-        return chatMessageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
+    public List<ChatMessage> getMessagesToBeMarked(IChatRoom chatRoom, User user, List<MessageStatus> inStatus, List<MessageStatus> notInStatus) {
+        return chatMessageRepository.findToBeMarkedMessages(chatRoom.getId(),user.getUserId(),inStatus,notInStatus);
     }
 
     protected void authoriseSender() throws ConverseException {
