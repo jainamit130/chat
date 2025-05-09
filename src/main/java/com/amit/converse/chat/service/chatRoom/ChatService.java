@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.chatRoom;
 
+import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;

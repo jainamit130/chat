@@ -2,8 +2,6 @@ package com.amit.converse.chat.service.Redis;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.exceptions.ConverseException;
-import com.amit.converse.chat.model.ChatRooms.ChatRoom;
-import com.amit.converse.chat.model.ChatRooms.DirectChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Redis.Interface.IRedisKeyService;
 import com.amit.converse.chat.service.Redis.Interface.IRedisUserService;
@@ -63,13 +61,13 @@ public class RedisUserService extends RedisService implements IRedisKeyService, 
     @Override
     public void removeUserKey(User user) {
         List<String> keyValues = getAllKeyValuesWithPrefix(getKey(user.getUserId()));
-        redisChatRoomService.removeUserFromChatRoomFromKeys(keyValues,user);
+        redisChatRoomService.removeUserFromChatRoomKeys(keyValues,user);
         removeKeyValues(keyValues);
     }
 
     protected void removeUserFromAllChatRoom(User user) {
         List<String> keyValues = getAllKeyValuesWithPrefix(getKey(user.getUserId()));
-        redisChatRoomService.removeUserFromChatRoomFromKeys(keyValues,user);
+        redisChatRoomService.removeUserFromChatRoomKeys(keyValues,user);
     }
 
     public void addChatRoomToUser(User user, IChatRoom chatRoom) {

@@ -28,12 +28,7 @@ public class MarkDeliveredService extends MarkService {
     }
 
     @Override
-    public List<ChatMessage> getToBeMarkedMessages(IChatRoom chatRoom, User user) {
-        return chatMessageService.getMessagesToBeMarked(chatRoom,user,List.of(MessageStatus.PENDING),List.of(MessageStatus.DELIVERED,MessageStatus.DELETED));
-    }
-
-    @Override
-    public Integer markMessage(ChatMessage message, String timestamp, String userId) {
+    public Integer markMessage(ChatMessage message, Instant timestamp, String userId) {
         return message.deliverMessage(timestamp,userId);
     }
 

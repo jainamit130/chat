@@ -4,6 +4,8 @@ import lombok.*;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
+
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "messages")
@@ -15,12 +17,12 @@ public class NotificationMessage extends Message {
     }
 
     @Override
-    public Integer readMessage(String timestamp, String userId) {
+    public Integer readMessage(Instant timestamp, String userId) {
         return 0;
     }
 
     @Override
-    public Integer deliverMessage(String timestamp, String userId) {
+    public Integer deliverMessage(Instant timestamp, String userId) {
         return 0;
     }
 }

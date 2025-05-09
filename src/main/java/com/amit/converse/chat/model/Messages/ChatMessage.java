@@ -8,6 +8,8 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
+
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
@@ -37,12 +39,12 @@ public class ChatMessage extends Message implements IDeletableMessage {
     public void deliverMessage() { this.status=MessageStatus.DELIVERED; }
 
     @Override
-    public Integer readMessage(String timestamp,String userId) {
+    public Integer readMessage(Instant timestamp,String userId) {
         return messageMetaData.readMessage(timestamp,userId);
     }
 
     @Override
-    public Integer deliverMessage(String timestamp,String userId) {
+    public Integer deliverMessage(Instant timestamp, String userId) {
         return messageMetaData.deliverMessage(timestamp,userId);
     }
 

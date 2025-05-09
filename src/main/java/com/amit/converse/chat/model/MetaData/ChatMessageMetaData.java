@@ -2,6 +2,7 @@ package com.amit.converse.chat.model.MetaData;
 
 import lombok.*;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -36,23 +37,23 @@ public class ChatMessageMetaData extends MessageMetaData {
     }
 
     @Override
-    public Integer readMessage(String timestamp,String userId) {
+    public Integer readMessage(Instant timestamp,String userId) {
         if(!readRecipients.contains(userId)){
             readRecipients.add(userId);
-            Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp,new HashSet());
+            Set<String> userIds = readReceiptsByTime.getOrDefault(timestamp.toString(),new HashSet());
             userIds.add(userId);
-            readReceiptsByTime.put(timestamp,userIds);
+            readReceiptsByTime.put(timestamp.toString(),userIds);
         }
         return readRecipients.size();
     }
 
     @Override
-    public Integer deliverMessage(String timestamp, String userId) {
+    public Integer deliverMessage(Instant timestamp, String userId) {
         if(!deliveredRecipients.contains(userId)) {
             deliveredRecipients.add(userId);
-            Set<String> userIds = deliveryReceiptsByTime.getOrDefault(timestamp, new HashSet());
+            Set<String> userIds = deliveryReceiptsByTime.getOrDefault(timestamp.toString(), new HashSet());
             userIds.add(userId);
-            deliveryReceiptsByTime.put(timestamp, userIds);
+            deliveryReceiptsByTime.put(timestamp.toString(), userIds);
         }
         return deliveredRecipients.size();
     }

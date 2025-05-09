@@ -31,9 +31,9 @@ public abstract class Message {
         this.content = content;
     }
 
-    public abstract Integer readMessage(String timestamp,String userId);
+    public abstract Integer readMessage(Instant timestamp,String userId);
 
-    public abstract Integer deliverMessage(String timestamp,String userId);
+    public abstract Integer deliverMessage(Instant timestamp,String userId);
 
     public void deleteMessage(String userId) {
         messageMetaData.addUserToDeletedForUsers(userId);

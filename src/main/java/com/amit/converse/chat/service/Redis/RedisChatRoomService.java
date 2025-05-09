@@ -4,9 +4,11 @@ import java.util.List;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.exceptions.ConverseException;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Redis.Interface.IRedisChatroomService;
 import com.amit.converse.chat.service.Redis.Interface.IRedisKeyService;
+import com.amit.converse.chat.service.chatRoom.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,10 @@ public class RedisChatRoomService extends RedisService implements IRedisKeyServi
 
     @Autowired
     private RedisUserService redisUserService;
+
+    private void removeChatRoomKey(String chatRoomId, User user) {
+        removeKeyValue(getKeyValue(chatRoomId,user.getUserId()));
+    }
 
     @Override
     public String getPrefix() { return "chatRoomId:"; }
@@ -29,11 +35,11 @@ public class RedisChatRoomService extends RedisService implements IRedisKeyServi
     }
 
     @Override
-    public void removeUserFromChatRoomFromKeys(List<String> keyValues, User user) {
+    public void removeUserFromChatRoomKeys(List<String> keyValues, User user) {
         for(String keyValue:keyValues) {
             try {
                 String chatRoomId = extractValue(keyValue);
-                removeKeyValue(getKeyValue(chatRoomId,user.getUserId()));
+                removeChatRoomKey(chatRoomId,user);
             } catch (ConverseException exception) {
                 System.out.println(exception.getMessage());
             }
@@ -41,8 +47,8 @@ public class RedisChatRoomService extends RedisService implements IRedisKeyServi
     }
 
     @Override
-    public void removeUserFromChatRoom(IChatRoom chatRoom,User user) {
-        removeKeyValue(getKeyValue(chatRoom.getId(),user.getUserId()));
+    public void removeUserFromChatRoom(ChatRoom chatRoom, User user) {
+        removeChatRoomKey(chatRoom.getId(),user);
     }
 
     @Override

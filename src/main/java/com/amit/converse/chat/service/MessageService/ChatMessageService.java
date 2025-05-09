@@ -68,8 +68,8 @@ public class ChatMessageService<T extends IChatRoom> {
         return chatMessageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
     }
 
-    public List<ChatMessage> getMessagesToBeMarked(IChatRoom chatRoom, User user, List<MessageStatus> inStatus, List<MessageStatus> notInStatus) {
-        return chatMessageRepository.findToBeMarkedMessages(chatRoom.getId(),user.getUserId(),inStatus,notInStatus);
+    public List<ChatMessage> getMessagesToBeMarked(IChatRoom chatRoom, User user, Instant fromInstant) {
+        return chatMessageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
     }
 
     protected void authoriseSender() throws ConverseException {

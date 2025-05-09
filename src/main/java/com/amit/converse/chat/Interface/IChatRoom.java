@@ -20,12 +20,11 @@ public interface IChatRoom {
     Instant getUserFetchStartTime(String userId);
     void readMessages(String userId);
     Instant getLastVisitedTimestamp(String userId);
+    void updateLastVisitedTimestamp(String userId);
     Integer getUnreadMessageCount(String userId);
     Instant getCreatedAt();
     Set<String> getDeletedForUsers();
-
     void connectChat(String userId);
-
     void clearChat(String userId);
     void deleteChat(String userId);
     IOnlineUsersDTO transit();

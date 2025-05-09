@@ -18,13 +18,6 @@ public interface IChatMessageRepository extends MongoRepository<ChatMessage,Stri
     })
     List<ChatMessage> findMessagesOfChatForUserFrom(String chatRoomId, String userId, Instant from);
 
-    @Aggregation(pipeline = {
-            "{ $match: { $and: [ { 'chatRoomId': ?0 }, { 'messageMetaData.deletedForUsers': { $nin: [?1] } }, { $or: [ { 'messageMetaData.status': null }, { $and: [ { 'messageMetaData.status': { $in: ?2 } }, { 'messageMetaData.status': { $nin: ?3 } } ] } ] } ] } }",
-            "{ $addFields: { status: { $cond: { if: { $eq: [ '$senderId', ?1 ] }, then: '$status', else: null } } } }",
-            "{ $sort: { 'timestamp': 1 } }"
-    })
-    List<ChatMessage> findToBeMarkedMessages(String chatRoomId, String userId, List<MessageStatus> inStatus, List<MessageStatus> notInStatues);
-
 
     @Aggregation(pipeline = {
             "{ $match: { 'chatRoomId': ?0, 'messageMetaData.deletedForUsers': { $nin: [?1] } }}",

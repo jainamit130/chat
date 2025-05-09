@@ -1,6 +1,6 @@
 package com.amit.converse.chat.service.Redis;
 
-import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Redis.Interface.IRedisWriteService;
 import lombok.AllArgsConstructor;
@@ -24,7 +24,7 @@ public class RedisWriteService implements IRedisWriteService {
     }
 
     @Override
-    public void addUserToChatRoom(IChatRoom chatRoom,User user) {
+    public void addUserToChatRoom(ChatRoom chatRoom,User user) {
         removeUserFromChatRoom(chatRoom,user);
         redisUserService.addChatRoomToUser(user,chatRoom);
         redisChatRoomService.addUserToChatRoom(chatRoom,user);
@@ -36,7 +36,7 @@ public class RedisWriteService implements IRedisWriteService {
     }
 
     @Override
-    public void removeUserFromChatRoom(IChatRoom chatRoom,User user) {
+    public void removeUserFromChatRoom(ChatRoom chatRoom, User user) {
         redisChatRoomService.removeUserFromChatRoom(chatRoom,user);
     }
 

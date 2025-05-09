@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.Instant;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,9 +27,9 @@ public abstract class MessageMetaData {
 
     public abstract void clearMessageMetadata();
 
-    public abstract Integer readMessage(String timestamp,String userId);
+    public abstract Integer readMessage(Instant timestamp,String userId);
 
-    public abstract Integer deliverMessage(String timestamp,String userId);
+    public abstract Integer deliverMessage(Instant timestamp, String userId);
 
     public void addUserToDeletedForUsers(String userId) {
         deletedForUsers.add(userId);

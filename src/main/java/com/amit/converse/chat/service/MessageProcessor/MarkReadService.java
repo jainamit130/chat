@@ -23,12 +23,7 @@ public class MarkReadService extends MarkService {
     }
 
     @Override
-    public List<ChatMessage> getToBeMarkedMessages(IChatRoom chatRoom, User user) {
-        return chatMessageService.getMessagesToBeMarked(chatRoom,user,List.of(MessageStatus.PENDING,MessageStatus.DELIVERED),List.of(MessageStatus.READ,MessageStatus.DELETED));
-    }
-
-    @Override
-    public Integer markMessage(ChatMessage message,String timestamp, String userId) {
+    public Integer markMessage(ChatMessage message,Instant timestamp, String userId) {
         return message.readMessage(timestamp,userId);
     }
 
