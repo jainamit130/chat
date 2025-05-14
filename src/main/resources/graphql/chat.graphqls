@@ -19,6 +19,7 @@ type latestMessage {
 type ChatMessage {
     id: String!
     senderId: String!
+    deletedForEveryone: Boolean!
     name: String
     content: String!
     timestamp: String!

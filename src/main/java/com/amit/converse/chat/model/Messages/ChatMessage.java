@@ -19,6 +19,7 @@ public class ChatMessage extends Message implements IDeletableMessage {
     private String senderId;
     private MessageStatus status;
     private String name;
+    private Boolean deletedForEveryone;
 
     public ChatMessage() {
         super("There are no messages!",new ChatMessageMetaData());
@@ -52,6 +53,7 @@ public class ChatMessage extends Message implements IDeletableMessage {
     public void deleteForEveryone() {
         this.content = "This message was deleted!";
         this.status = MessageStatus.DELETED;
+        this.deletedForEveryone = true;
         messageMetaData.clearMessageMetadata();
     }
 }

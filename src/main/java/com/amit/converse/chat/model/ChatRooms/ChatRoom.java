@@ -60,9 +60,12 @@ public abstract class ChatRoom implements IChatRoom {
     protected Integer totalMessageCount;
     protected Map<String, Integer> readMessageCount;
     protected Map<String, Instant> lastVisitedTimestamp;
-    protected transient String chatRoomName;
-    protected transient Integer unreadMessageCount;
-    protected transient ChatMessage latestMessage;
+    @Transient
+    protected String chatRoomName;
+    @Transient
+    protected Integer unreadMessageCount;
+    @Transient
+    protected ChatMessage latestMessage;
     @Transient
     protected ChatRoomFulfilmentService chatRoomFulfilmentService;
     @Transient

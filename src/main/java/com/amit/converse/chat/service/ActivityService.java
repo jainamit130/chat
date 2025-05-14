@@ -11,11 +11,10 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class ActivityService {
-    private final ChatContext chatContext;
     private final ChatNotificationService chatNotificationService;
 
-    public void sendTypingNotification(List<String> typingUsernames) {
+    public void sendTypingNotification(String chatRoomId,List<String> typingUsernames) {
         TypingNotification typingNotification = TypingNotification.builder().typingUsernames(typingUsernames).build();
-        chatNotificationService.sendNotification(chatContext.getChatRoom().getId(),typingNotification);
+        chatNotificationService.sendNotification(chatRoomId,typingNotification);
     }
 }
