@@ -22,14 +22,17 @@ public class ActivityController {
 
     @MessageMapping("/chat/typing/{chatRoomId}")
     public void handleTypingEvent(@DestinationVariable String chatRoomId, String username) {
-        typingUsersMap.get(chatRoomId).add(username);
-        activityService.sendTypingNotification(chatRoomId,new ArrayList<>(typingUsersMap.get(chatRoomId)));
+        typingUsersMap.computeIfAbsent(chatRoomId, key -> ConcurrentHashMap.newKeySet()).add(username);
+        activityService.sendTypingNotification(chatRoomId, new ArrayList<>(typingUsersMap.get(chatRoomId)));
     }
 
     @MessageMapping("/chat/stopTyping/{chatRoomId}")
     public void handleStopTypingEvent(@DestinationVariable String chatRoomId,String username) {
-        typingUsersMap.get(chatRoomId).remove(username);
-        activityService.sendTypingNotification(chatRoomId,new ArrayList<>(typingUsersMap.get(chatRoomId)));
+        Set<String> typingUsers = typingUsersMap.get(chatRoomId);
+        if (typingUsers != null) {
+            typingUsers.remove(username);
+            activityService.sendTypingNotification(chatRoomId, new ArrayList<>(typingUsers));
+        }
     }
 
 }
