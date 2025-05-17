@@ -23,12 +23,6 @@ public class UserContext {
 
     public static void setUser(User user) {
         updateContext(user);
-        USER_CONTEXT.process();
-    }
-
-    public static void setUserAndTransit(User user) {
-        updateContext(user);
-        USER_CONTEXT.transit();
     }
 
     public static void clearContext() {

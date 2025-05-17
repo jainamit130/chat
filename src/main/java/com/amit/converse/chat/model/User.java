@@ -85,10 +85,6 @@ public class User implements IDeliverableEntity {
         lastSeenTimestamp = Instant.now();
     }
 
-    public void process() {
-        state.process();
-    }
-
     public void transit() {
         state.transit();
     }
@@ -97,8 +93,7 @@ public class User implements IDeliverableEntity {
         redisSessionTransition.transit();
     }
 
-    public void commit() {
-        redisSessionTransition.commit();
+    public boolean isOffline() {
+        return getConnectionStatus().equals(ConnectionStatus.INACTIVE);
     }
-
 }

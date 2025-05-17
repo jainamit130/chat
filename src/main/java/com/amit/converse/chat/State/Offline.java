@@ -26,8 +26,4 @@ public class Offline extends State {
         deliveryProcessingService.deliver(user);
     }
 
-    @Override
-    public void commit() {
-
-    }
 }

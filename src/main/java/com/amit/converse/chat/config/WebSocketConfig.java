@@ -1,6 +1,8 @@
 package com.amit.converse.chat.config;
 
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
+import com.amit.converse.chat.context.User.SetUserContextService;
+import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.service.JwtService;
 import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,6 +35,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
     private ChatService chatService;
+    private final SetUserContextService setUserContextService;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -53,19 +56,22 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                                 .maxPoolSize(20)
                                         .keepAliveSeconds(60);
         registration.interceptors(new ChannelInterceptor() {
+
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
-                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-                    handleTokenValidationAndSetUser(accessor);
-                } else {
-                    if (accessor.getUser() == null) {
-                        handleTokenValidationAndSetUser(accessor);
-                    } else {
-                        userDetailsService.loadUserByUserId(accessor.getUser().getName());
-                    }
+                if (accessor.getUser() == null) handleTokenValidationAndSetUser(accessor);
+                else userDetailsService.loadUserByUserId(accessor.getUser().getName());
+
+                // Always transit to online in this flow
+                if(UserContext.getUser().isOffline()) UserContext.getUser().transit();
+
+                if(StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                    System.out.println("Disconnecting: "+ accessor.getUser().getName() + " transiting to offline!");
+                    UserContext.getUser().transit();
                 }
+
                 handleSetChatRoom(accessor);
                 return message;
             }

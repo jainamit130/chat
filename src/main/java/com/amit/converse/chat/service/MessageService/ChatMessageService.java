@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.MessageService;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.Notification.MessageMarkedNotification;
 import com.amit.converse.chat.dto.Notification.MessageNotification;
@@ -16,6 +17,7 @@ import com.amit.converse.chat.service.Notification.UserNotificationService;
 import com.amit.converse.chat.service.User.UserChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -52,8 +54,9 @@ public class ChatMessageService<T extends IChatRoom> {
 
     private void fulfilMessage(ChatMessage message) {
         message.setTimestamp(Instant.now());
+        message.setDeletedForEveryone(false);
         message.setName(UserContext.getUser().getUsername());
-        message.setChatRoomId(chatService.getContextChatRoom().getId());
+        message.setChatRoomId(ChatContext.getChatRoomId());
         message.setSenderId(UserContext.getUserId());
         message.setStatus(MessageStatus.PENDING);
     }
@@ -91,9 +94,7 @@ public class ChatMessageService<T extends IChatRoom> {
         authoriseSender();
         ChatMessage savedMessage = saveMessage(message);
         sendMessageNotification(chatRoom.getId(),savedMessage);
-        userChatService.connectChat(new ArrayList<>(chatRoom.getDeletedForUsers()),chatRoom);
-        messageProcessingService.process(savedMessage);
-        chatService.processSentMessage();
+        messageProcessingService.processMessage(chatRoom,savedMessage);
     }
 
     public ChatMessage getLatestMessage(IChatRoom chatRoom) {

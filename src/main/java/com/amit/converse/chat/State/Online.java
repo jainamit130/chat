@@ -26,8 +26,4 @@ public class Online extends State {
         user.setState(new Offline(user,userService,redisReadService,deliveryProcessingService,redisSessionTransitionFactory));
     }
 
-    @Override
-    public void commit() {
-        userService.commit(user);
-    }
 }

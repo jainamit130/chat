@@ -14,11 +14,6 @@ public class OnlineRedisSessionITransitionService extends RedisSessionITransitio
         super(ConnectionStatus.ACTIVE,userChatService,redisWriteService,redisReadService);
     }
 
-    @Override
-    public void commitUser() {
-        redisWriteService.removeUser(UserContext.getUser());
-    }
-
     // Save User Id Key from Redis
     @Override
     public void alterUser() {

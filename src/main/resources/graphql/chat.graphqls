@@ -11,6 +11,7 @@ type latestMessage {
     id: String
     senderId: String
     status: MessageStatus
+    deletedForEveryone: Boolean!
     content: String!
     timestamp: String
     name: String

@@ -23,12 +23,14 @@ public class ChatMessage extends Message implements IDeletableMessage {
 
     public ChatMessage() {
         super("There are no messages!",new ChatMessageMetaData());
+        this.deletedForEveryone = false;
     }
 
     public ChatMessage(String senderId,String content) {
         super(content,new ChatMessageMetaData());
         this.senderId = senderId;
         this.status = MessageStatus.PENDING;
+        this.deletedForEveryone = false;
     }
 
     public void setMessageStatus(MessageStatus newStatus) {

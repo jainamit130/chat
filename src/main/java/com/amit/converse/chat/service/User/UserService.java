@@ -30,10 +30,6 @@ public class UserService {
         redisWriteService.removeUserFromChatRoom(getUserContext());
     }
 
-    public void activateUser() {
-        clearRedisChatRoomOfUser();
-    }
-
     private void updateContext(User user) {
         UserContext.updateContext(user);
     }
@@ -77,11 +73,6 @@ public class UserService {
         Optional<User> getContextUserIfPresent = getContextUserIfPresentInUsers(users);
         if(getContextUserIfPresent.isPresent())
             updateContext(getContextUserIfPresent.get());
-    }
-
-    public void commit(User user) {
-        user.commit();
-        processUserToDB(user);
     }
 
     public void transit(User user) {

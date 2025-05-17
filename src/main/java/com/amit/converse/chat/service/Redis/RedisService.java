@@ -5,7 +5,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.concurrent.TimeUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,10 +17,6 @@ public class RedisService {
 
     public Boolean hasKeyValue(String keyValue) {
         return redisTemplate.hasKey(keyValue);
-    }
-
-    protected void setKeyValue(String keyValue, long redisExpiryTimeout) {
-        redisTemplate.opsForValue().set(keyValue,"",redisExpiryTimeout,TimeUnit.SECONDS);
     }
 
     protected String getValueOfKey(String key) {

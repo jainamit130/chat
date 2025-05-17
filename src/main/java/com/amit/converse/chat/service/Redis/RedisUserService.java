@@ -18,9 +18,6 @@ import java.util.List;
 @Primary
 public class RedisUserService extends RedisService implements IRedisKeyService, IRedisUserService {
 
-    @Value("${Redis.Key.Timeout}")
-    private long redisExpiryDuration;
-
     @Autowired
     @Lazy
     private RedisChatRoomService redisChatRoomService;
@@ -47,14 +44,14 @@ public class RedisUserService extends RedisService implements IRedisKeyService, 
         String chatRoomId = getActiveChatRoom(user);
         removeUserKey(user);
         if(chatRoomId!="") setKeyValue(redisChatRoomService.getKeyValue(chatRoomId, user.getUserId()));
-        setKeyValue(getKeyValue(user.getUserId(),chatRoomId),redisExpiryDuration);
+        setKeyValue(getKeyValue(user.getUserId(),chatRoomId));
     }
 
     @Override
     public void setUserKey(User user,IChatRoom chatRoom) {
         String chatRoomId = chatRoom==null?"":chatRoom.getId();
         removeUserKey(user);
-        setKeyValue(getKeyValue(user.getUserId(),chatRoomId),redisExpiryDuration);
+        setKeyValue(getKeyValue(user.getUserId(),chatRoomId));
     }
 
     // remove already existing userKey => from userId:{userId}:{...} to not existing
