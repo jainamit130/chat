@@ -45,7 +45,7 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
         Optional<User> optionalCounterPartUser = onlineUsers.stream()
                 .filter(user -> !user.getUserId().equals(UserContext.getUser()))
                 .findFirst();
-        if(optionalCounterPartUser.isPresent()) {
+        if(!optionalCounterPartUser.isPresent()) {
             User counterPartUser = optionalCounterPartUser.get();
             directChatOnlineUsersDTOBuilder.lastSeenTimestamp(counterPartUser.getLastSeenTimestamp());
         }

@@ -36,7 +36,7 @@ public class MessageProcessingService {
     @Async
     public void processMessage(IChatRoom chatRoom, ChatMessage message) {
         userChatService.connectChat(new ArrayList<>(chatRoom.getDeletedForUsers()),chatRoom);
-        process(message);
         chatService.processSentMessage();
+        process(message);
     }
 }

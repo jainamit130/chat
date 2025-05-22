@@ -28,6 +28,7 @@ public class UserDetailsService {
                 .userId(user.getUserId())
                 .username(user.getUsername())
                 .userStatus(user.getStatus())
+                .status(user.getConnectionStatus())
                 .commonGroupChatIds(new ArrayList<>())
                 .lastSeenTimestamp(user.getLastSeenTimestamp())
                 .build();

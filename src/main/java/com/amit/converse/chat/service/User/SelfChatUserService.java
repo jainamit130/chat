@@ -2,6 +2,7 @@ package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
+import com.amit.converse.chat.dto.OnlineUsers.SelfChatOnlineUsersDTO;
 import com.amit.converse.chat.model.ChatRooms.SelfChat;
 import com.amit.converse.chat.service.chatRoom.SelfChatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,7 @@ public class SelfChatUserService extends UserChatService<SelfChat> {
 
     @Override
     public IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat) {
-        return null;
+        return SelfChatOnlineUsersDTO.builder().build();
     }
 
     public SelfChat getSelfChat() {

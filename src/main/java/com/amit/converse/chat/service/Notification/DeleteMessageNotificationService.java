@@ -20,6 +20,6 @@ public class DeleteMessageNotificationService {
 
     public void sendMessageDeletedNotification(List<ChatMessage> messages) {
         List<String> deletedMessageIds = messages.stream().map(message -> message.getId()).collect(Collectors.toList());
-        chatNotificationService.sendNotification(chatService.getContextChatRoom().getId(), MessageDeleteNotification.builder().messageIds(deletedMessageIds).build());
+        chatNotificationService.sendNotification(chatService.getContextChatRoom().getId(), MessageDeleteNotification.builder().messageIds(deletedMessageIds).chatRoomId(messages.getFirst().getChatRoomId()).build());
     }
 }

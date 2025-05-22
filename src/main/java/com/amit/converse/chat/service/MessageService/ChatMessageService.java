@@ -104,4 +104,8 @@ public class ChatMessageService<T extends IChatRoom> {
         }
         return new ChatMessage();
     }
+
+    public void readMessage(User user) {
+        chatService.readMessages(user);
+    }
 }

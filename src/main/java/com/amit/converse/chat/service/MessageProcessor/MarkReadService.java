@@ -24,6 +24,7 @@ public class MarkReadService extends MarkService {
 
     @Override
     public Integer markMessage(ChatMessage message,Instant timestamp, String userId) {
+        chatMessageService.readMessage(User.builder().userId(userId).build());
         return message.readMessage(timestamp,userId);
     }
 

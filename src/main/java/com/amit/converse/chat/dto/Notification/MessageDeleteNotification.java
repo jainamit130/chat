@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class MessageDeleteNotification extends IChatNotification {
     private List<String> messageIds;
+    private String chatRoomId;
 
     @Override
     public NotificationType getNotificationType() {

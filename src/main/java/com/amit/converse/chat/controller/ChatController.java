@@ -71,7 +71,7 @@ public class ChatController {
     }
 
     @PostMapping("/clearChat/{chatRoomId}")
-    public ResponseEntity clearChat() {
+    public ResponseEntity clearChat(@PathVariable String chatRoomId) {
         try {
             clearChatService.clearChat();
             return new ResponseEntity(HttpStatus.NO_CONTENT);
