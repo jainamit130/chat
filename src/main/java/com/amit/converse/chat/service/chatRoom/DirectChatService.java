@@ -21,9 +21,13 @@ public class DirectChatService extends ChatService<DirectChat> {
     private void processDirectChatCreation(User primaryUser, User counterPartUser) {
         Optional<DirectChat> alreadyExistingDirectChat = getChatIfAlreadyExisting(primaryUser.getUserId(),counterPartUser.getUserId());
         if(alreadyExistingDirectChat.isPresent()) {
-            updateChatRoomContext(alreadyExistingDirectChat.get());
+            DirectChat directChat = alreadyExistingDirectChat.get();
+            fulfillChatRoom(directChat);
+            updateChatRoomContext(directChat);
         } else {
-            processChatRoomToDB(CreateDirectChatService.getNewDirectChat(primaryUser, counterPartUser));
+            DirectChat directChat = CreateDirectChatService.getNewDirectChat(primaryUser, counterPartUser);
+            fulfillChatRoom(directChat);
+            processChatRoomToDB(directChat);
         }
     }
 

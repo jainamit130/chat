@@ -40,7 +40,9 @@ public class GroupChatService extends ChatService<GroupChat> {
     }
 
     public void processCreation(CreateGroupRequest createGroupRequest,String adminUserId) {
-        processChatRoomToDB(CreateGroupChatService.getGroupChat(createGroupRequest.getGroupName(),createGroupRequest.getUserIds(),adminUserId));
+        GroupChat groupChat = CreateGroupChatService.getGroupChat(createGroupRequest.getGroupName(), createGroupRequest.getUserIds(), adminUserId);
+        fulfillChatRoom(groupChat);
+        processChatRoomToDB(groupChat);
     }
 
     public List<GroupChat> getCommonChats(String user1Id, String user2Id) {

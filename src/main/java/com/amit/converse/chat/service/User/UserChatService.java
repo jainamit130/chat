@@ -28,7 +28,7 @@ public class UserChatService<T extends ChatRoom> {
     @Autowired
     private UserNotificationService userNotificationService;
 
-    private void sendNewChatNotificationToUser(String userId, IChatRoom newChatRoom) {
+    private void sendNewChatNotificationToUser(String userId, ChatRoom newChatRoom) {
         userNotificationService.sendNotification(userId,new NewChatNotification(newChatRoom));
     }
 
@@ -77,7 +77,7 @@ public class UserChatService<T extends ChatRoom> {
         processUsersToDB(Collections.singletonList(contextUser));
     }
 
-    public void connectChat(List<String> userIds,IChatRoom chatRoom) {
+    public void connectChat(List<String> userIds,ChatRoom chatRoom) {
         List<User> users = getUsersFromRepo(userIds);
         for(User user:users) {
             connectChat(user,chatRoom);
@@ -91,7 +91,7 @@ public class UserChatService<T extends ChatRoom> {
         user.connectChat(chatRoom.getId());
     }
 
-    public void connectChatAndNotify(User user,IChatRoom chatRoom) {
+    public void connectChatAndNotify(User user,ChatRoom chatRoom) {
         connectChat(user,chatRoom);
         sendNewChatNotificationToUser(user.getUserId(),chatRoom);
     }

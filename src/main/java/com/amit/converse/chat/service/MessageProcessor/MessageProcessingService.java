@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.MessageProcessor;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.service.User.UserChatService;
 import com.amit.converse.chat.service.chatRoom.ChatService;
@@ -34,7 +35,7 @@ public class MessageProcessingService {
     }
 
     @Async
-    public void processMessage(IChatRoom chatRoom, ChatMessage message) {
+    public void processMessage(ChatRoom chatRoom, ChatMessage message) {
         userChatService.connectChat(new ArrayList<>(chatRoom.getDeletedForUsers()),chatRoom);
         chatService.processSentMessage();
         process(message);

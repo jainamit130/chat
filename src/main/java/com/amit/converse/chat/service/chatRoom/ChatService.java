@@ -58,8 +58,7 @@ public class ChatService<T extends ChatRoom> {
     public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds,String userId) {
         List<ChatRoom> chatRooms = chatRoomRepository.getAllChatRoomsByIds(chatRoomIds,userId);
         chatRooms.stream().forEach(chatRoom -> {
-            chatRoom.setChatRoomFulfilmentService(chatRoomFulfilmentServiceFactory.getFulfilmentService(chatRoom.getChatRoomType()));
-            chatRoom.fulfill();
+            fulfillChatRoom(chatRoom);
         });
         return chatRooms;
     }
@@ -67,9 +66,13 @@ public class ChatService<T extends ChatRoom> {
     public ChatRoom getChatRoomById(String chatRoomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ConverseChatRoomNotFoundException(chatRoomId));
+        fulfillChatRoom(chatRoom);
+        return chatRoom;
+    }
+
+    public void fulfillChatRoom(ChatRoom chatRoom) {
         chatRoom.setChatRoomFulfilmentService(chatRoomFulfilmentServiceFactory.getFulfilmentService(chatRoom.getChatRoomType()));
         chatRoom.fulfill();
-        return chatRoom;
     }
 
     protected T saveChat(T chat) {

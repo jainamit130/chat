@@ -6,6 +6,7 @@ import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.Notification.MessageMarkedNotification;
 import com.amit.converse.chat.dto.Notification.MessageNotification;
 import com.amit.converse.chat.exceptions.ConverseException;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
@@ -90,7 +91,7 @@ public class ChatMessageService<T extends IChatRoom> {
 
     public final void sendMessage(ChatMessage message) throws InterruptedException {
         fulfilMessage(message);
-        IChatRoom chatRoom = chatService.getContextChatRoom();
+        ChatRoom chatRoom = chatService.getContextChatRoom();
         authoriseSender();
         ChatMessage savedMessage = saveMessage(message);
         sendMessageNotification(chatRoom.getId(),savedMessage);
