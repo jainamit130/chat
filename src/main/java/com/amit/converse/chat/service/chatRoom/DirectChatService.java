@@ -25,9 +25,7 @@ public class DirectChatService extends ChatService<DirectChat> {
             fulfillChatRoom(directChat);
             updateChatRoomContext(directChat);
         } else {
-            DirectChat directChat = CreateDirectChatService.getNewDirectChat(primaryUser, counterPartUser);
-            fulfillChatRoom(directChat);
-            processChatRoomToDB(directChat);
+            processChatRoomToDB(CreateDirectChatService.getNewDirectChat(primaryUser, counterPartUser));
         }
     }
 

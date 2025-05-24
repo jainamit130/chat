@@ -28,4 +28,5 @@ public interface IChatRoom {
     void clearChat(String userId);
     void deleteChat(String userId);
     IOnlineUsersDTO transit();
+    List<String> getAllUserIds();
 }

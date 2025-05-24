@@ -55,7 +55,7 @@ public class RedisReadService implements IRedisReadService {
     public Set<String> filterOnlineUsers(IChatRoom chatRoom) {
         Set<String> onlineUsers = new HashSet<>();
 
-        for (String userId : chatRoom.getUserIds()) {
+        for (String userId : chatRoom.getAllUserIds()) {
             if (isUserOnline(User.builder().userId(userId).build())) {
                 onlineUsers.add(userId);
             }

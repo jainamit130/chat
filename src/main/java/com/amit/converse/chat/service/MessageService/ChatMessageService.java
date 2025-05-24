@@ -45,10 +45,6 @@ public class ChatMessageService<T extends IChatRoom> {
     @Autowired
     private IChatMessageRepository chatMessageRepository;
 
-    private ChatMessage getEmptyMessage() {
-        return new ChatMessage();
-    }
-
     public ChatMessage saveMessage(ChatMessage message) {
         return chatMessageRepository.save(message);
     }
@@ -103,7 +99,7 @@ public class ChatMessageService<T extends IChatRoom> {
         if(latestMessage.isPresent()) {
             return latestMessage.get();
         }
-        return new ChatMessage();
+        return new ChatMessage(chatRoom.getUserFetchStartTime(UserContext.getUserId()));
     }
 
     public void readMessage(User user) {

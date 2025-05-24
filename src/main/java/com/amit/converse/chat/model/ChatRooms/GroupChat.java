@@ -4,6 +4,7 @@ import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
 import lombok.*;
 import org.springframework.data.annotation.PersistenceCreator;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -43,7 +44,8 @@ public class GroupChat extends ChatRoom implements ITransactable {
     // Admin UserIds for Group only
     private List<String> adminUserIds;
     // Exit Group Feature Only For Groups
-    private transient Boolean isExited;
+    @Transient
+    private Boolean isExited;
     private Map<String,Instant> exitedMembers;
     private Map<String,Instant> blindPeriod;
 
@@ -71,7 +73,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
 
     @Override
     public Boolean isDeletable() {
-        return getUserIds().isEmpty() && getExitedMemberCount()==super.getDeletedForUsersCount();
+        return (super.getDeletedForUsersCount()==getTotalMemberCount());
     }
 
     @Override

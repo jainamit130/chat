@@ -26,6 +26,11 @@ public class ChatMessage extends Message implements IDeletableMessage {
         this.deletedForEveryone = false;
     }
 
+    public ChatMessage(Instant timestamp) {
+        super("There are no messages!",new ChatMessageMetaData(),timestamp);
+        this.deletedForEveryone = false;
+    }
+
     public ChatMessage(String senderId,String content) {
         super(content,new ChatMessageMetaData());
         this.senderId = senderId;

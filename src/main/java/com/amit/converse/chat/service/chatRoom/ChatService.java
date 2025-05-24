@@ -55,24 +55,22 @@ public class ChatService<T extends ChatRoom> {
         processChatRoomToDB(getContextChatRoom());
     }
 
-    public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds,String userId) {
-        List<ChatRoom> chatRooms = chatRoomRepository.getAllChatRoomsByIds(chatRoomIds,userId);
-        chatRooms.stream().forEach(chatRoom -> {
-            fulfillChatRoom(chatRoom);
-        });
+    public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds, String userId) {
+        List<ChatRoom> chatRooms = new ArrayList<>(chatRoomRepository.getAllChatRoomsByIds(chatRoomIds, userId));
+        chatRooms.forEach(this::fulfillChatRoom);
         return chatRooms;
     }
 
     public ChatRoom getChatRoomById(String chatRoomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ConverseChatRoomNotFoundException(chatRoomId));
-        fulfillChatRoom(chatRoom);
-        return chatRoom;
+        return fulfillChatRoom(chatRoom);
     }
 
-    public void fulfillChatRoom(ChatRoom chatRoom) {
+    public ChatRoom fulfillChatRoom(ChatRoom chatRoom) {
         chatRoom.setChatRoomFulfilmentService(chatRoomFulfilmentServiceFactory.getFulfilmentService(chatRoom.getChatRoomType()));
         chatRoom.fulfill();
+        return chatRoom;
     }
 
     protected T saveChat(T chat) {
@@ -81,11 +79,11 @@ public class ChatService<T extends ChatRoom> {
 
     public void processChatRoomToDB(T chatRoom) {
         if (chatRoom.isDeletable()) {
-            clearChatService.clearChat();
+            clearChatService.clearChat(chatRoom);
             chatRoomRepository.deleteById(chatRoom.getId());
             updateChatRoomContext(null);
         } else {
-            updateChatRoomContext(saveChat(chatRoom));
+            updateChatRoomContext((T) fulfillChatRoom(saveChat(chatRoom)));
         }
     }
 
@@ -97,7 +95,6 @@ public class ChatService<T extends ChatRoom> {
     public void clearChat(String userId) {
         T chatRoom = (T) ChatContext.getChatRoom();
         chatRoom.clearChat(userId);
-        processChatRoomToDB(chatRoom);
     }
 
     public List<ChatMessage> getMessagesOfChatRoom() {
@@ -107,7 +104,6 @@ public class ChatService<T extends ChatRoom> {
     public void processSentMessage() {
         T chatRoom = getContextChatRoom();
         chatRoom.totalMessageCountIncrement();
-        processChatRoomToDB(chatRoom);
     }
 
     public ChatRoomData getChatRoomData(String chatRoomId) {

@@ -1,7 +1,6 @@
 package com.amit.converse.chat.model;
 
 import com.amit.converse.chat.Redis.RedisSessionITransitionService;
-import com.amit.converse.chat.State.Offline;
 import com.amit.converse.chat.State.State;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.service.MessageProcessor.IDeliverableEntity;
@@ -11,10 +10,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
@@ -35,6 +31,9 @@ public class User implements IDeliverableEntity {
     private Map<String,Integer> exitedChatRoomIds = new HashMap<>();
 
     @Builder.Default
+    private List<String> deletedChatRoomIds = new ArrayList<>();
+
+    @Builder.Default
     private Set<String> adminRoleChatRoomIds = new HashSet<>();
 
     @Builder.Default
@@ -47,6 +46,12 @@ public class User implements IDeliverableEntity {
     private RedisSessionITransitionService redisSessionTransition;
     private Instant lastSeenTimestamp;
     private Instant creationDate;
+
+    public List<String> getAllChatRoomIds() {
+        List<String> allChatRoomIds = new ArrayList<>(chatRoomIds);
+        allChatRoomIds.addAll(deletedChatRoomIds);
+        return allChatRoomIds;
+    }
 
     public String getStatus() {
         return status;
@@ -69,6 +74,11 @@ public class User implements IDeliverableEntity {
         return getState().getConnectionStatus();
     }
 
+    public void deleteChat(String chatRoomId) {
+        chatRoomIds.remove(chatRoomId);
+        deletedChatRoomIds.add(chatRoomId);
+    }
+
     public void disconnectChat(String chatRoomId, Integer unreadMessageCount) {
         chatRoomIds.remove(chatRoomId);
         exitedChatRoomIds.put(chatRoomId,unreadMessageCount);
@@ -76,6 +86,7 @@ public class User implements IDeliverableEntity {
 
     public void connectChat(String chatRoomId) {
         exitedChatRoomIds.remove(chatRoomId);
+        deletedChatRoomIds.remove(chatRoomId);
         chatRoomIds.add(chatRoomId);
     }
 

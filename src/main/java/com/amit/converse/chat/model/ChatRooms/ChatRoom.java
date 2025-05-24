@@ -71,6 +71,12 @@ public abstract class ChatRoom implements IChatRoom {
     @Transient
     protected ChatRoomRedisTransitionService chatRoomRedisTransitionService;
 
+    public List<String> getAllUserIds() {
+        ArrayList<String> userIds = new ArrayList<>(this.userIds);
+        userIds.addAll(deletedForUsers);
+        return userIds;
+    }
+
     public void setUserIds(List<String> userIds) {
         Set<String> userIdsSet = Set.copyOf(userIds);
         this.userIds = new ArrayList<>(userIdsSet);

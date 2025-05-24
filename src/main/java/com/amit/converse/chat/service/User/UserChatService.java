@@ -15,9 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserChatService<T extends ChatRoom> {
@@ -34,7 +32,7 @@ public class UserChatService<T extends ChatRoom> {
 
     private void disconnectChat(User user, IChatRoom chatRoom) {
         chatRoom.deleteChat(user.getUserId());
-        user.disconnectChat(chatRoom.getId(), chatRoom.getUnreadMessageCount(user.getUserId()));
+        user.deleteChat(chatRoom.getId());
     }
 
     public IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat) {
@@ -84,11 +82,13 @@ public class UserChatService<T extends ChatRoom> {
             sendNewChatNotificationToUser(user.getUserId(),chatRoom);
         }
         processUsersToDB(users);
+        chatService.processChatRoomToDB((T) chatRoom);
     }
 
     public void connectChat(User user,IChatRoom chatRoom) {
         chatRoom.connectChat(user.getUserId());
         user.connectChat(chatRoom.getId());
+        chatService.processChatRoomToDB((T) chatRoom);
     }
 
     public void connectChatAndNotify(User user,ChatRoom chatRoom) {
@@ -108,7 +108,14 @@ public class UserChatService<T extends ChatRoom> {
         User user = userService.getUserContext();
         // Redis clears the state of any active chatRoom of the user
         userService.clearRedisChatRoomOfUser();
-        return chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()),user.getUserId());
+        List<ChatRoom> chatRooms = chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()),user.getUserId());
+
+        chatRooms.sort((chatRoom1, chatRoom2) -> {
+            return chatRoom2.getLatestMessage().getTimestamp()
+                    .compareTo(chatRoom1.getLatestMessage().getTimestamp());
+        });
+
+        return chatRooms;
     }
 
     public User createUser(User user) {

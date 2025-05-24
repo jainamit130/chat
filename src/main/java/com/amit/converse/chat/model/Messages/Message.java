@@ -31,6 +31,12 @@ public abstract class Message {
         this.content = content;
     }
 
+    public Message(String content,MessageMetaData messageMetaData,Instant timestamp) {
+        this.messageMetaData = messageMetaData;
+        this.timestamp = timestamp;
+        this.content = content;
+    }
+
     public abstract Integer readMessage(Instant timestamp,String userId);
 
     public abstract Integer deliverMessage(Instant timestamp,String userId);
