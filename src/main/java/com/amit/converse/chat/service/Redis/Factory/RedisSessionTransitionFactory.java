@@ -6,7 +6,6 @@ import com.amit.converse.chat.service.Redis.RedisReadService;
 import com.amit.converse.chat.service.Redis.RedisWriteService;
 import com.amit.converse.chat.service.User.UserChatService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 

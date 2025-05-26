@@ -22,12 +22,9 @@ public class JwtService {
     @Value("${converse.jwt.key}")
     private String privateKey;
 
-    @Value("${converse.jwt.expiration}")
-    private Long expiration;
-
-    public boolean isTokenValid(String token) {
+    public boolean isTokenValid(String token, UserDetails userDetails) {
         final String userId = extractId(token);
-        return (userId != null && !isTokenExpired(token));
+        return (userId.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
     private boolean isTokenExpired(String token) {
@@ -40,28 +37,6 @@ public class JwtService {
 
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
-    }
-
-    public String generateToken(UserDetails userDetails){
-        return generateToken(new HashMap<>(),userDetails);
-    }
-
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails){
-        return Jwts.builder()
-                .claims(extraClaims)
-                .subject(userDetails.getUsername())
-                .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(Date.from(getExpirationTime()))
-                .signWith(getSignInKey(), Jwts.SIG.HS256)
-                .compact();
-    }
-
-    public Instant getExpirationTime(){
-        return Instant.now().plusMillis(expiration);
-    }
-
-    public String extractServiceName(String token) {
-        return extractClaim(token, claims -> claims.get("serviceName", String.class));
     }
 
     public <T> T extractClaim(String token, Function<Claims ,T> claimsResolver) {

@@ -1,7 +1,6 @@
 package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.Interface.IChatRoom;
-import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.Notification.UserStatusNotification;
 import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDTO;
@@ -12,7 +11,6 @@ import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.amit.converse.chat.service.Notification.UserNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -45,7 +43,7 @@ public class UserChatService<T extends ChatRoom> {
     }
 
     public Integer getUnreadMessageCount(IChatRoom chatRoom) {
-        return chatRoom.getUnreadMessageCount(UserContext.getUserId());
+        return chatRoom.getUnreadMessageCount(UserService.getUserContext().getUserId());
     }
 
     public void processChatRoomToDB(T chatRoom) {
@@ -75,8 +73,8 @@ public class UserChatService<T extends ChatRoom> {
         processUsersToDB(Collections.singletonList(contextUser));
     }
 
-    public void connectChat(List<String> userIds,ChatRoom chatRoom) {
-        List<User> users = getUsersFromRepo(userIds);
+    public void connectbashChat(List<String> userIds,ChatRoom chatRoom) {
+        List<User> users = new ArrayList<>(getUsersFromRepo(userIds));
         for(User user:users) {
             connectChat(user,chatRoom);
             sendNewChatNotificationToUser(user.getUserId(),chatRoom);
@@ -99,7 +97,7 @@ public class UserChatService<T extends ChatRoom> {
     // Notify All ChatRooms of a user about status: went online or went offline
     public void notifyStatus(ConnectionStatus status) {
         User user = userService.getUserContext();
-        UserStatusNotification userStatusNotification = UserStatusNotification.builder().status(status).username(user.getUsername()).build();
+        UserStatusNotification userStatusNotification = UserStatusNotification.builder().status(status).username(user.getDisplayName()).build();
         userNotificationService.sendNotificationToUserChats(user, userStatusNotification);
         return;
     }
@@ -120,6 +118,6 @@ public class UserChatService<T extends ChatRoom> {
 
     public User createUser(User user) {
         userService.createUser(user);
-        return UserContext.getUser();
+        return UserService.getUserContext();
     }
 }

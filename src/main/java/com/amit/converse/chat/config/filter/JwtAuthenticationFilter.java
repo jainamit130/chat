@@ -1,7 +1,7 @@
 package com.amit.converse.chat.config.filter;
 
-import com.amit.converse.chat.config.UserDetailsImpl;
 import com.amit.converse.chat.config.UserDetailsServiceImpl;
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -35,12 +35,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String jwt = authHeader.substring(7);
         String userId = jwtService.extractId(jwt);
         if (userId != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            // Validate token without loading UserDetails
-            if (jwtService.isTokenValid(jwt)) {
-                // Create Authentication object without UserDetails
-                UserDetailsImpl userDetails = userDetailsService.loadUserByUserId(userId);
+            User user = userDetailsService.loadUserByUserId(userId);
+            if (jwtService.isTokenValid(jwt,user)) {
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
+                        user,
                         null,
                         Collections.emptyList()
                 );
@@ -50,6 +48,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         filterChain.doFilter(request, response);
-        userDetailsService.clearContext();
     }
 }

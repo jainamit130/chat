@@ -1,6 +1,5 @@
 package com.amit.converse.chat.service.User;
 
-import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.dto.OnlineUsers.SelfChatOnlineUsersDTO;
 import com.amit.converse.chat.model.ChatRooms.SelfChat;
@@ -22,6 +21,6 @@ public class SelfChatUserService extends UserChatService<SelfChat> {
     }
 
     public SelfChat getSelfChat() {
-        return selfChatService.getChat(UserContext.getUser());
+        return selfChatService.getChat(UserService.getUserContext());
     }
 }

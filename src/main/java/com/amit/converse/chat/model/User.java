@@ -8,6 +8,8 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.Instant;
 import java.util.*;
@@ -17,7 +19,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @Builder
 @Document(collection = "user")
-public class User implements IDeliverableEntity {
+public class User implements IDeliverableEntity, UserDetails {
 
     @Id
     private String id;
@@ -107,4 +109,30 @@ public class User implements IDeliverableEntity {
     public boolean isOffline() {
         return getConnectionStatus().equals(ConnectionStatus.INACTIVE);
     }
+
+    public String getDisplayName() {
+        return username;
+    }
+
+    // User Details implementation methods
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return getUserId();
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
 }

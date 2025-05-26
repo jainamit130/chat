@@ -1,6 +1,5 @@
 package com.amit.converse.chat.service.User;
 
-import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,19 +28,8 @@ public class UserService {
         redisWriteService.removeUserFromChatRoom(getUserContext());
     }
 
-    private void updateContext(User user) {
-        UserContext.updateContext(user);
-    }
-
-    public User getUserContext() {
-        return UserContext.getUser();
-    }
-
-    private Optional<User> getContextUserIfPresentInUsers(List<User> users) {
-        Optional<User> matchingUser = users.stream()
-                .filter(user -> user.getUserId().equals(UserContext.getUserId()))
-                .findFirst();
-        return matchingUser;
+    public static User getUserContext() {
+        return AuthService.getUser();
     }
 
     private List<User> getAllUsers() {
@@ -65,14 +52,11 @@ public class UserService {
     }
 
     public void processUserToDB(User user) {
-        updateContext(userRepository.save(user));
+        userRepository.save(user);
     }
 
     public void processUsersToDB(List<User> users) {
         userRepository.saveAll(users);
-        Optional<User> getContextUserIfPresent = getContextUserIfPresentInUsers(users);
-        if(getContextUserIfPresent.isPresent())
-            updateContext(getContextUserIfPresent.get());
     }
 
     public void transit(User user) {
@@ -87,23 +71,23 @@ public class UserService {
     }
 
     public List<String> processUsersToUsernames(List<User> users) {
-        return users.stream().map(user -> user.getUsername()).collect(Collectors.toList());
+        return users.stream().map(user -> user.getDisplayName()).collect(Collectors.toList());
     }
 
     public List<UserDetails> getAllUserDetails() {
         return getAllUsers().stream().map(user -> {
-            return UserDetails.builder().username(user.getUsername()).userId(user.getUserId()).build();
+            return UserDetails.builder().username(user.getDisplayName()).userId(user.getUserId()).build();
         }).collect(Collectors.toList());
     }
 
 
     public UserDetails getProfileDetails(String userId) {
-        if(UserContext.getUserId().equals(userId)) return userDetailsService.getProfileDetails(UserContext.getUser());
+        if(UserService.getUserContext().getUserId().equals(userId)) return userDetailsService.getProfileDetails(UserService.getUserContext());
         return userDetailsService.getUserDetails(getUserById(userId));
     }
 
     public void createUser(User user) throws ConverseException {
-        String username = user.getUsername();
+        String username = user.getDisplayName();
         if(userRepository.existsByUsername(username)) {
             throw new ConverseException("Username already exists: " + username);
         }

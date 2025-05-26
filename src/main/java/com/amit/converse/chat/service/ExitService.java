@@ -1,7 +1,7 @@
 package com.amit.converse.chat.service;
 
-import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.User.UserService;
 import com.amit.converse.chat.service.chatRoom.GroupChatService;
 import com.amit.converse.chat.service.Notification.NotifyGroupExitService;
 import com.amit.converse.chat.service.User.GroupChatUserService;
@@ -20,7 +20,7 @@ public class ExitService {
 
     // LoggedIn User exits
     public void leave() {
-        leave(Collections.singletonList(UserContext.getUserId()));
+        leave(Collections.singletonList(UserService.getUserContext().getUserId()));
     }
 
     // Users removed from group

@@ -1,6 +1,7 @@
 package com.amit.converse.chat.controller;
 
 import com.amit.converse.chat.service.ActivityService;
+import com.amit.converse.chat.service.User.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;

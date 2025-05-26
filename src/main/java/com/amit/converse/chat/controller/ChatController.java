@@ -1,7 +1,10 @@
 package com.amit.converse.chat.controller;
 
+import com.amit.converse.chat.config.util.SecurityContextUtil;
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.model.Messages.ChatMessage;
+import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.User.UserService;
 import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.amit.converse.chat.service.MessageService.ChatMessageServiceFactory;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.ClearChatService;
@@ -18,6 +21,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -41,8 +45,9 @@ public class ChatController {
     }
 
     @MessageMapping("/chat/send/message/{chatRoomId}")
-    public void sendMessage(@DestinationVariable String chatRoomId,ChatMessage message) {
+    public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage message, Principal principal) {
         try {
+            SecurityContextUtil.ensureContextFromPrincipal(principal);
             message.setChatRoomId(chatRoomId);
             chatMessageServiceFactory.getMessageServiceFactory(chatRoomId).sendMessage(message);
         } catch (IllegalArgumentException | InterruptedException e) {

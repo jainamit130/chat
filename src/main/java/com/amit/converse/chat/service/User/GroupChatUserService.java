@@ -1,6 +1,5 @@
 package com.amit.converse.chat.service.User;
 
-import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
@@ -51,13 +50,13 @@ public class GroupChatUserService extends UserChatService<GroupChat> {
         List<User> users = getUsersFromRepo(chatRoom.getUserIds());
         List<UserDTO> userDTOList = new ArrayList<>();
         for(User user: users) {
-            UserDTO userDTO = UserDTO.builder().userId(user.getUserId()).username(user.getUsername()).build();
+            UserDTO userDTO = UserDTO.builder().userId(user.getUserId()).username(user.getDisplayName()).build();
             userDTOList.add(userDTO);
         }
         return GroupDetails.builder().members(userDTOList).build();
     }
 
     public List<String> getCommonChatIds(String userId) {
-        return groupChatService.getCommonChats(UserContext.getUserId(),userId).stream().map(groupChat -> groupChat.getId()).collect(Collectors.toList());
+        return groupChatService.getCommonChats(UserService.getUserContext().getUserId(),userId).stream().map(groupChat -> groupChat.getId()).collect(Collectors.toList());
     }
 }

@@ -1,6 +1,6 @@
 package com.amit.converse.chat.config;
 
-import com.amit.converse.chat.context.User.SetUserContextService;
+import com.amit.converse.chat.State.StateFactoryService;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.UserService;
 import lombok.AllArgsConstructor;
@@ -15,28 +15,18 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private UserService userService;
-    private final SetUserContextService setUserContextService;
+
+    @Autowired
+    private StateFactoryService stateFactoryService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         throw new UnsupportedOperationException("This method is not supported!");
     }
 
-    public UserDetailsImpl loadUserByUserId(String userId) throws UsernameNotFoundException {
-        User loadedUser = userService.getUserById(userId);
-        setUserContextService.setUser(loadedUser);
-        return new UserDetailsImpl(
-                loadedUser.getUserId(),
-                loadedUser.getPassword()
-        );
+    public User loadUserByUserId(String userId) throws UsernameNotFoundException {
+        User user = userService.getUserById(userId);
+        user.setState(stateFactoryService.getState(user));
+        return user;
     }
-
-    public void clearContext() {
-        User user = userService.getUserContext();
-        if(user!=null) {
-            userService.processUserToDB(user);
-            setUserContextService.clearContext();
-        }
-    }
-
 }

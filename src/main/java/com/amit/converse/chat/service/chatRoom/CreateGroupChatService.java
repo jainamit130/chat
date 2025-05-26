@@ -1,10 +1,10 @@
 package com.amit.converse.chat.service.chatRoom;
 
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
-import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.dto.CreateGroupRequest;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.service.User.GroupChatUserService;
+import com.amit.converse.chat.service.User.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateGroupChatService {
 
-    private final UserContext userContext;
     private final ChatContext chatContext;
     private final GroupChatService groupChatService;
     private final GroupChatUserService groupChatUserService;
@@ -26,8 +25,8 @@ public class CreateGroupChatService {
     }
 
     public String create(CreateGroupRequest createGroupRequest) {
-        createGroupRequest.addUserId(userContext.getUserId());
-        groupChatService.processCreation(createGroupRequest,userContext.getUserId());
+        createGroupRequest.addUserId(UserService.getUserContext().getUserId());
+        groupChatService.processCreation(createGroupRequest,UserService.getUserContext().getUserId());
         groupChatUserService.processCreation();
         return chatContext.getChatRoom().getId();
     }

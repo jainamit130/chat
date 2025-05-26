@@ -5,7 +5,6 @@ import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.DirectChatUserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,7 +23,7 @@ public class DirectChatFulfilmentService extends ChatRoomFulfilmentService {
 
     @Override
     public void fillName(ChatRoom chatRoom) {
-        User counterPartUser = directChatUserService.getCounterPartUser(chatRoom.getUserIds());
-        chatRoom.setName(counterPartUser.getUsername());
+        User counterPartUser = directChatUserService.getCounterPartUser(chatRoom.getAllUserIds());
+        chatRoom.setName(counterPartUser.getDisplayName());
     }
 }

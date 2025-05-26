@@ -1,9 +1,9 @@
 package com.amit.converse.chat.config;
 
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
-import com.amit.converse.chat.context.User.SetUserContextService;
-import com.amit.converse.chat.context.User.UserContext;
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.JwtService;
+import com.amit.converse.chat.service.User.UserService;
 import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -20,6 +20,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
@@ -35,7 +36,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
     private ChatService chatService;
-    private final SetUserContextService setUserContextService;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -62,16 +62,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
                 if (accessor.getUser() == null) handleTokenValidationAndSetUser(accessor);
-                else userDetailsService.loadUserByUserId(accessor.getUser().getName());
 
-                // Always transit to online in this flow
-                if(UserContext.getUser().isOffline()) UserContext.getUser().transit();
+                UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken) accessor.getUser();
+                User user = (User) authToken.getPrincipal();
 
                 if(StompCommand.DISCONNECT.equals(accessor.getCommand())) {
                     System.out.println("Disconnecting: "+ accessor.getUser().getName() + " transiting to offline!");
-                    UserContext.getUser().transit();
+                    user.transit();
+                    return message;
                 }
 
+                if(user.isOffline()) UserService.getUserContext().transit();
                 handleSetChatRoom(accessor);
                 return message;
             }
@@ -80,11 +81,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 String token = accessor.getFirstNativeHeader("token");
                 if (token != null && token.startsWith("Bearer ")) {
                     String jwt = token.substring(7);
-                    if (jwtService.isTokenValid(jwt)) {
-                        String userId = jwtService.extractId(jwt);
-                        UserDetailsImpl userDetails = userDetailsService.loadUserByUserId(userId);
+                    String userId = jwtService.extractId(jwt);
+                    User user = userDetailsService.loadUserByUserId(userId);
+                    if (jwtService.isTokenValid(jwt,user)) {
                         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                                userDetails, null, Collections.emptyList()
+                                user, null, Collections.emptyList()
                         );
                         accessor.setUser(authenticationToken);
                     }

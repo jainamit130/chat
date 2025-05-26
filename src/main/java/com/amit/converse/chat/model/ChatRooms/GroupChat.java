@@ -85,8 +85,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
     public void join(List<String> userIds) {
         unExit(userIds);
         HashSet<String> userIdsSet = new HashSet(this.userIds);
-        userIdsSet.addAll(userIds);
-        setUserIds(new ArrayList<>(userIdsSet));
+        userIds.addAll(userIdsSet);
     }
 
     @Override

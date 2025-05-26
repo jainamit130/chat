@@ -17,7 +17,7 @@ public class CreateChatController {
     private final CreateGroupChatService createGroupChatService;
 
     @PostMapping("create/direct/{userId}")
-    public ResponseEntity<String> createDirectChat(@RequestParam String userId, @RequestBody CreateDirectChatRequest directChatRequest) {
+    public ResponseEntity<String> createDirectChat(@PathVariable String userId, @RequestBody CreateDirectChatRequest directChatRequest) {
         try {
             return new ResponseEntity(createDirectChatService.create(userId,directChatRequest), HttpStatus.OK);
         } catch (InterruptedException e) {

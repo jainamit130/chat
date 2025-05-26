@@ -1,6 +1,5 @@
 package com.amit.converse.chat.model.ChatRooms;
 
-import com.amit.converse.chat.Redis.ChatRoomRedisTransitionService;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
 import lombok.*;
 import org.springframework.data.annotation.TypeAlias;

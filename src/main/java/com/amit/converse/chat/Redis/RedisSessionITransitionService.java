@@ -1,9 +1,7 @@
 package com.amit.converse.chat.Redis;
 
 import com.amit.converse.chat.Interface.ITransition;
-import com.amit.converse.chat.context.User.UserContext;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
-import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import com.amit.converse.chat.service.Redis.RedisWriteService;
 import com.amit.converse.chat.service.User.UserChatService;

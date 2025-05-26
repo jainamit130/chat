@@ -26,7 +26,7 @@ public class UserDetailsService {
     private UserDetails getInitializedUserDetails(User user) {
         UserDetails userDetails = UserDetails.builder()
                 .userId(user.getUserId())
-                .username(user.getUsername())
+                .username(user.getDisplayName())
                 .userStatus(user.getStatus())
                 .status(user.getConnectionStatus())
                 .commonGroupChatIds(new ArrayList<>())

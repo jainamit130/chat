@@ -59,9 +59,9 @@ public class GroupChatController {
 
 /*
 *
-* create direct chat
-* create group chat
-* send message
+* create direct chat => done
+* create group chat => done
+* send message => done
 * add member
 * remove member
 * exit group
