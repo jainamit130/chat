@@ -1,5 +1,6 @@
 package com.amit.converse.chat.config;
 
+import com.amit.converse.chat.config.util.SecurityContextUtil;
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.JwtService;
@@ -64,6 +65,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 if (accessor.getUser() == null) handleTokenValidationAndSetUser(accessor);
 
                 UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken) accessor.getUser();
+                SecurityContextUtil.ensureContextFromPrincipal(authToken);
                 User user = (User) authToken.getPrincipal();
 
                 if(StompCommand.DISCONNECT.equals(accessor.getCommand())) {

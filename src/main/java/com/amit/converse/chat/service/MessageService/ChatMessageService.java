@@ -2,8 +2,10 @@ package com.amit.converse.chat.service.MessageService;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
+import com.amit.converse.chat.dto.MessageInfoDto;
 import com.amit.converse.chat.dto.Notification.MessageMarkedNotification;
 import com.amit.converse.chat.dto.Notification.MessageNotification;
+import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Enums.MessageStatus;
@@ -22,7 +24,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class ChatMessageService<T extends IChatRoom> {
@@ -101,5 +105,18 @@ public class ChatMessageService<T extends IChatRoom> {
 
     public void readMessage(User user) {
         chatService.readMessages(user);
+    }
+
+    public MessageInfoDto getMessageInfo(String messageId) {
+        ChatMessage message = chatMessageRepository.findMessageById(messageId,UserService.getUserContext().getUserId())
+                .orElseThrow(() -> new ConverseException("No messageInfo to share for message id: "+messageId));
+
+        Map<String, Set<UserDetails>> deliveryReceiptsByTime = userChatService.convertMapIdsToMapUserDetails(message.getDeliveryReceiptsByTime());
+        Map<String, Set<UserDetails>> readReceiptsByTime = userChatService.convertMapIdsToMapUserDetails(message.getReadReceiptsByTime());
+
+        return MessageInfoDto.builder()
+                .deliveryReceiptsByTime(deliveryReceiptsByTime)
+                .readReceiptsByTime(readReceiptsByTime)
+                .build();
     }
 }

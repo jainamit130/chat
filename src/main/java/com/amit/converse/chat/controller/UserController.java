@@ -1,9 +1,11 @@
 package com.amit.converse.chat.controller;
 
+import com.amit.converse.chat.dto.MessageInfoDto;
 import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.service.CreateUserService;
+import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.User.UserChatService;
 import com.amit.converse.chat.service.User.UserService;
 import lombok.AllArgsConstructor;
@@ -12,9 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.PriorityQueue;
 
 @RestController
 @AllArgsConstructor
@@ -23,6 +23,7 @@ public class UserController {
     private final UserService userService;
     private final UserChatService userChatService;
     protected CreateUserService createUserService;
+    private final ChatMessageService chatMessageService;
 
     @QueryMapping
     public List<ChatRoom> getChatRoomsOfUser() {
@@ -57,4 +58,8 @@ public class UserController {
         }
     }
 
+    @GetMapping("/get/messageInfo/{messageId}")
+    public ResponseEntity<MessageInfoDto> getMessageInfo(@PathVariable String messageId){
+        return new ResponseEntity(chatMessageService.getMessageInfo(messageId), HttpStatus.OK);
+    }
 }

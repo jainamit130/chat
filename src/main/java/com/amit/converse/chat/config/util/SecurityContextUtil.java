@@ -1,10 +1,12 @@
 package com.amit.converse.chat.config.util;
 
+import com.amit.converse.chat.model.User;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.security.Principal;
+import java.util.Collections;
 
 public class SecurityContextUtil {
     public static void ensureContextFromPrincipal(Principal principal) {
@@ -15,5 +17,14 @@ public class SecurityContextUtil {
         } else {
             throw new IllegalStateException("Unsupported principal type: " + principal.getClass());
         }
+    }
+
+    public static void populateUserContext(User user) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                user, null, Collections.emptyList()
+        );
+        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        context.setAuthentication(authenticationToken);
+        SecurityContextHolder.setContext(context);
     }
 }

@@ -26,4 +26,14 @@ public interface IChatMessageRepository extends MongoRepository<ChatMessage,Stri
             "{ $limit: 1 }"
     })
     Optional<ChatMessage> findLatestMessage(String chatRoomId, String userId);
+
+    @Aggregation(pipeline = {
+            "{ $match: { '_id': ?0, 'senderId': ?1, 'messageMetaData.deletedForUsers': { $nin: [?1] } } }",
+            "{ $addFields: { " +
+                    "status: '$status', " +
+                    "deliveryReceiptsByTime: '$messageMetaData.deliveryReceiptsByTime', " +
+                    "readReceiptsByTime: '$messageMetaData.readReceiptsByTime' " +
+                    "} }"
+    })
+    Optional<ChatMessage> findMessageById(String messageId, String userId);
 }

@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.Instant;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Data
@@ -38,4 +39,8 @@ public abstract class MessageMetaData {
     public Integer getDeletedForUsersCount() {
         return deletedForUsers.size();
     }
+
+    public abstract Map<String, Set<String>> getDeliveryReceiptsByTime();
+
+    public abstract Map<String, Set<String>> getReadReceiptsByTime();
 }

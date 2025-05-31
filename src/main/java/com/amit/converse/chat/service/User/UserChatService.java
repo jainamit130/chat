@@ -1,10 +1,12 @@
 package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.config.util.SecurityContextUtil;
 import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.Notification.UserStatusNotification;
 import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDTO;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
+import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
@@ -73,7 +75,7 @@ public class UserChatService<T extends ChatRoom> {
         processUsersToDB(Collections.singletonList(contextUser));
     }
 
-    public void connectbashChat(List<String> userIds,ChatRoom chatRoom) {
+    public void connectChat(List<String> userIds,ChatRoom chatRoom) {
         List<User> users = new ArrayList<>(getUsersFromRepo(userIds));
         for(User user:users) {
             connectChat(user,chatRoom);
@@ -117,7 +119,19 @@ public class UserChatService<T extends ChatRoom> {
     }
 
     public User createUser(User user) {
-        userService.createUser(user);
+        SecurityContextUtil.populateUserContext(userService.createUser(user));
         return UserService.getUserContext();
+    }
+
+
+    public Map<String, Set<UserDetails>> convertMapIdsToMapUserDetails(Map<String, Set<String>> receiptIdsByTime) {
+        Map<String, Set<UserDetails>> updatedMap = new HashMap<>();
+
+        for (Map.Entry<String, Set<String>> entry : receiptIdsByTime.entrySet()) {
+            String timestamp = entry.getKey();
+            Set<UserDetails> userDetails = userService.processIdsToUserDetails(entry.getValue());
+            updatedMap.put(timestamp, userDetails);
+        }
+        return updatedMap;
     }
 }

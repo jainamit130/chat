@@ -9,7 +9,10 @@ import com.amit.converse.chat.service.Redis.Interface.IRedisWriteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,8 +54,8 @@ public class UserService {
         return users;
     }
 
-    public void processUserToDB(User user) {
-        userRepository.save(user);
+    public User processUserToDB(User user) {
+        return userRepository.save(user);
     }
 
     public void processUsersToDB(List<User> users) {
@@ -86,11 +89,21 @@ public class UserService {
         return userDetailsService.getUserDetails(getUserById(userId));
     }
 
-    public void createUser(User user) throws ConverseException {
+    public User createUser(User user) throws ConverseException {
         String username = user.getDisplayName();
         if(userRepository.existsByUsername(username)) {
             throw new ConverseException("Username already exists: " + username);
         }
-        processUserToDB(user);
+        return processUserToDB(user);
+    }
+
+    public Set<UserDetails> processIdsToUserDetails(Set<String> userIds) {
+        Set<UserDetails> userDetails = new HashSet<>();
+
+        for (String userId : userIds) {
+            Optional<User> user = userRepository.findByUserId(userId);
+            if (user.isPresent()) userDetails.add(UserDetails.builder().username(user.get().getDisplayName()).userId(userId).build());
+        }
+        return userDetails;
     }
 }

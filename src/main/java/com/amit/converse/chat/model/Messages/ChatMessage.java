@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.Map;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -62,5 +64,14 @@ public class ChatMessage extends Message implements IDeletableMessage {
         this.status = MessageStatus.DELETED;
         this.deletedForEveryone = true;
         messageMetaData.clearMessageMetadata();
+    }
+
+
+    public Map<String, Set<String>> getDeliveryReceiptsByTime() {
+        return messageMetaData.getDeliveryReceiptsByTime();
+    }
+
+    public Map<String, Set<String>> getReadReceiptsByTime() {
+        return messageMetaData.getReadReceiptsByTime();
     }
 }
