@@ -11,18 +11,21 @@ import java.util.Collections;
 public class SecurityContextUtil {
     public static void ensureContextFromPrincipal(Principal principal) {
         if (principal instanceof UsernamePasswordAuthenticationToken auth) {
-            SecurityContext context = SecurityContextHolder.createEmptyContext();
-            context.setAuthentication(auth);
-            SecurityContextHolder.setContext(context);
+            populateSecurityContext(auth);
         } else {
             throw new IllegalStateException("Unsupported principal type: " + principal.getClass());
         }
     }
 
-    public static void populateUserContext(User user) {
+    public static User populateUserContext(User user) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 user, null, Collections.emptyList()
         );
+        populateSecurityContext(authenticationToken);
+        return user;
+    }
+
+    private static void populateSecurityContext(UsernamePasswordAuthenticationToken authenticationToken) {
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         context.setAuthentication(authenticationToken);
         SecurityContextHolder.setContext(context);

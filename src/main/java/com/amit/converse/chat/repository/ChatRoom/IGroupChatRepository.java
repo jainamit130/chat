@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface IGroupChatRepository extends MongoRepository<GroupChat,String> {
 
-    @Query("{ 'chatRoomType' : 'GroupChat', 'userIds' : { $all: [?0, ?1] } }")
+    @Query("{ 'chatRoomType' : 'GROUP', 'userIds' : { $all: [?0, ?1] } }")
     Optional<List<GroupChat>> findGroupChats(String userId1, String userId2);
 }

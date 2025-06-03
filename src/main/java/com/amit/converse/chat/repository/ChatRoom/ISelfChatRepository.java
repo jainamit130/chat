@@ -10,6 +10,9 @@ import java.util.Optional;
 @Repository
 public interface ISelfChatRepository extends MongoRepository<SelfChat,String> {
 
-    @Query("{ 'chatRoomType' : 'SelfChat', 'userIds' : { $all: [?0] } }")
+    @Query("{ 'chatRoomType': 'SELF', $or: [ " +
+            "{ 'userIds': ?0 }, " +
+            "{ 'deletedForUsers': ?0 } " +
+            "] }")
     Optional<SelfChat> findSelfChat(String userId);
 }

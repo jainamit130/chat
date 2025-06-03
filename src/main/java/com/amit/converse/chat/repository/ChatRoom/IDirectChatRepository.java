@@ -10,7 +10,12 @@ import java.util.Optional;
 @Repository
 public interface IDirectChatRepository extends MongoRepository<DirectChat, String> {
 
-    @Query("{ 'chatRoomType' : 'DirectChat', 'userIds' : { $all: [?0, ?1] } }")
+    @Query("{ 'chatRoomType': 'DIRECT', $or: [ " +
+            "{ 'userIds': { $all: [?0, ?1] } }, " +
+            "{ 'deletedForUsers': { $all: [?0, ?1] } }, " +
+            "{ $and: [ { 'userIds': ?0 }, { 'deletedForUsers': ?1 } ] }, " +
+            "{ $and: [ { 'userIds': ?1 }, { 'deletedForUsers': ?0 } ] } " +
+            "] }")
     Optional<DirectChat> findDirectChat(String userId1, String userId2);
     
 }

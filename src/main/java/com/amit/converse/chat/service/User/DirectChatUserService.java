@@ -17,23 +17,6 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
     @Autowired
     private DirectChatService directChatService;
 
-    public void processCreation() {
-        DirectChat directChat = chatService.getContextChatRoom();
-
-        Set<String> deletedForUserIds = new HashSet<>(directChat.getDeletedForUsers());
-
-        List<User> deletedUsers = getUsersFromRepo(new ArrayList<>(deletedForUserIds));
-
-        for (User user : deletedUsers) {
-            directChat.getDeletedForUsers().remove(user.getUserId());
-            connectChatAndNotify(user, directChat);
-        }
-
-        processUsersToDB(deletedUsers);
-        processChatRoomToDB(directChat);
-    }
-
-
     public User getCounterPartUser(List<String> userIds) {
         if(userIds.size()!=2) throw new ConverseException("Invalid Chat!");
         String counterPartUserId = userIds.stream().filter(userId -> !userId.equals(UserService.getUserContext().getUserId())).findFirst().get();

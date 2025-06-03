@@ -34,7 +34,7 @@ public class CreateDirectChatService {
         User primaryUser = UserService.getUserContext();
         User counterPartUser = directChatUserService.getUserFromRepo(counterPartUserId);
         directChatService.processCreation(primaryUser,counterPartUser,directChatRequest);
-        directChatUserService.processCreation();
         return directChatService.getContextChatRoom().getId();
     }
+
 }

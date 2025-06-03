@@ -69,8 +69,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 User user = (User) authToken.getPrincipal();
 
                 if(StompCommand.DISCONNECT.equals(accessor.getCommand())) {
+                    String userId = user.getUserId();
+                    User freshUser = userDetailsService.loadUserByUserId(userId);
                     System.out.println("Disconnecting: "+ accessor.getUser().getName() + " transiting to offline!");
-                    user.transit();
+                    freshUser.transit();
                     return message;
                 }
 

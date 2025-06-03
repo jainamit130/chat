@@ -48,12 +48,13 @@ public class UserChatService<T extends ChatRoom> {
         return chatRoom.getUnreadMessageCount(UserService.getUserContext().getUserId());
     }
 
-    public void processChatRoomToDB(T chatRoom) {
-        chatService.processChatRoomToDB(chatRoom);
-    }
-
     public void processUsersToDB(List<User> users) {
         userService.processUsersToDB(users);
+    }
+
+    public void processUsersAndChatRoomToDB(List<User> users,T chatRoom) {
+        processUsersToDB(users);
+        chatService.processChatRoomToDB(chatRoom);
     }
 
     public List<String> processUsersToUsernames(List<User> users) {
@@ -71,12 +72,11 @@ public class UserChatService<T extends ChatRoom> {
     public void deleteChat(T chatRoom) {
         User contextUser = userService.getUserContext();
         disconnectChat(contextUser,chatRoom);
-        processChatRoomToDB(chatRoom);
-        processUsersToDB(Collections.singletonList(contextUser));
+        processUsersAndChatRoomToDB(Collections.singletonList(contextUser),chatRoom);
     }
 
     public void connectChat(List<String> userIds,ChatRoom chatRoom) {
-        List<User> users = new ArrayList<>(getUsersFromRepo(userIds));
+        List<User> users = getUsersFromRepo(userIds);
         for(User user:users) {
             connectChat(user,chatRoom);
             sendNewChatNotificationToUser(user.getUserId(),chatRoom);
@@ -119,8 +119,7 @@ public class UserChatService<T extends ChatRoom> {
     }
 
     public User createUser(User user) {
-        SecurityContextUtil.populateUserContext(userService.createUser(user));
-        return UserService.getUserContext();
+        return SecurityContextUtil.populateUserContext(userService.createUser(user));
     }
 
 

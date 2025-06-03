@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.User;
 
+import com.amit.converse.chat.config.util.SecurityContextUtil;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.User;
@@ -55,11 +56,16 @@ public class UserService {
     }
 
     public User processUserToDB(User user) {
-        return userRepository.save(user);
+        return SecurityContextUtil.populateUserContext(userRepository.save(user));
     }
 
     public void processUsersToDB(List<User> users) {
-        userRepository.saveAll(users);
+        String contextUserId = getUserContext().getId();
+        userRepository.saveAll(users).stream().forEach((user) -> {
+            if(user.getUserId().equals(contextUserId)) {
+                SecurityContextUtil.populateUserContext(user);
+            }
+        });
     }
 
     public void transit(User user) {
