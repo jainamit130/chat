@@ -26,14 +26,9 @@ public class UserChatService<T extends ChatRoom> {
     @Autowired
     private UserNotificationService userNotificationService;
 
-    private void sendNewChatNotificationToUser(String userId, ChatRoom newChatRoom) {
+    protected void sendNewChatNotificationToUser(String userId, ChatRoom newChatRoom) {
         chatService.transit(newChatRoom);
         userNotificationService.sendNotification(userId,new NewChatNotification(newChatRoom));
-    }
-
-    private void disconnectChat(User user, IChatRoom chatRoom) {
-        chatRoom.deleteChat(user.getUserId());
-        user.deleteChat(chatRoom.getId());
     }
 
     public IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat) {
@@ -72,8 +67,21 @@ public class UserChatService<T extends ChatRoom> {
 
     public void deleteChat(T chatRoom) {
         User contextUser = userService.getUserContext();
-        disconnectChat(contextUser,chatRoom);
+        chatRoom.deleteChat(userService.getUserContext().getUserId());
+        contextUser.deleteChat(chatRoom.getId());
         processUsersAndChatRoomToDB(Collections.singletonList(contextUser),chatRoom);
+    }
+
+    protected void disconnectChat(List<User> users, ChatRoom chatRoom) {
+        for(User user:users) {
+            disconnectChatAndNotify(user,chatRoom);
+        }
+        processUsersAndChatRoomToDB(users,(T) chatRoom);
+    }
+
+    private void disconnectChatAndNotify(User user, ChatRoom chatRoom) {
+        user.disconnectChat(chatRoom.getId(),chatRoom.getUnreadMessageCount(user.getUserId()));
+        sendNewChatNotificationToUser(user.getUserId(),chatRoom);
     }
 
     public void connectChatFromUserIds(List<String> userIds,ChatRoom chatRoom) {

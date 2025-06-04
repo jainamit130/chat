@@ -26,8 +26,8 @@ public class ExitService {
     // Users removed from group
     public void leave(List<String> userIds) {
         List<User> users = groupChatUserService.getUsersFromRepo(userIds);
-        groupChatService.exitChatRoom(userIds);
         notifyAndExit(users);
+        groupChatService.exitChatRoom(userIds);
     }
 
     // notify the exit to the group and exit

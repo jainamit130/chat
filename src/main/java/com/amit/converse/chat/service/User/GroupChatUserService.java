@@ -2,6 +2,7 @@ package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.dto.GroupDetails;
 import com.amit.converse.chat.dto.UserDTO;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.chatRoom.GroupChatService;
@@ -20,20 +21,8 @@ public class GroupChatUserService extends UserChatService<GroupChat> {
     @Autowired
     private GroupChatService groupChatService;
 
-    public void processCreation() {
-        GroupChat chatRoom = chatService.getContextChatRoom();
-        List<User> users = getUsersFromRepo(chatRoom.getUserIds());
-        for(User user : users) {
-            connectChatAndNotify(user,chatRoom);
-        }
-        processUsersToDB(users);
-    }
-
     public void exit(List<User> users) {
-        GroupChat chatRoom = chatService.getContextChatRoom();
-        for(User user:users) {
-            user.disconnectChat(chatRoom.getId(),chatRoom.getUnreadMessageCount(user.getUserId()));
-        }
+        disconnectChat(users,chatService.getContextChatRoom());
         processUsersToDB(users);
     }
 
