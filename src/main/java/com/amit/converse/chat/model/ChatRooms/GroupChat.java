@@ -73,7 +73,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
 
     @Override
     public Boolean isDeletable() {
-        return (super.getDeletedForUsersCount()==getTotalMemberCount());
+        return !isNewlyFormed && (super.getDeletedForUsersCount()==getTotalMemberCount());
     }
 
     @Override
@@ -99,4 +99,13 @@ public class GroupChat extends ChatRoom implements ITransactable {
     private void unExit(List<String> userIds) {
         userIds.forEach(exitedMembers::remove);
     }
+
+    @Override
+    public void readMessages(String userId) {
+        super.readMessages(userId);
+        if(exitedMembers.containsKey(userId)) {
+            exitedMembers.put(userId,Instant.now());
+        }
+    }
+
 }

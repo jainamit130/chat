@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateDirectChatRequest {
+public class CreateChatRequest {
     @NotBlank
     private ChatMessage message;
 }

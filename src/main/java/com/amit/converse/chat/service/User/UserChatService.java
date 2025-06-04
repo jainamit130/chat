@@ -27,6 +27,7 @@ public class UserChatService<T extends ChatRoom> {
     private UserNotificationService userNotificationService;
 
     private void sendNewChatNotificationToUser(String userId, ChatRoom newChatRoom) {
+        chatService.transit(newChatRoom);
         userNotificationService.sendNotification(userId,new NewChatNotification(newChatRoom));
     }
 
@@ -75,20 +76,21 @@ public class UserChatService<T extends ChatRoom> {
         processUsersAndChatRoomToDB(Collections.singletonList(contextUser),chatRoom);
     }
 
-    public void connectChat(List<String> userIds,ChatRoom chatRoom) {
+    public void connectChatFromUserIds(List<String> userIds,ChatRoom chatRoom) {
         List<User> users = getUsersFromRepo(userIds);
+        connectChat(users,chatRoom);
+    }
+
+    public void connectChat(List<User> users,ChatRoom chatRoom) {
         for(User user:users) {
-            connectChat(user,chatRoom);
-            sendNewChatNotificationToUser(user.getUserId(),chatRoom);
+            connectChatAndNotify(user,chatRoom);
         }
-        processUsersToDB(users);
-        chatService.processChatRoomToDB((T) chatRoom);
+        processUsersAndChatRoomToDB(users,(T) chatRoom);
     }
 
     public void connectChat(User user,IChatRoom chatRoom) {
         chatRoom.connectChat(user.getUserId());
         user.connectChat(chatRoom.getId());
-        chatService.processChatRoomToDB((T) chatRoom);
     }
 
     public void connectChatAndNotify(User user,ChatRoom chatRoom) {

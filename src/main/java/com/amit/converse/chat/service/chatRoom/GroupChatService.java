@@ -22,8 +22,7 @@ public class GroupChatService extends ChatService<GroupChat> {
                 .orElseThrow(() -> new ConverseChatRoomNotFoundException(chatRoomId));
     }
 
-    public void joinChatRoom(List<String> userIds) {
-        GroupChat groupChat = (GroupChat) ChatContext.getChatRoom();
+    public void joinChatRoom(List<String> userIds, GroupChat groupChat) {
         groupChat.join(userIds);
         processChatRoomToDB(groupChat);
     }
@@ -40,7 +39,7 @@ public class GroupChatService extends ChatService<GroupChat> {
     }
 
     public void processCreation(CreateGroupRequest createGroupRequest,String adminUserId) {
-        processChatRoomToDB(CreateGroupChatService.getGroupChat(createGroupRequest.getGroupName(), createGroupRequest.getUserIds(), adminUserId));
+        processChatRoomToDB(CreateGroupChatService.getGroupChat(createGroupRequest.getGroupName(), adminUserId));
     }
 
     public List<GroupChat> getCommonChats(String user1Id, String user2Id) {

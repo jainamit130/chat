@@ -26,12 +26,6 @@ public abstract class MessageMetaData {
         this.deletedForUsers = new HashSet<>();
     }
 
-    public abstract void clearMessageMetadata();
-
-    public abstract Integer readMessage(Instant timestamp,String userId);
-
-    public abstract Integer deliverMessage(Instant timestamp, String userId);
-
     public void addUserToDeletedForUsers(String userId) {
         deletedForUsers.add(userId);
     }
@@ -40,7 +34,4 @@ public abstract class MessageMetaData {
         return deletedForUsers.size();
     }
 
-    public abstract Map<String, Set<String>> getDeliveryReceiptsByTime();
-
-    public abstract Map<String, Set<String>> getReadReceiptsByTime();
 }

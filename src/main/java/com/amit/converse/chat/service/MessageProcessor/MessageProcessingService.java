@@ -1,13 +1,11 @@
 package com.amit.converse.chat.service.MessageProcessor;
 
-import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.service.User.UserChatService;
 import com.amit.converse.chat.service.chatRoom.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -36,7 +34,7 @@ public class MessageProcessingService {
 
     public void processMessage(ChatRoom chatRoom, ChatMessage message) {
         chatService.processSentMessage();
-        userChatService.connectChat(new ArrayList<>(chatRoom.getDeletedForUsers()),chatRoom);
         process(message);
+        userChatService.connectChatFromUserIds(new ArrayList<>(chatRoom.getDeletedForUsers()),chatRoom);
     }
 }

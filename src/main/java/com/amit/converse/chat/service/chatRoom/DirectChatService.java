@@ -1,6 +1,6 @@
 package com.amit.converse.chat.service.chatRoom;
 
-import com.amit.converse.chat.dto.CreateDirectChatRequest;
+import com.amit.converse.chat.dto.CreateChatRequest;
 import com.amit.converse.chat.model.ChatRooms.DirectChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatRoom.IDirectChatRepository;
@@ -38,7 +38,7 @@ public class DirectChatService extends ChatService<DirectChat> {
         return directChatRepository.save(directChat);
     }
 
-    public void processCreation(User primaryUser, User counterPartUser,CreateDirectChatRequest directChatRequest) throws InterruptedException {
+    public void processCreation(User primaryUser, User counterPartUser, CreateChatRequest directChatRequest) throws InterruptedException {
         // Updates the context, fulfilling its purpose of getting a chat new or existing
         processDirectChatCreation(primaryUser,counterPartUser);
         directChatMessageService.sendMessage(directChatRequest.getMessage());

@@ -11,7 +11,7 @@ import java.util.Set;
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
-public class ChatMessageMetaData extends MessageMetaData {
+public class ChatMessageMetaData extends MessageMetaData implements IChatMessageMetaData {
 
     public ChatMessageMetaData() {
         super();

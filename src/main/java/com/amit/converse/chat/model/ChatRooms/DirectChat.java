@@ -15,8 +15,6 @@ import java.util.List;
 @TypeAlias("DIRECT")
 @EqualsAndHashCode(callSuper = false)
 public class DirectChat extends ChatRoom {
-    @Transient
-    private Boolean isNewlyFormed = false;
 
     public DirectChat(String counterPartUsername) {
         super(ChatRoomType.DIRECT, new ArrayList<>());

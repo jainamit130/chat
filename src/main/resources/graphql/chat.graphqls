@@ -4,28 +4,26 @@ type ChatRoom {
     userIds: [String!]!
     chatRoomType: ChatRoomType!
     unreadMessageCount: Int!
-    latestMessage: latestMessage!
-}
-
-type latestMessage {
-    id: String
-    senderId: String
-    status: MessageStatus
-    deletedForEveryone: Boolean!
-    content: String!
-    timestamp: String
-    name: String
+    latestMessage: Message!
 }
 
 type ChatMessage {
-    id: String!
-    senderId: String!
+    id: String
+    senderId: String
     deletedForEveryone: Boolean!
     name: String
     content: String!
     timestamp: String!
     status: MessageStatus
 }
+
+type NotificationMessage {
+    id: String
+    content: String!
+    timestamp: String!
+}
+
+union Message = ChatMessage | NotificationMessage
 
 enum MessageStatus {
     DELIVERED
@@ -64,7 +62,7 @@ type GroupChatOnlineUsersDTO implements IOnlineUsersDTO {
 }
 
 type ChatRoomData {
-    messages: [ChatMessage]
+    messages: [Message!]!
     onlineUsersDTO: IOnlineUsersDTO
 }
 

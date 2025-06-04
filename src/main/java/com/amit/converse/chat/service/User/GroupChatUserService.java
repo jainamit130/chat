@@ -29,14 +29,6 @@ public class GroupChatUserService extends UserChatService<GroupChat> {
         processUsersToDB(users);
     }
 
-    public void join(List<User> users) {
-        GroupChat chatRoom = chatService.getContextChatRoom();
-        for(User user:users) {
-            user.connectChat(chatRoom.getId());
-        }
-        processUsersToDB(users);
-    }
-
     public void exit(List<User> users) {
         GroupChat chatRoom = chatService.getContextChatRoom();
         for(User user:users) {

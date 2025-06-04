@@ -1,6 +1,8 @@
 package com.amit.converse.chat.model.Messages;
 
+import com.amit.converse.chat.model.MetaData.NotificationMessageMetaData;
 import lombok.*;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,11 +11,15 @@ import java.time.Instant;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "messages")
+@TypeAlias("NotificationMessage")
 @CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
 public class NotificationMessage extends Message {
 
+    private NotificationMessageMetaData messageMetaData;
+
     public NotificationMessage() {
         super("There are no messages");
+        this.messageMetaData = new NotificationMessageMetaData();
     }
 
     @Override

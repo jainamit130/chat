@@ -10,8 +10,10 @@ import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
+import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.Message.IChatMessageRepository;
+import com.amit.converse.chat.repository.Message.IMessageRepository;
 import com.amit.converse.chat.service.User.UserService;
 import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.amit.converse.chat.service.MessageProcessor.MessageProcessingService;
@@ -45,6 +47,8 @@ public class ChatMessageService<T extends IChatRoom> {
     protected UserNotificationService userNotificationService;
     @Autowired
     private IChatMessageRepository chatMessageRepository;
+    @Autowired
+    private IMessageRepository messageRepository;
 
     public ChatMessage saveMessage(ChatMessage message) {
         return chatMessageRepository.save(message);
@@ -63,10 +67,10 @@ public class ChatMessageService<T extends IChatRoom> {
         chatMessageRepository.saveAll(messages);
     }
 
-    public List<ChatMessage> getMessagesToBeMarked(IChatRoom chatRoom) {
+    public List<Message> getMessagesToBeMarked(IChatRoom chatRoom) {
         User user = UserService.getUserContext();
         Instant fromInstant = chatRoom.getUserFetchStartTime(user.getUserId());
-        return chatMessageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
+        return messageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
     }
 
     public List<ChatMessage> getMessagesToBeMarked(IChatRoom chatRoom, User user, Instant fromInstant) {
@@ -95,11 +99,9 @@ public class ChatMessageService<T extends IChatRoom> {
         messageProcessingService.processMessage(chatRoom,savedMessage);
     }
 
-    public ChatMessage getLatestMessage(IChatRoom chatRoom) {
-        Optional<ChatMessage> latestMessage = chatMessageRepository.findLatestMessage(chatRoom.getId(),UserService.getUserContext().getUserId());
-        if(latestMessage.isPresent()) {
-            return latestMessage.get();
-        }
+    public Message getLatestMessage(IChatRoom chatRoom) {
+        Optional<Message> latestMessage = messageRepository.findLatestMessage(chatRoom.getId(),UserService.getUserContext().getUserId());
+        if(latestMessage.isPresent()) return latestMessage.get();
         return new ChatMessage(chatRoom.getUserFetchStartTime(UserService.getUserContext().getUserId()));
     }
 

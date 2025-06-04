@@ -2,9 +2,11 @@ package com.amit.converse.chat.service.chatRoom;
 
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.ChatRoomData;
+import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
+import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
 import com.amit.converse.chat.service.chatRoom.filfillmentService.factory.ChatRoomFulfilmentServiceFactory;
@@ -97,7 +99,7 @@ public class ChatService<T extends ChatRoom> {
         chatRoom.clearChat(userId);
     }
 
-    public List<ChatMessage> getMessagesOfChatRoom() {
+    public List<Message> getMessagesOfChatRoom() {
         return chatMessageService.getMessagesToBeMarked(ChatContext.getChatRoom());
     }
 
@@ -106,11 +108,15 @@ public class ChatService<T extends ChatRoom> {
         chatRoom.totalMessageCountIncrement();
     }
 
+    public IOnlineUsersDTO transit(ChatRoom chatRoom) {
+        return chatRoom.transit();
+    }
+
     public ChatRoomData getChatRoomData(String chatRoomId) {
         updateChatRoomContext((T) getChatRoomById(chatRoomId));
         ChatRoom chatRoom = getContextChatRoom();
         return ChatRoomData.builder().messages(getMessagesOfChatRoom()).
-                onlineUsersDTO(chatRoom.transit())
+                onlineUsersDTO(transit(chatRoom))
                 .build();
     }
 

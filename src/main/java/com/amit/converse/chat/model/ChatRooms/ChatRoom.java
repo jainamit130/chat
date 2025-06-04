@@ -5,6 +5,7 @@ import com.amit.converse.chat.Redis.ChatRoomRedisTransitionService;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
+import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.service.chatRoom.filfillmentService.ChatRoomFulfilmentService;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -65,11 +66,13 @@ public abstract class ChatRoom implements IChatRoom {
     @Transient
     protected Integer unreadMessageCount;
     @Transient
-    protected ChatMessage latestMessage;
+    protected Message latestMessage;
     @Transient
     protected ChatRoomFulfilmentService chatRoomFulfilmentService;
     @Transient
     protected ChatRoomRedisTransitionService chatRoomRedisTransitionService;
+    @Transient
+    protected Boolean isNewlyFormed = false;
 
     public List<String> getAllUserIds() {
         ArrayList<String> userIds = new ArrayList<>(this.userIds);

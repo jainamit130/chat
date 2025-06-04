@@ -2,9 +2,13 @@ package com.amit.converse.chat.model.Messages;
 
 import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.MetaData.ChatMessageMetaData;
+import com.amit.converse.chat.model.MetaData.IChatMessageMetaData;
 import com.amit.converse.chat.model.MetaData.MessageMetaData;
+import jakarta.annotation.PostConstruct;
+import jakarta.persistence.PostLoad;
 import lombok.*;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -16,25 +20,29 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @Document(collection = "messages")
+@TypeAlias("ChatMessage")
 @CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
 public class ChatMessage extends Message implements IDeletableMessage {
     private String senderId;
     private MessageStatus status;
     private String name;
     private Boolean deletedForEveryone;
+    private ChatMessageMetaData messageMetaData;
 
     public ChatMessage() {
-        super("There are no messages!",new ChatMessageMetaData());
+        super("There are no messages!");
+        this.messageMetaData = new ChatMessageMetaData();
         this.deletedForEveryone = false;
     }
 
     public ChatMessage(Instant timestamp) {
-        super("There are no messages!",new ChatMessageMetaData(),timestamp);
+        super("There are no messages!",timestamp);
         this.deletedForEveryone = false;
+        this.messageMetaData = new ChatMessageMetaData();
     }
 
     public ChatMessage(String senderId,String content) {
-        super(content,new ChatMessageMetaData());
+        super(content);
         this.senderId = senderId;
         this.status = MessageStatus.PENDING;
         this.deletedForEveryone = false;
@@ -73,5 +81,13 @@ public class ChatMessage extends Message implements IDeletableMessage {
 
     public Map<String, Set<String>> getReadReceiptsByTime() {
         return messageMetaData.getReadReceiptsByTime();
+    }
+
+    public void deleteMessage(String userId) {
+        messageMetaData.addUserToDeletedForUsers(userId);
+    }
+
+    public Integer getDeletedForMembersCount() {
+        return messageMetaData.getDeletedForUsersCount();
     }
 }

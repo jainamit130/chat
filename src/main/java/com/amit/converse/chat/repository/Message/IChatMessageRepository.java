@@ -12,23 +12,20 @@ import java.util.Optional;
 public interface IChatMessageRepository extends MongoRepository<ChatMessage,String> {
 
     @Aggregation(pipeline = {
-            "{ $match: { 'chatRoomId': ?0, 'messageMetaData.deletedForUsers': { $nin: [?1] }, 'timestamp': { $gt: ?2 } } }",
+            "{ $match: { '_class': 'ChatMessage', 'chatRoomId': ?0, 'messageMetaData.deletedForUsers': { $nin: [?1] }, 'timestamp': { $gt: ?2 } } }",
             "{ $addFields: { status: { $cond: { if: { $eq: [ '$senderId', ?1 ] }, then: '$status', else: null } } } }",
             "{ $sort: { 'timestamp': 1 } }"
     })
     List<ChatMessage> findMessagesOfChatForUserFrom(String chatRoomId, String userId, Instant from);
 
-
     @Aggregation(pipeline = {
-            "{ $match: { 'chatRoomId': ?0, 'messageMetaData.deletedForUsers': { $nin: [?1] } }}",
-            "{ $addFields: { status: { $cond: { if: { $eq: [ '$senderId', ?1 ] }, then: '$status', else: null } } } }",
-            "{ $sort: { 'timestamp': -1 } }",
-            "{ $limit: 1 }"
+            "{ $match: { '_class': 'ChatMessage',  'chatRoomId': ?0, 'messageMetaData.deletedForUsers': { $nin: [?1] }, 'timestamp': { $gt: ?2 } } }",
+            "{ $sort: { 'timestamp': 1 } }"
     })
-    Optional<ChatMessage> findLatestMessage(String chatRoomId, String userId);
+    List<ChatMessage> findMessagesOfChatForUser(String chatRoomId, String userId, Instant from);
 
     @Aggregation(pipeline = {
-            "{ $match: { '_id': ?0, 'senderId': ?1, 'messageMetaData.deletedForUsers': { $nin: [?1] } } }",
+            "{ $match: { '_class': 'ChatMessage', '_id': ?0, 'senderId': ?1, 'messageMetaData.deletedForUsers': { $nin: [?1] } } }",
             "{ $addFields: { " +
                     "status: '$status', " +
                     "deliveryReceiptsByTime: '$messageMetaData.deliveryReceiptsByTime', " +
