@@ -1,7 +1,5 @@
 package com.amit.converse.chat.service;
 
-import com.amit.converse.chat.State.Offline;
-import com.amit.converse.chat.State.Online;
 import com.amit.converse.chat.State.StateFactoryService;
 import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.model.ChatRooms.SelfChat;
@@ -18,6 +16,9 @@ public class CreateUserService {
 
     @Autowired
     private UserChatService userChatService;
+
+    @Autowired
+    private ChatConnectService chatConnectService;
 
     @Autowired
     private SelfChatUserService selfChatUserService;
@@ -39,7 +40,7 @@ public class CreateUserService {
     public void createUser(UserDTO userDTO) {
         User createdUser = userChatService.createUser(getUser(userDTO));
         SelfChat selfChat = selfChatUserService.getSelfChat();
-        userChatService.connectChat(createdUser, selfChat);
+        chatConnectService.processChatConnection(createdUser, selfChat);
         userChatService.processUsersAndChatRoomToDB(Collections.singletonList(createdUser),selfChat);
     }
 

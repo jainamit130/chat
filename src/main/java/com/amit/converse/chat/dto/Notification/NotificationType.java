@@ -5,6 +5,7 @@ public enum NotificationType {
     MESSAGE_DELIVERED,
     MESSAGE_READ,
     NEW_CHAT,
+    EXITED_CHAT,
     TYPING,
     STATUS,
     MESSAGE,

@@ -13,16 +13,9 @@ public interface IChatMessageRepository extends MongoRepository<ChatMessage,Stri
 
     @Aggregation(pipeline = {
             "{ $match: { '_class': 'ChatMessage', 'chatRoomId': ?0, 'messageMetaData.deletedForUsers': { $nin: [?1] }, 'timestamp': { $gt: ?2 } } }",
-            "{ $addFields: { status: { $cond: { if: { $eq: [ '$senderId', ?1 ] }, then: '$status', else: null } } } }",
             "{ $sort: { 'timestamp': 1 } }"
     })
     List<ChatMessage> findMessagesOfChatForUserFrom(String chatRoomId, String userId, Instant from);
-
-    @Aggregation(pipeline = {
-            "{ $match: { '_class': 'ChatMessage',  'chatRoomId': ?0, 'messageMetaData.deletedForUsers': { $nin: [?1] }, 'timestamp': { $gt: ?2 } } }",
-            "{ $sort: { 'timestamp': 1 } }"
-    })
-    List<ChatMessage> findMessagesOfChatForUser(String chatRoomId, String userId, Instant from);
 
     @Aggregation(pipeline = {
             "{ $match: { '_class': 'ChatMessage', '_id': ?0, 'senderId': ?1, 'messageMetaData.deletedForUsers': { $nin: [?1] } } }",

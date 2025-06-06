@@ -2,7 +2,7 @@ package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.config.util.SecurityContextUtil;
-import com.amit.converse.chat.dto.Notification.NewChatNotification;
+import com.amit.converse.chat.dto.Notification.IUserNotification;
 import com.amit.converse.chat.dto.Notification.UserStatusNotification;
 import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDTO;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
@@ -26,9 +26,9 @@ public class UserChatService<T extends ChatRoom> {
     @Autowired
     private UserNotificationService userNotificationService;
 
-    protected void sendNewChatNotificationToUser(String userId, ChatRoom newChatRoom) {
-        chatService.transit(newChatRoom);
-        userNotificationService.sendNotification(userId,new NewChatNotification(newChatRoom));
+    public void sendNotificationToUser(String userId, ChatRoom chatRoom,IUserNotification notification) {
+        chatService.transit(chatRoom);
+        userNotificationService.sendNotification(userId,notification);
     }
 
     public IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat) {
@@ -41,7 +41,9 @@ public class UserChatService<T extends ChatRoom> {
     }
 
     public Integer getUnreadMessageCount(IChatRoom chatRoom) {
-        return chatRoom.getUnreadMessageCount(UserService.getUserContext().getUserId());
+        User user = UserService.getUserContext();
+        if(user.isExited(chatRoom.getId())) return user.getUnreadMessageCountOfExitedChat(chatRoom.getId());
+        return chatRoom.getUnreadMessageCount(user.getUserId());
     }
 
     public void processUsersToDB(List<User> users) {
@@ -72,40 +74,6 @@ public class UserChatService<T extends ChatRoom> {
         processUsersAndChatRoomToDB(Collections.singletonList(contextUser),chatRoom);
     }
 
-    protected void disconnectChat(List<User> users, ChatRoom chatRoom) {
-        for(User user:users) {
-            disconnectChatAndNotify(user,chatRoom);
-        }
-        processUsersAndChatRoomToDB(users,(T) chatRoom);
-    }
-
-    private void disconnectChatAndNotify(User user, ChatRoom chatRoom) {
-        user.disconnectChat(chatRoom.getId(),chatRoom.getUnreadMessageCount(user.getUserId()));
-        sendNewChatNotificationToUser(user.getUserId(),chatRoom);
-    }
-
-    public void connectChatFromUserIds(List<String> userIds,ChatRoom chatRoom) {
-        List<User> users = getUsersFromRepo(userIds);
-        connectChat(users,chatRoom);
-    }
-
-    public void connectChat(List<User> users,ChatRoom chatRoom) {
-        for(User user:users) {
-            connectChatAndNotify(user,chatRoom);
-        }
-        processUsersAndChatRoomToDB(users,(T) chatRoom);
-    }
-
-    public void connectChat(User user,IChatRoom chatRoom) {
-        chatRoom.connectChat(user.getUserId());
-        user.connectChat(chatRoom.getId());
-    }
-
-    public void connectChatAndNotify(User user,ChatRoom chatRoom) {
-        connectChat(user,chatRoom);
-        sendNewChatNotificationToUser(user.getUserId(),chatRoom);
-    }
-
     // Notify All ChatRooms of a user about status: went online or went offline
     public void notifyStatus(ConnectionStatus status) {
         User user = userService.getUserContext();
@@ -118,7 +86,11 @@ public class UserChatService<T extends ChatRoom> {
         User user = userService.getUserContext();
         // Redis clears the state of any active chatRoom of the user
         userService.clearRedisChatRoomOfUser();
-        List<ChatRoom> chatRooms = chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()),user.getUserId());
+        List<String> allChatRoomIds = new ArrayList<>();
+        allChatRoomIds.addAll(user.getChatRoomIds());
+        allChatRoomIds.addAll(user.getExitedChatRoomIds().keySet());
+
+        List<ChatRoom> chatRooms = chatService.getChatRoomsByIds(allChatRoomIds, user.getUserId());
 
         chatRooms.sort((chatRoom1, chatRoom2) -> {
             return chatRoom2.getLatestMessage().getTimestamp()
@@ -131,7 +103,6 @@ public class UserChatService<T extends ChatRoom> {
     public User createUser(User user) {
         return SecurityContextUtil.populateUserContext(userService.createUser(user));
     }
-
 
     public Map<String, Set<UserDetails>> convertMapIdsToMapUserDetails(Map<String, Set<String>> receiptIdsByTime) {
         Map<String, Set<UserDetails>> updatedMap = new HashMap<>();

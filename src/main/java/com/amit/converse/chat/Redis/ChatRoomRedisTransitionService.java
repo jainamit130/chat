@@ -5,6 +5,7 @@ import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.MessageProcessor.MarkingContext;
 import com.amit.converse.chat.service.MessageProcessor.ReadProcessingService;
 import com.amit.converse.chat.service.Redis.RedisWriteService;
 import com.amit.converse.chat.service.User.UserService;
@@ -25,6 +26,6 @@ public abstract class ChatRoomRedisTransitionService implements ITransition {
         User user = UserService.getUserContext();
         ChatRoom chatRoom = (ChatRoom) ChatContext.getChatRoom();
         redisWriteService.addUserToChatRoom(chatRoom,user);
-        readProcessingService.read(user);
+        readProcessingService.read(user,new MarkingContext());
     }
 }

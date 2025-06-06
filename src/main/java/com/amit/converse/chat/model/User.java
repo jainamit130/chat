@@ -94,6 +94,10 @@ public class User implements IDeliverableEntity, UserDetails {
 
     public boolean isExited(String chatRoomId) { return exitedChatRoomIds.containsKey(chatRoomId); }
 
+    public Integer getUnreadMessageCountOfExitedChat(String chatRoomId) {
+        return exitedChatRoomIds.get(chatRoomId);
+    }
+
     public void updateLastSeenToNow() {
         lastSeenTimestamp = Instant.now();
     }

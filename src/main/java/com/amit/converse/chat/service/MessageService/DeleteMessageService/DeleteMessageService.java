@@ -32,7 +32,7 @@ public class DeleteMessageService {
     }
 
     public void deleteMessagesForUserFromTillNow(IChatRoom chatRoom, Instant from, String userId) {
-        List<ChatMessage> messages = messageRepository.findMessagesOfChatForUser(chatRoom.getId(), userId, from);
+        List<ChatMessage> messages = messageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(), userId, from);
         List<ChatMessage> messagesToSave = new ArrayList<>();
         for (ChatMessage message : messages) deleteMessageForUser(chatRoom,userId,message,messagesToSave);
         saveDeletedMessages(messagesToSave);

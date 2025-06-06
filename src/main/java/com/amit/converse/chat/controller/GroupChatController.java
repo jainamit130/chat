@@ -62,15 +62,15 @@ public class GroupChatController {
 * create direct chat => done
 * create group chat => done
 * send message => done
-* add member
-* remove member
-* exit group
-* get Group Details
-* get message details
+* add member => done
+* remove member => on going
+* exit group => on going
+* get Group Details => pending
+* get message details => done
 * det user details
-* clear chat
-* delete chat
-* delete message
+* clear chat => done
+* delete chat => done
+* delete message =>done
 *
 *
 *

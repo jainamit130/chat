@@ -68,6 +68,17 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 SecurityContextUtil.ensureContextFromPrincipal(authToken);
                 User user = (User) authToken.getPrincipal();
 
+                if(StompCommand.SUBSCRIBE.equals(accessor.getCommand())) {
+                    String destination = accessor.getFirstNativeHeader("destination");
+                    if(destination!=null && destination.startsWith("/topic/chat")) {
+                        String chatRoomId = (destination.substring(destination.lastIndexOf('/')+1));
+                        if(user!=null && user.isExited(chatRoomId)) {
+                            System.out.println("Blocked subscription to exited chatRoomId: " + chatRoomId);
+                            return null;
+                        }
+                    }
+                }
+
                 if(StompCommand.DISCONNECT.equals(accessor.getCommand())) {
                     String userId = user.getUserId();
                     User freshUser = userDetailsService.loadUserByUserId(userId);
@@ -77,7 +88,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 }
 
                 if(user.isOffline()) UserService.getUserContext().transit();
-                handleSetChatRoom(accessor);
+//                handleSetChatRoom(accessor);
                 return message;
             }
 

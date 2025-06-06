@@ -16,15 +16,14 @@ import java.util.List;
 public class JoinService {
     private final GroupChatService groupChatService;
     private final GroupChatUserService groupChatUserService;
-    private final NotifyGroupJoinService joinNotificationService;
+    private final ChatConnectService chatConnectService;
 
     public void join(List<String> userIds) {
         GroupChat groupChat = groupChatService.getContextChatRoom();
         List<User> users = groupChatUserService.getUsersFromRepo(userIds);
         groupChatService.joinChatRoom(userIds,groupChat);
-        groupChatUserService.connectChat(users,groupChat);
-        joinNotificationService.notifyGroup(users);
-        groupChatUserService.connectChatFromUserIds(new ArrayList<>(groupChat.getDeletedForUsers()),groupChat);
+        chatConnectService.processChatConnections(users,groupChat);
+        chatConnectService.connectChatFromUserIds(new ArrayList<>(groupChat.getDeletedForUsers()),groupChat);
     }
 
 }

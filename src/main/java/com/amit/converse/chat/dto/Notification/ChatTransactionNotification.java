@@ -6,7 +6,7 @@ import java.util.List;
 
 @Builder
 public class ChatTransactionNotification extends IChatNotification {
-    private List<String> notifications;
+    private List<TransactionNotification> notifications;
 
     @Override
     public NotificationType getNotificationType() {

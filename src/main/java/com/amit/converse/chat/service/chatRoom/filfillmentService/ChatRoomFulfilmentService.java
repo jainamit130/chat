@@ -14,14 +14,14 @@ public abstract class ChatRoomFulfilmentService {
     private ChatMessageService<ChatRoom> chatMessageService;
 
     @Autowired
-    private UserChatService userChatService;
+    protected UserChatService userChatService;
 
     // Latest Message
     public void fillLatestMessage(ChatRoom chatRoom) {
         chatRoom.setLatestMessage(chatMessageService.getLatestMessage(chatRoom));
     }
 
-    private void fillUnreadMessageCount(ChatRoom chatRoom) {
+    protected void fillUnreadMessageCount(ChatRoom chatRoom) {
         chatRoom.setUnreadMessageCount(userChatService.getUnreadMessageCount(chatRoom));
     }
 

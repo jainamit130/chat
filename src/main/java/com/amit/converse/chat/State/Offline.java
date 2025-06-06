@@ -3,6 +3,7 @@ package com.amit.converse.chat.State;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageProcessor.DeliveryProcessingService;
+import com.amit.converse.chat.service.MessageProcessor.MarkingContext;
 import com.amit.converse.chat.service.Redis.Factory.RedisSessionTransitionFactory;
 import com.amit.converse.chat.service.Redis.RedisReadService;
 import com.amit.converse.chat.service.User.UserService;
@@ -23,7 +24,7 @@ public class Offline extends State {
     public void transit() {
         userService.transit(user);
         user.setState(new Online(user,userService,redisReadService,deliveryProcessingService,redisSessionTransitionFactory));
-        deliveryProcessingService.deliver(user);
+        deliveryProcessingService.deliver(user,new MarkingContext());
     }
 
 }

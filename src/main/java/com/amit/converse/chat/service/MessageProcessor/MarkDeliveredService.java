@@ -2,7 +2,6 @@ package com.amit.converse.chat.service.MessageProcessor;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.dto.Notification.MessageDeliveredNotification;
-import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
@@ -33,9 +32,9 @@ public class MarkDeliveredService extends MarkService {
     }
 
     @Override
-    public List<String> getActiveUserIds(IChatRoom chatRoom) {
-        setOnlineUserIds(new ArrayList<>(redisReadService.filterOnlineUsers(chatRoom)));
-        return getOnlineUserIds();
+    public List<String> getActiveUserIds(IChatRoom chatRoom, MarkingContext context) {
+        context.setOnlineUserIds(new ArrayList<>(redisReadService.filterOnlineUsers(chatRoom)));
+        return context.getOnlineUserIds();
     }
 
     @Override

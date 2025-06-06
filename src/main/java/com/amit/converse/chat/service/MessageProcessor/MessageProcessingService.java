@@ -2,6 +2,7 @@ package com.amit.converse.chat.service.MessageProcessor;
 
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
+import com.amit.converse.chat.service.ChatConnectService;
 import com.amit.converse.chat.service.User.UserChatService;
 import com.amit.converse.chat.service.chatRoom.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +28,18 @@ public class MessageProcessingService {
     @Autowired
     private ReadProcessingService readProcessingService;
 
+    @Autowired
+    private ChatConnectService chatConnectService;
+
     public final void process(ChatMessage message) {
-        deliveryProcessingService.deliver(message);
-        readProcessingService.read(message);
+        MarkingContext markingContext = new MarkingContext();
+        deliveryProcessingService.deliver(message,markingContext);
+        readProcessingService.read(message,markingContext);
     }
 
     public void processMessage(ChatRoom chatRoom, ChatMessage message) {
         chatService.processSentMessage();
         process(message);
-        userChatService.connectChatFromUserIds(new ArrayList<>(chatRoom.getDeletedForUsers()),chatRoom);
+        chatConnectService.connectChatFromUserIds(new ArrayList<>(chatRoom.getDeletedForUsers()),chatRoom);
     }
 }

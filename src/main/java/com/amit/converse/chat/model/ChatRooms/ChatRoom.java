@@ -85,10 +85,6 @@ public abstract class ChatRoom implements IChatRoom {
         this.userIds = new ArrayList<>(userIdsSet);
     }
 
-    private void addUserId(String userId) {
-        this.userIds.add(userId);
-    }
-
     public void setName(String name) {
         this.chatRoomName = name;
     }
@@ -122,7 +118,14 @@ public abstract class ChatRoom implements IChatRoom {
 
     @Override
     public void connectChat(String userId) {
-        addUserId(userId);
+        this.userIds.add(userId);
+        setUserIds(this.userIds);
+        deletedForUsers.remove(userId);
+    }
+
+    @Override
+    public void disconnectChat(String userId) {
+        this.userIds.remove(userId);
         setUserIds(this.userIds);
         deletedForUsers.remove(userId);
     }

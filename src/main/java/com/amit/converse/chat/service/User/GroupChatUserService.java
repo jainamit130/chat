@@ -5,6 +5,7 @@ import com.amit.converse.chat.dto.UserDTO;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.ChatConnectService;
 import com.amit.converse.chat.service.chatRoom.GroupChatService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +21,6 @@ public class GroupChatUserService extends UserChatService<GroupChat> {
 
     @Autowired
     private GroupChatService groupChatService;
-
-    public void exit(List<User> users) {
-        disconnectChat(users,chatService.getContextChatRoom());
-        processUsersToDB(users);
-    }
 
     public GroupDetails getGroupDetails() {
         GroupChat chatRoom = chatService.getContextChatRoom();

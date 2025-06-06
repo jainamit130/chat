@@ -19,20 +19,18 @@ public class ReadProcessingService implements IReadProcessor {
     private MarkReadService markReadService;
 
     @Override
-    public void read(User user) {
+    public void read(User user,MarkingContext context) {
         // all unread messages in the chatRoom must be marked read
         IChatRoom chatRoom = chatService.getContextChatRoom();
-        markReadService.mark(chatRoom,user);
-        markReadService.saveAllMarkedMessages();
+        markReadService.mark(chatRoom,user,context);
+        markReadService.saveAllMarkedMessages(context);
         chatService.readMessages(user);
-        markReadService.clearMarkService();
     }
 
     @Override
-    public void read(ChatMessage message) {
+    public void read(ChatMessage message, MarkingContext context) {
         IChatRoom chatRoom = chatService.getChatRoomById(message.getChatRoomId());
-        markReadService.mark(chatRoom,message);
-        markReadService.saveAllMarkedMessages();
-        markReadService.clearMarkService();
+        markReadService.mark(chatRoom,message,context);
+        markReadService.saveAllMarkedMessages(context);
     }
 }

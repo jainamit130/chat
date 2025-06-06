@@ -15,16 +15,10 @@ public abstract class MarkService {
 
     protected RedisReadService redisReadService;
     protected ChatMessageService chatMessageService;
-    private Map<String,List<String>> senderSpecificMessageIds;
-    private List<ChatMessage> markedMessages;
-    private List<String> onlineUserIds;
 
     public MarkService(RedisReadService redisReadService, ChatMessageService chatMessageService) {
         this.redisReadService = redisReadService;
         this.chatMessageService = chatMessageService;
-        this.senderSpecificMessageIds = new HashMap<>();
-        this.markedMessages = new ArrayList<>();
-        this.onlineUserIds = new ArrayList<>();
     }
 
     private void sendMessageMarkedNotificationToSender(IChatRoom chatRoom, String senderId, List<String> messageIds) {
@@ -38,61 +32,49 @@ public abstract class MarkService {
         }
     }
 
-    private void collectToNotifyMessageToSender(ChatMessage message) {
+    private void collectToNotifyMessageToSender(ChatMessage message, Map<String, List<String>> senderSpecificMessageIds) {
         List<String> senderMessageIds = senderSpecificMessageIds.getOrDefault(message.getSenderId(),new ArrayList<>());
         senderMessageIds.add(message.getId());
         senderSpecificMessageIds.put(message.getSenderId(),senderMessageIds);
         processMessage(message);
     }
 
-    private void markMessages(List<ChatMessage> messages, Instant markTimestamp, String userId, Integer memberCount) {
-        messages.stream().forEach(message -> {
-            Integer markedUsersCount = markMessage(message,markTimestamp, userId);
-            if(memberCount.equals(markedUsersCount)) collectToNotifyMessageToSender(message);
-        });
-        return;
+    private void markMessages(List<ChatMessage> messages, Instant markTimestamp, String userId,
+                              Integer memberCount, Map<String, List<String>> senderSpecificMessageIds) {
+        for (ChatMessage message : messages) {
+            Integer markedUsersCount = markMessage(message, markTimestamp, userId);
+            if (memberCount.equals(markedUsersCount)) {
+                collectToNotifyMessageToSender(message, senderSpecificMessageIds);
+            }
+        }
     }
 
-    protected List<String> getOnlineUserIds() {
-        return Collections.unmodifiableList(onlineUserIds);
-    }
-
-    protected void setOnlineUserIds(List<String> onlineUserIds) {
-        this.onlineUserIds = onlineUserIds;
-    }
-
-    protected void mark(IChatRoom chatRoom, User user) {
+    protected void mark(IChatRoom chatRoom, User user, MarkingContext context) {
         Instant lastVisitedTimestamp = getLastVisitedTimestamp(chatRoom,user);
         List<ChatMessage> toBeMarkedChatRoomMessages = chatMessageService.getMessagesToBeMarked(chatRoom,user,lastVisitedTimestamp);
-        markMessages(toBeMarkedChatRoomMessages,Instant.now(),user.getUserId(),chatRoom.getMemberCount());
-        markedMessages.addAll(toBeMarkedChatRoomMessages);
-        sendSenderSpecificMessageMarkedNotification(chatRoom,senderSpecificMessageIds);
+        markMessages(toBeMarkedChatRoomMessages,Instant.now(),user.getUserId(),chatRoom.getMemberCount(),context.getSenderSpecificMessageIds());
+        context.getMarkedMessages().addAll(toBeMarkedChatRoomMessages);
+        sendSenderSpecificMessageMarkedNotification(chatRoom,context.getSenderSpecificMessageIds());
     }
 
-    protected void mark(IChatRoom chatRoom,ChatMessage message) {
+    protected void mark(IChatRoom chatRoom,ChatMessage message, MarkingContext context) {
         // Online UserIds for MarkDeliveredService or Online and ChatActive UserIds for MarkReadService
-        List<String> activeUserIds = getActiveUserIds(chatRoom);
+        List<String> activeUserIds = getActiveUserIds(chatRoom, context);
         Instant markTimestamp = Instant.now();
         for(String onlineUserId:activeUserIds) {
-            markMessages(Collections.singletonList(message),markTimestamp,onlineUserId,chatRoom.getMemberCount());
+            markMessages(Collections.singletonList(message),markTimestamp,onlineUserId,chatRoom.getMemberCount(),context.getSenderSpecificMessageIds());
         }
-        markedMessages.add(message);
-        sendSenderSpecificMessageMarkedNotification(chatRoom,senderSpecificMessageIds);
+        context.getMarkedMessages().add(message);
+        sendSenderSpecificMessageMarkedNotification(chatRoom,context.getSenderSpecificMessageIds());
     }
 
-    protected void saveAllMarkedMessages() {
-        chatMessageService.saveMessages(markedMessages);
+    protected void saveAllMarkedMessages(MarkingContext context) {
+        chatMessageService.saveMessages(context.getMarkedMessages());
     }
 
     public abstract Integer markMessage(ChatMessage message, Instant timestamp,String userId);
-    public abstract List<String> getActiveUserIds(IChatRoom chatRoom);
+    public abstract List<String> getActiveUserIds(IChatRoom chatRoom, MarkingContext context);
     public abstract void processMessage(ChatMessage message);
     public abstract void sendMessageMarkedNotification(String chatRoomId, String senderId, List<String> messageIds);
     public abstract Instant getLastVisitedTimestamp(IChatRoom chatRoom,User user);
-
-    public void clearMarkService() {
-        this.senderSpecificMessageIds = new HashMap<>();
-        this.markedMessages = new ArrayList<>();
-        this.onlineUserIds = new ArrayList<>();
-    }
 }

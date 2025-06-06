@@ -26,6 +26,7 @@ public interface IChatRoom {
     Instant getCreatedAt();
     Set<String> getDeletedForUsers();
     void connectChat(String userId);
+    void disconnectChat(String userId);
     void clearChat(String userId);
     void deleteChat(String userId);
     IOnlineUsersDTO transit();

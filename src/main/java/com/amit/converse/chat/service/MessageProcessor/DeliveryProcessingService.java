@@ -22,22 +22,20 @@ public class DeliveryProcessingService implements IDeliveryProcessor {
     private MarkDeliveredService markDeliveredService;
 
     @Override
-    public void deliver(User user) {
+    public void deliver(User user, MarkingContext context) {
         // all undelivered messages in all chatRooms must be marked delivered
         List<IChatRoom> chatRooms = chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()), user.getUserId());
         for(IChatRoom chatRoom:chatRooms) {
-            markDeliveredService.mark(chatRoom,user);
+            markDeliveredService.mark(chatRoom,user,context);
         }
-        markDeliveredService.saveAllMarkedMessages();
-        markDeliveredService.clearMarkService();
+        markDeliveredService.saveAllMarkedMessages(context);
     }
 
     @Override
-    public void deliver(ChatMessage message) {
+    public void deliver(ChatMessage message, MarkingContext context) {
         IChatRoom chatRoom = chatService.getChatRoomById(message.getChatRoomId());
-        markDeliveredService.mark(chatRoom,message);
-        markDeliveredService.saveAllMarkedMessages();
-        markDeliveredService.clearMarkService();
+        markDeliveredService.mark(chatRoom,message,context);
+        markDeliveredService.saveAllMarkedMessages(context);
     }
 
 }

@@ -14,4 +14,5 @@ public interface IChatRoomRepository extends MongoRepository<ChatRoom, String> {
             "{ $match: { '_id': { $in: ?0 }, 'deletedForUsers': { $nin: [?1] } } }"
     })
     List<ChatRoom> getAllChatRoomsByIds(List<String> chatRoomIds, String userId);
+
 }

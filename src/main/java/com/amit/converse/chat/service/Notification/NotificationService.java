@@ -1,7 +1,6 @@
 package com.amit.converse.chat.service.Notification;
 
 import com.amit.converse.chat.dto.Notification.INotification;
-import com.amit.converse.chat.dto.Notification.IUserNotification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
