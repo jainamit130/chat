@@ -1,7 +1,10 @@
 package com.amit.converse.chat.model.ChatRooms;
 
 import com.amit.converse.chat.Interface.ITransactable;
+import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDTO;
+import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
+import com.amit.converse.chat.model.User;
 import lombok.*;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
@@ -23,7 +26,6 @@ public class GroupChat extends ChatRoom implements ITransactable {
         this.name = name;
         this.adminUserIds = Collections.singletonList(adminUserId);
         this.createdBy=adminUserId;
-        this.isExited = false;
         this.exitedMembers = new HashMap<>();
         this.blindPeriod = new HashMap<>();
     }
@@ -34,7 +36,6 @@ public class GroupChat extends ChatRoom implements ITransactable {
         this.name = name;
         this.adminUserIds = adminUserIds;
         this.createdBy=createdBy;
-        this.isExited = false;
         this.exitedMembers = new HashMap<>();
         this.blindPeriod = new HashMap<>();
     }
@@ -94,6 +95,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
                 if(!exitedMembers.containsKey(userId))
                     exitedMembers.put(userId,Instant.now());
         });
+        this.isExited = true;
     }
 
     private void unExit(List<String> userIds) {
@@ -108,4 +110,9 @@ public class GroupChat extends ChatRoom implements ITransactable {
         }
     }
 
+    @Override
+    public IOnlineUsersDTO transit() {
+        if(isExited) return new GroupChatOnlineUsersDTO();
+        return super.transit();
+    }
 }

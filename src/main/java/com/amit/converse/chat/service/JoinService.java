@@ -3,7 +3,6 @@ package com.amit.converse.chat.service;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.chatRoom.GroupChatService;
-import com.amit.converse.chat.service.Notification.NotifyGroupJoinService;
 import com.amit.converse.chat.service.User.GroupChatUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ public class JoinService {
         GroupChat groupChat = groupChatService.getContextChatRoom();
         List<User> users = groupChatUserService.getUsersFromRepo(userIds);
         groupChatService.joinChatRoom(userIds,groupChat);
-        chatConnectService.processChatConnections(users,groupChat);
+        chatConnectService.processChatConnectionsAndNotify(users,groupChat);
         chatConnectService.connectChatFromUserIds(new ArrayList<>(groupChat.getDeletedForUsers()),groupChat);
     }
 

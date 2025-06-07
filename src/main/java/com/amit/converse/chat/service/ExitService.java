@@ -4,7 +4,6 @@ import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.UserService;
 import com.amit.converse.chat.service.chatRoom.GroupChatService;
-import com.amit.converse.chat.service.Notification.NotifyGroupExitService;
 import com.amit.converse.chat.service.User.GroupChatUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,7 +29,7 @@ public class ExitService {
         GroupChat groupChat = groupChatService.getContextChatRoom();
         List<User> users = groupChatUserService.getUsersFromRepo(userIds);
         chatDisconnectService.connectChatFromUserIds(new ArrayList<>(groupChat.getDeletedForUsers()),groupChat);
-        chatDisconnectService.processChatConnections(users,groupChat);
         groupChatService.exitChatRoom(userIds);
+        chatDisconnectService.processChatConnectionsAndNotify(users,groupChat);
     }
 }

@@ -20,20 +20,27 @@ public abstract class ChatConnectionService {
 
     private void processChatConnectionAndNotify(User user, ChatRoom chatRoom,TransactionNotification transactionNotification) {
         processChatConnection(user,chatRoom);
-        sendNotificationToUser(user.getUserId(),chatRoom,transactionNotification);
+        sendNotificationToUser(user,chatRoom,transactionNotification);
     }
 
-    protected abstract void sendNotificationToUser(String userId, ChatRoom newChatRoom,TransactionNotification transactionNotification);
+    protected abstract void sendNotificationToUser(User user, ChatRoom newChatRoom,TransactionNotification transactionNotification);
 
     protected abstract void processChatConnection(User user, ChatRoom chatRoom);
 
-    public void processChatConnections(List<User> users, ChatRoom chatRoom) {
+    public void processChatConnectionsAndNotify(List<User> users, ChatRoom chatRoom) {
         List<TransactionNotification> joinNotifications = new ArrayList<>();
         for(User user:users) {
             joinNotifications.add(notifyGroupTransactionService.generateMessage(user));
             processChatConnectionAndNotify(user,chatRoom,joinNotifications.getLast());
         }
         notifyGroupTransactionService.notifyGroup(chatRoom,joinNotifications);
+        userChatService.processUsersAndChatRoomToDB(users,chatRoom);
+    }
+
+    public void processChatConnections(List<User> users, ChatRoom chatRoom) {
+        for(User user:users) {
+            processChatConnectionAndNotify(user,chatRoom,null);
+        }
         userChatService.processUsersAndChatRoomToDB(users,chatRoom);
     }
 

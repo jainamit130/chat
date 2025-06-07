@@ -2,6 +2,7 @@ package com.amit.converse.chat.model.Messages;
 
 import com.amit.converse.chat.model.MetaData.NotificationMessageMetaData;
 import lombok.*;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -16,6 +17,9 @@ import java.time.Instant;
 public class NotificationMessage extends Message {
 
     private NotificationMessageMetaData messageMetaData;
+
+    @Transient
+    private String __typename = "NotificationMessage";
 
     public NotificationMessage() {
         super("There are no messages");

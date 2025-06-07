@@ -4,6 +4,7 @@ import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Messages.Message;
+import com.amit.converse.chat.model.User;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -29,6 +30,6 @@ public interface IChatRoom {
     void disconnectChat(String userId);
     void clearChat(String userId);
     void deleteChat(String userId);
-    IOnlineUsersDTO transit();
     List<String> getAllUserIds();
+    IOnlineUsersDTO transit();
 }

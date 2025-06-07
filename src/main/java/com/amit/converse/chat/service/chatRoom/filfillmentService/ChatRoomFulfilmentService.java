@@ -29,11 +29,16 @@ public abstract class ChatRoomFulfilmentService {
 
     public abstract void fillName(ChatRoom chatRoom);
 
+
     public final void fulfill(ChatRoom chatRoom) {
+        fillIsExited(chatRoom);
         fillTransitionService(chatRoom);
         fillLatestMessage(chatRoom);
         fillUnreadMessageCount(chatRoom);
         fillName(chatRoom);
+    }
+
+    protected void fillIsExited(ChatRoom chatRoom) {
     }
 
 }

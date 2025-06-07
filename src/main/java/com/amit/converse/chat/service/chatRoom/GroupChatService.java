@@ -24,13 +24,11 @@ public class GroupChatService extends ChatService<GroupChat> {
 
     public void joinChatRoom(List<String> userIds, GroupChat groupChat) {
         groupChat.join(userIds);
-        processChatRoomToDB(groupChat);
     }
 
     public void exitChatRoom(List<String> userIds) {
         GroupChat groupChat = (GroupChat) ChatContext.getChatRoom();
         groupChat.exit(userIds);
-        processChatRoomToDB(groupChat);
     }
 
     @Override

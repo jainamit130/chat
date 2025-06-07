@@ -3,7 +3,6 @@ package com.amit.converse.chat.model.ChatRooms;
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.Redis.ChatRoomRedisTransitionService;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
-import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
 import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.service.chatRoom.filfillmentService.ChatRoomFulfilmentService;
@@ -168,6 +167,10 @@ public abstract class ChatRoom implements IChatRoom {
     @Override
     public IOnlineUsersDTO transit() {
         return chatRoomRedisTransitionService.transitAndGetOnlineUsers();
+    }
+
+    public Boolean isDeletedForUser(String userId) {
+        return deletedForUsers.contains(userId);
     }
 
 }

@@ -17,8 +17,8 @@ public class ChatDisconnectService extends ChatConnectionService {
         this.notifyGroupTransactionService = notifyService;
     }
 
-    protected void sendNotificationToUser(String userId, ChatRoom exitedChatRoom, TransactionNotification transactionNotification) {
-        userChatService.sendNotificationToUser(userId,exitedChatRoom,new ExitedChatNotification(exitedChatRoom,transactionNotification));
+    protected void sendNotificationToUser(User user, ChatRoom exitedChatRoom, TransactionNotification transactionNotification) {
+        userChatService.sendNotificationToUser(user,exitedChatRoom,new ExitedChatNotification(exitedChatRoom,transactionNotification));
     }
 
     protected void processChatConnection(User user, ChatRoom chatRoom) {

@@ -5,6 +5,7 @@ type ChatRoom {
     chatRoomType: ChatRoomType!
     unreadMessageCount: Int!
     latestMessage: Message!
+    isExited: Boolean
 }
 
 type ChatMessage {

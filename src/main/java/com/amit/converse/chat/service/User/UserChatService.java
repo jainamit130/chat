@@ -26,9 +26,9 @@ public class UserChatService<T extends ChatRoom> {
     @Autowired
     private UserNotificationService userNotificationService;
 
-    public void sendNotificationToUser(String userId, ChatRoom chatRoom,IUserNotification notification) {
+    public void sendNotificationToUser(User user, ChatRoom chatRoom,IUserNotification notification) {
         chatService.transit(chatRoom);
-        userNotificationService.sendNotification(userId,notification);
+        userNotificationService.sendNotification(user.getUserId(),notification);
     }
 
     public IOnlineUsersDTO getOnlineUsersDTO(List<String> onlineUserIdsOfChat) {
