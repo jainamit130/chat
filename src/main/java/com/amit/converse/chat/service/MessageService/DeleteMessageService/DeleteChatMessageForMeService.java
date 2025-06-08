@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class DeleteMessageForMeService extends DeleteMessageService {
+public class DeleteChatMessageForMeService extends DeleteChatMessageService {
 
     public void deleteMessageForMe(List<String> messageIds) {
         List<ChatMessage> messages = messageRepository.findAllById(messageIds);
         String userId = UserService.getUserContext().getUserId();
         IChatRoom chatRoom = ChatContext.getChatRoom();
         List<ChatMessage> messagesToSave = new ArrayList<>();
-        for(ChatMessage message: messages) deleteMessageForUser(chatRoom,userId,message,messagesToSave);
+        for(ChatMessage message: messages) deleteMessageForUser(chatRoom,userId,message,new ArrayList<>(messagesToSave));
         saveDeletedMessages(messagesToSave);
     }
 }

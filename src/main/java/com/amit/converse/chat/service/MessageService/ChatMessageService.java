@@ -67,13 +67,13 @@ public class ChatMessageService<T extends IChatRoom> {
         chatMessageRepository.saveAll(messages);
     }
 
-    public List<Message> getMessagesToBeMarked(IChatRoom chatRoom) {
+    public List<Message> getMessagesOfChatRoom(IChatRoom chatRoom) {
         User user = UserService.getUserContext();
         Instant fromInstant = chatRoom.getUserFetchStartTime(user.getUserId());
         return messageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
     }
 
-    public List<ChatMessage> getMessagesToBeMarked(IChatRoom chatRoom, User user, Instant fromInstant) {
+    public List<ChatMessage> getMessagesOfChatRoom(IChatRoom chatRoom, User user, Instant fromInstant) {
         return chatMessageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
     }
 

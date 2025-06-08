@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class DeleteMessageForEveryoneService extends DeleteMessageService {
+public class DeleteChatMessageForEveryoneService extends DeleteChatMessageService {
 
     @Value("${messageValidTimeDiffForDeletingForEveryone}")
     private int thresholdTimeDiff;

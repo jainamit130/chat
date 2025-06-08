@@ -32,4 +32,8 @@ public abstract class Message {
     public abstract Integer readMessage(Instant timestamp,String userId);
 
     public abstract Integer deliverMessage(Instant timestamp,String userId);
+
+    public abstract void deleteMessage(String userId);
+
+    public abstract Integer getDeletedForMembersCount();
 }

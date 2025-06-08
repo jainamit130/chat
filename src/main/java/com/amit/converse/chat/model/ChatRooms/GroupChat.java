@@ -4,7 +4,6 @@ import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDTO;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
-import com.amit.converse.chat.model.User;
 import lombok.*;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
@@ -27,7 +26,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
         this.adminUserIds = Collections.singletonList(adminUserId);
         this.createdBy=adminUserId;
         this.exitedMembers = new HashMap<>();
-        this.blindPeriod = new HashMap<>();
+        this.blindPeriods = new HashMap<>();
     }
 
     @PersistenceCreator
@@ -37,7 +36,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
         this.adminUserIds = adminUserIds;
         this.createdBy=createdBy;
         this.exitedMembers = new HashMap<>();
-        this.blindPeriod = new HashMap<>();
+        this.blindPeriods = new HashMap<>();
     }
 
     private final String name;
@@ -48,7 +47,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
     @Transient
     private Boolean isExited;
     private Map<String,Instant> exitedMembers;
-    private Map<String,Instant> blindPeriod;
+    private Map<String,List<BlindPeriod>> blindPeriods;
 
     @Override
     public Integer getExitedMemberCount() {
@@ -61,9 +60,9 @@ public class GroupChat extends ChatRoom implements ITransactable {
     }
 
     public void clearBlindPeriod(String userId) {
-        Map<String,Instant> blindPeriod = getBlindPeriod();
+        Map<String,List<BlindPeriod>> blindPeriod = this.getBlindPeriods();
         blindPeriod.remove(userId);
-        setBlindPeriod(blindPeriod);
+        setBlindPeriods(blindPeriod);
     }
 
     @Override
@@ -99,7 +98,12 @@ public class GroupChat extends ChatRoom implements ITransactable {
     }
 
     private void unExit(List<String> userIds) {
-        userIds.forEach(exitedMembers::remove);
+        userIds.forEach((userId) -> {
+            List<BlindPeriod> blindPeriods = getBlindPeriods().getOrDefault(userId,new ArrayList<>());
+            blindPeriods.add(new BlindPeriod(exitedMembers.get(userId),Instant.now()));
+            this.blindPeriods.put(userId,blindPeriods);
+            exitedMembers.remove(userId);
+        });
     }
 
     @Override

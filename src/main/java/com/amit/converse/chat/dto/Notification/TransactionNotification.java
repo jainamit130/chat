@@ -1,5 +1,7 @@
 package com.amit.converse.chat.dto.Notification;
 
+import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
+import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.Messages.NotificationMessage;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,5 +17,7 @@ public class TransactionNotification {
     String username;
     String moderatorName;
     String id;
+    ConnectionStatus onlineStatus;
+    IOnlineUsersDTO onlineUsersDTO;
     NotificationType type;
 }

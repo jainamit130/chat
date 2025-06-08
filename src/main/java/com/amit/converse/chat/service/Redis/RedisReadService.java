@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.Redis;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Redis.Interface.IRedisReadService;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,11 @@ public class RedisReadService implements IRedisReadService {
 
     public Boolean isUserInChatRoom(IChatRoom chatRoom, User user) {
         return redisChatRoomService.isKeyExisting(chatRoom,user);
+    }
+
+    public ConnectionStatus getConnectionStatus(User user) {
+        if(isUserOnline(user)) return ConnectionStatus.ACTIVE;
+        return ConnectionStatus.INACTIVE;
     }
 
     public Boolean isUserOnline(User user) {

@@ -35,4 +35,13 @@ public class NotificationMessage extends Message {
     public Integer deliverMessage(Instant timestamp, String userId) {
         return 0;
     }
+
+    public void deleteMessage(String userId) {
+        messageMetaData.addUserToDeletedForUsers(userId);
+    }
+
+    @Override
+    public Integer getDeletedForMembersCount() {
+        return messageMetaData.getDeletedForUsersCount();
+    }
 }

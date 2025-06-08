@@ -1,6 +1,7 @@
 package com.amit.converse.chat.Interface;
 
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
+import com.amit.converse.chat.model.Enums.ChatRoomType;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Messages.Message;
@@ -16,6 +17,7 @@ public interface IChatRoom {
     List<String> getUserIds();
     Integer getMemberCount();
     Integer getTotalMemberCount();
+    ChatRoomType getChatRoomType();
     Boolean isDeletable();
     String getId();
     void setLatestMessage(Message message);

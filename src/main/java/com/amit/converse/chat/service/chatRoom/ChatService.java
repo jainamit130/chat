@@ -5,10 +5,11 @@ import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
-import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
+import com.amit.converse.chat.service.User.UserService;
+import com.amit.converse.chat.service.chatRoom.MessageFilters.MessageFilterFactory;
 import com.amit.converse.chat.service.chatRoom.filfillmentService.factory.ChatRoomFulfilmentServiceFactory;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.ClearChatService;
@@ -33,6 +34,8 @@ public class ChatService<T extends ChatRoom> {
     private ChatRoomFulfilmentServiceFactory chatRoomFulfilmentServiceFactory;
     @Autowired
     private RedisReadService redisReadService;
+    @Autowired
+    private MessageFilterFactory messageFilterFactory;
 
     public T getContextChatRoom(String chatRoomId) {
         T chatRoom = (T) ChatContext.getChatRoom();
@@ -100,7 +103,7 @@ public class ChatService<T extends ChatRoom> {
     }
 
     public List<Message> getMessagesOfChatRoom() {
-        return chatMessageService.getMessagesToBeMarked(ChatContext.getChatRoom());
+        return messageFilterFactory.getBlindPeriodFilter(ChatContext.getChatRoom().getChatRoomType()).filterBlindSpots((ChatRoom) ChatContext.getChatRoom(), UserService.getUserContext(),chatMessageService.getMessagesOfChatRoom(ChatContext.getChatRoom()));
     }
 
     public void processSentMessage() {

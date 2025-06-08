@@ -3,14 +3,12 @@ package com.amit.converse.chat.controller;
 import com.amit.converse.chat.config.util.SecurityContextUtil;
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.model.Messages.ChatMessage;
-import com.amit.converse.chat.model.User;
-import com.amit.converse.chat.service.User.UserService;
 import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.amit.converse.chat.service.MessageService.ChatMessageServiceFactory;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.ClearChatService;
 import com.amit.converse.chat.service.DeleteChatService;
-import com.amit.converse.chat.service.MessageService.DeleteMessageService.DeleteMessageForEveryoneService;
-import com.amit.converse.chat.service.MessageService.DeleteMessageService.DeleteMessageForMeService;
+import com.amit.converse.chat.service.MessageService.DeleteMessageService.DeleteChatMessageForEveryoneService;
+import com.amit.converse.chat.service.MessageService.DeleteMessageService.DeleteChatMessageForMeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
@@ -30,8 +28,8 @@ import java.util.List;
 public class ChatController {
     private final ClearChatService clearChatService;
     private final DeleteChatService deleteChatService;
-    private final DeleteMessageForMeService deleteMessageForMeService;
-    private final DeleteMessageForEveryoneService deleteMessageForEveryoneService;
+    private final DeleteChatMessageForMeService deleteMessageForMeService;
+    private final DeleteChatMessageForEveryoneService deleteMessageForEveryoneService;
     private final ChatService chatService;
     private final ChatMessageServiceFactory chatMessageServiceFactory;
 

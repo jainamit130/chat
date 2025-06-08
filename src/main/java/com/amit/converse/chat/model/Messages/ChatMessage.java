@@ -2,12 +2,7 @@ package com.amit.converse.chat.model.Messages;
 
 import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.MetaData.ChatMessageMetaData;
-import com.amit.converse.chat.model.MetaData.IChatMessageMetaData;
-import com.amit.converse.chat.model.MetaData.MessageMetaData;
-import jakarta.annotation.PostConstruct;
-import jakarta.persistence.PostLoad;
 import lombok.*;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -87,6 +82,7 @@ public class ChatMessage extends Message implements IDeletableMessage {
         messageMetaData.addUserToDeletedForUsers(userId);
     }
 
+    @Override
     public Integer getDeletedForMembersCount() {
         return messageMetaData.getDeletedForUsersCount();
     }

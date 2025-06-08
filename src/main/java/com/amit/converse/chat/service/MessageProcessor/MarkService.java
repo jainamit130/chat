@@ -51,7 +51,7 @@ public abstract class MarkService {
 
     protected void mark(IChatRoom chatRoom, User user, MarkingContext context) {
         Instant lastVisitedTimestamp = getLastVisitedTimestamp(chatRoom,user);
-        List<ChatMessage> toBeMarkedChatRoomMessages = chatMessageService.getMessagesToBeMarked(chatRoom,user,lastVisitedTimestamp);
+        List<ChatMessage> toBeMarkedChatRoomMessages = chatMessageService.getMessagesOfChatRoom(chatRoom,user,lastVisitedTimestamp);
         markMessages(toBeMarkedChatRoomMessages,Instant.now(),user.getUserId(),chatRoom.getMemberCount(),context.getSenderSpecificMessageIds());
         context.getMarkedMessages().addAll(toBeMarkedChatRoomMessages);
         sendSenderSpecificMessageMarkedNotification(chatRoom,context.getSenderSpecificMessageIds());

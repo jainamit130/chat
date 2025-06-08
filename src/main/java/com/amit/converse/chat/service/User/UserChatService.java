@@ -3,6 +3,7 @@ package com.amit.converse.chat.service.User;
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.config.util.SecurityContextUtil;
 import com.amit.converse.chat.dto.Notification.IUserNotification;
+import com.amit.converse.chat.dto.Notification.UserChatNotification;
 import com.amit.converse.chat.dto.Notification.UserStatusNotification;
 import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDTO;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
@@ -26,8 +27,8 @@ public class UserChatService<T extends ChatRoom> {
     @Autowired
     private UserNotificationService userNotificationService;
 
-    public void sendNotificationToUser(User user, ChatRoom chatRoom,IUserNotification notification) {
-        chatService.transit(chatRoom);
+    public void sendNotificationToUser(User user, ChatRoom chatRoom, UserChatNotification notification) {
+        notification.populateOnlineUsersDTOInTransactionNotification(chatService.transit(chatRoom));
         userNotificationService.sendNotification(user.getUserId(),notification);
     }
 

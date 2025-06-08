@@ -1,8 +1,8 @@
 package com.amit.converse.chat.service.MessageService.DeleteMessageService;
 
 import com.amit.converse.chat.Interface.IChatRoom;
-import com.amit.converse.chat.model.Messages.ChatMessage;
-import com.amit.converse.chat.repository.Message.IChatMessageRepository;
+import com.amit.converse.chat.model.Messages.Message;
+import com.amit.converse.chat.repository.Message.IMessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +14,15 @@ import java.util.List;
 public class DeleteMessageService {
 
     @Autowired
-    protected IChatMessageRepository messageRepository;
+    protected IMessageRepository messageRepository;
 
-    protected void deleteMessageForUser(IChatRoom chatRoom, String userId, ChatMessage message, List<ChatMessage> messagesToSave) {
+    private void saveDeletedMessages(List<Message> messagesToSave) {
+        if (!messagesToSave.isEmpty()) {
+            messageRepository.saveAll(messagesToSave);
+        }
+    }
+
+    protected void deleteMessageForUser(IChatRoom chatRoom, String userId, Message message, List<Message> messagesToSave) {
         message.deleteMessage(userId);
         if (message.getDeletedForMembersCount() == chatRoom.getTotalMemberCount()) {
             messageRepository.deleteById(message.getId());
@@ -25,16 +31,10 @@ public class DeleteMessageService {
         }
     }
 
-    protected void saveDeletedMessages(List<ChatMessage> messagesToSave) {
-        if (!messagesToSave.isEmpty()) {
-            messageRepository.saveAll(messagesToSave);
-        }
-    }
-
     public void deleteMessagesForUserFromTillNow(IChatRoom chatRoom, Instant from, String userId) {
-        List<ChatMessage> messages = messageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(), userId, from);
-        List<ChatMessage> messagesToSave = new ArrayList<>();
-        for (ChatMessage message : messages) deleteMessageForUser(chatRoom,userId,message,messagesToSave);
+        List<Message> messages = messageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(), userId, from);
+        List<Message> messagesToSave = new ArrayList<>();
+        for (Message message : messages) deleteMessageForUser(chatRoom,userId,message,messagesToSave);
         saveDeletedMessages(messagesToSave);
     }
 }

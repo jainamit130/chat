@@ -3,8 +3,12 @@ package com.amit.converse.chat.service.chatRoom;
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.CreateGroupRequest;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
+import com.amit.converse.chat.model.ChatRooms.BlindPeriod;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
+import com.amit.converse.chat.model.Messages.Message;
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatRoom.IGroupChatRepository;
+import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +34,23 @@ public class GroupChatService extends ChatService<GroupChat> {
         GroupChat groupChat = (GroupChat) ChatContext.getChatRoom();
         groupChat.exit(userIds);
     }
+
+    @Override
+    public List<Message> getMessagesOfChatRoom() {
+        List<Message> rawMessages = super.getMessagesOfChatRoom();
+        GroupChat chatRoom = getContextChatRoom();
+        User user = UserService.getUserContext();
+        List<BlindPeriod> blindPeriods =
+                chatRoom.getBlindPeriods().getOrDefault(user.getUserId(), List.of());
+
+        return rawMessages.stream()
+                .filter(msg -> blindPeriods.stream().noneMatch(
+                        period -> !msg.getTimestamp().isBefore(period.getStart()) &&
+                                !msg.getTimestamp().isAfter(period.getEnd())
+                ))
+                .toList();
+    }
+
 
     @Override
     protected GroupChat saveChat(GroupChat groupChat) {
