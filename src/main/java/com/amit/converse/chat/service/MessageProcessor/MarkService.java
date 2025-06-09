@@ -66,6 +66,7 @@ public abstract class MarkService {
         }
         context.getMarkedMessages().add(message);
         sendSenderSpecificMessageMarkedNotification(chatRoom,context.getSenderSpecificMessageIds());
+        context.getSenderSpecificMessageIds().clear();
     }
 
     protected void saveAllMarkedMessages(MarkingContext context) {

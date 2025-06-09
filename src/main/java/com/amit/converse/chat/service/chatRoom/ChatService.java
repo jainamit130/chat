@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.chatRoom;
 
+import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
@@ -51,7 +52,7 @@ public class ChatService<T extends ChatRoom> {
         ChatContext.updateChatRoom(chatRoom);
     }
 
-    public void clearContext() {
+    public static void clearContext() {
         ChatContext.clearContext();
     }
 
@@ -92,8 +93,8 @@ public class ChatService<T extends ChatRoom> {
         }
     }
 
-    public List<String> getOnlineUserIdsOfChat() {
-        List<String> onlineUserIds = new ArrayList<>(redisReadService.filterOnlineUsers(ChatContext.getChatRoom()));
+    public List<String> getOnlineUserIdsOfChat(IChatRoom chatRoom) {
+        List<String> onlineUserIds = new ArrayList<>(redisReadService.filterOnlineUsers(chatRoom));
         return onlineUserIds;
     }
 

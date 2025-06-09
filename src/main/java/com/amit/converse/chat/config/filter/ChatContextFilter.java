@@ -21,25 +21,29 @@ public class ChatContextFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String requestURI = request.getRequestURI();
-        if (requestURI.startsWith("/ws")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        String chatRoomId = null;
-        if (requestURI.startsWith("/converse/chat")) {
-            int lastIndex = requestURI.lastIndexOf("/");
-            chatRoomId = requestURI.substring(lastIndex+1);
-        }
-        if (chatRoomId != null) {
-            try {
-                ChatRoom chatRoom = chatService.getChatRoomById(chatRoomId);
-                if (chatRoom != null) {
-                    chatService.updateChatRoomContext(chatRoom);
-                }
-            } catch (Exception e) {
+        try {
+            if (requestURI.startsWith("/ws")) {
+                filterChain.doFilter(request, response);
+                return;
             }
+            String chatRoomId = null;
+            if (requestURI.startsWith("/converse/chat")) {
+                int lastIndex = requestURI.lastIndexOf("/");
+                chatRoomId = requestURI.substring(lastIndex + 1);
+            }
+            if (chatRoomId != null) {
+                try {
+                    ChatRoom chatRoom = chatService.getChatRoomById(chatRoomId);
+                    if (chatRoom != null) {
+                        chatService.updateChatRoomContext(chatRoom);
+                    }
+                } catch (Exception e) {
+                }
+            }
+            filterChain.doFilter(request, response);
+        } finally {
+            ChatService.clearContext();
         }
-        filterChain.doFilter(request, response);
     }
 
 }

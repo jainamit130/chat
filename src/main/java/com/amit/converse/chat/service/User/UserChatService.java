@@ -2,6 +2,7 @@ package com.amit.converse.chat.service.User;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.config.util.SecurityContextUtil;
+import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.Notification.IUserNotification;
 import com.amit.converse.chat.dto.Notification.UserChatNotification;
 import com.amit.converse.chat.dto.Notification.UserStatusNotification;
@@ -28,7 +29,7 @@ public class UserChatService<T extends ChatRoom> {
     private UserNotificationService userNotificationService;
 
     public void sendNotificationToUser(User user, ChatRoom chatRoom, UserChatNotification notification) {
-        notification.populateOnlineUsersDTOInTransactionNotification(chatService.transit(chatRoom));
+        notification.populateOnlineUsersDTOInTransactionNotification(getOnlineUsersOfChat(chatRoom));
         userNotificationService.sendNotification(user.getUserId(),notification);
     }
 
@@ -37,8 +38,12 @@ public class UserChatService<T extends ChatRoom> {
         return GroupChatOnlineUsersDTO.builder().onlineUsers(processUsersToUsernames(onlineUsers)).build();
     }
 
+    public IOnlineUsersDTO getOnlineUsersOfChat(ChatRoom chatRoom){
+        return getOnlineUsersDTO(chatService.getOnlineUserIdsOfChat(chatRoom));
+    }
+
     public IOnlineUsersDTO getOnlineUsersOfChat(){
-        return getOnlineUsersDTO(chatService.getOnlineUserIdsOfChat());
+        return getOnlineUsersDTO(chatService.getOnlineUserIdsOfChat(ChatContext.getChatRoom()));
     }
 
     public Integer getUnreadMessageCount(IChatRoom chatRoom) {
