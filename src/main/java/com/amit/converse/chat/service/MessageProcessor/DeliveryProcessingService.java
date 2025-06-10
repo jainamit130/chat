@@ -1,6 +1,6 @@
 package com.amit.converse.chat.service.MessageProcessor;
 
-import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.chatRoom.ChatService;
@@ -24,16 +24,15 @@ public class DeliveryProcessingService implements IDeliveryProcessor {
     @Override
     public void deliver(User user, MarkingContext context) {
         // all undelivered messages in all chatRooms must be marked delivered
-        List<IChatRoom> chatRooms = chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()), user.getUserId());
-        for(IChatRoom chatRoom:chatRooms) {
+        List<ChatRoom> chatRooms = chatService.getChatRoomsByIds(new ArrayList<>(user.getChatRoomIds()), user);
+        for(ChatRoom chatRoom:chatRooms) {
             markDeliveredService.mark(chatRoom,user,context);
         }
         markDeliveredService.saveAllMarkedMessages(context);
     }
 
     @Override
-    public void deliver(ChatMessage message, MarkingContext context) {
-        IChatRoom chatRoom = chatService.getChatRoomById(message.getChatRoomId());
+    public void deliver(ChatRoom chatRoom,ChatMessage message, MarkingContext context) {
         markDeliveredService.mark(chatRoom,message,context);
         markDeliveredService.saveAllMarkedMessages(context);
     }

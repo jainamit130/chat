@@ -1,9 +1,10 @@
 package com.amit.converse.chat.service.MessageProcessor;
 
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 
 public interface IDeliveryProcessor {
-    void deliver(User user,MarkingContext context);
-    void deliver(ChatMessage message,MarkingContext context);
+    void deliver(User user, MarkingContext context);
+    void deliver(ChatRoom chatRoom,ChatMessage message,MarkingContext context);
 }

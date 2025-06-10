@@ -22,8 +22,8 @@ public class DirectChatFulfilmentService extends ChatRoomFulfilmentService {
     }
 
     @Override
-    public void fillName(ChatRoom chatRoom) {
-        User counterPartUser = directChatUserService.getCounterPartUser(chatRoom.getAllUserIds());
+    public void fillName(ChatRoom chatRoom,User user) {
+        User counterPartUser = directChatUserService.getCounterPartUser(chatRoom.getAllUserIds(),user);
         chatRoom.setName(counterPartUser.getDisplayName());
     }
 }

@@ -17,6 +17,12 @@ public class DirectChatUserService extends UserChatService<DirectChat> {
     @Autowired
     private DirectChatService directChatService;
 
+    public User getCounterPartUser(List<String> userIds,User user) {
+        if(userIds.size()!=2) throw new ConverseException("Invalid Chat!");
+        String counterPartUserId = userIds.stream().filter(userId -> !userId.equals(user.getUserId())).findFirst().get();
+        return getUserFromRepo(counterPartUserId);
+    }
+
     public User getCounterPartUser(List<String> userIds) {
         if(userIds.size()!=2) throw new ConverseException("Invalid Chat!");
         String counterPartUserId = userIds.stream().filter(userId -> !userId.equals(UserService.getUserContext().getUserId())).findFirst().get();

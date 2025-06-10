@@ -5,6 +5,7 @@ import com.amit.converse.chat.Redis.ChatRoomRedisTransitionService;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
 import com.amit.converse.chat.model.Messages.Message;
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.chatRoom.filfillmentService.ChatRoomFulfilmentService;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -88,8 +89,8 @@ public abstract class ChatRoom implements IChatRoom {
         this.chatRoomName = name;
     }
 
-    public void fulfill() {
-        chatRoomFulfilmentService.fulfill(this);
+    public void fulfill(User user) {
+        chatRoomFulfilmentService.fulfill(this,user);
     }
 
     public Integer getDeletedForUsersCount() {

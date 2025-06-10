@@ -88,21 +88,25 @@ public class GroupChat extends ChatRoom implements ITransactable {
         userIds.addAll(userIdsSet);
     }
 
+    public void markExited() {
+        isExited = true;
+    }
+
     @Override
     public void exit(List<String> userIds) {
         userIds.forEach((userId) -> {
                 if(!exitedMembers.containsKey(userId))
                     exitedMembers.put(userId,Instant.now());
         });
-        this.isExited = true;
     }
 
     private void unExit(List<String> userIds) {
-        userIds.forEach((userId) -> {
-            List<BlindPeriod> blindPeriods = getBlindPeriods().getOrDefault(userId,new ArrayList<>());
-            blindPeriods.add(new BlindPeriod(exitedMembers.get(userId),Instant.now()));
-            this.blindPeriods.put(userId,blindPeriods);
-            exitedMembers.remove(userId);
+        userIds.forEach(userId -> {
+            if (exitedMembers.containsKey(userId)) {
+                List<BlindPeriod> blindPeriods = this.blindPeriods.computeIfAbsent(userId, k -> new ArrayList<>());
+                blindPeriods.add(new BlindPeriod(exitedMembers.get(userId), Instant.now()));
+                exitedMembers.remove(userId);
+            }
         });
     }
 
@@ -118,5 +122,9 @@ public class GroupChat extends ChatRoom implements ITransactable {
     public IOnlineUsersDTO transit() {
         if(isExited) return new GroupChatOnlineUsersDTO();
         return super.transit();
+    }
+
+    public Instant getExitInstant(String userId) {
+        return exitedMembers.get(userId);
     }
 }

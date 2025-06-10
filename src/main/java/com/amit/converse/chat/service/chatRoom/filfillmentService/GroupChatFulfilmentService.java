@@ -21,15 +21,14 @@ public class GroupChatFulfilmentService extends ChatRoomFulfilmentService {
     }
 
     @Override
-    public void fillName(ChatRoom chatRoom) {
+    public void fillName(ChatRoom chatRoom,User user) {
         // Since the name for GroupChat is persisted and hence the ChatRoom instance must already have the name populated
         return;
     }
 
     @Override
-    public void fillIsExited(ChatRoom chatRoom) {
+    public void fillIsExited(ChatRoom chatRoom,User user) {
         GroupChat groupChat = (GroupChat) chatRoom;
-        User user = UserService.getUserContext();
         if(user==null) return;
         groupChat.setIsExited(user.isExited(groupChat.getId()));
     }

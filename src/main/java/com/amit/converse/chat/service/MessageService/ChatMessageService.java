@@ -99,14 +99,14 @@ public class ChatMessageService<T extends IChatRoom> {
         messageProcessingService.processMessage(chatRoom,savedMessage);
     }
 
-    public Message getLatestMessage(IChatRoom chatRoom) {
-        Optional<Message> latestMessage = messageRepository.findLatestMessage(chatRoom.getId(),UserService.getUserContext().getUserId());
+    public Message getLatestMessage(IChatRoom chatRoom,User user) {
+        Optional<Message> latestMessage = messageRepository.findLatestMessage(chatRoom.getId(),user.getUserId());
         if(latestMessage.isPresent()) return latestMessage.get();
-        return new ChatMessage(chatRoom.getUserFetchStartTime(UserService.getUserContext().getUserId()));
+        return new ChatMessage(chatRoom.getUserFetchStartTime(user.getUserId()));
     }
 
-    public void readMessage(User user) {
-        chatService.readMessages(user);
+    public void readMessage(ChatRoom chatRoom,User user) {
+        chatService.readMessages(chatRoom,user);
     }
 
     public MessageInfoDto getMessageInfo(String messageId) {

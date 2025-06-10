@@ -22,7 +22,7 @@ public class DirectChatService extends ChatService<DirectChat> {
         Optional<DirectChat> alreadyExistingDirectChat = getChatIfAlreadyExisting(primaryUser.getUserId(),counterPartUser.getUserId());
         if(alreadyExistingDirectChat.isPresent()) {
             DirectChat directChat = alreadyExistingDirectChat.get();
-            fulfillChatRoom(directChat);
+            fulfillChatRoom(directChat,primaryUser);
             updateChatRoomContext(directChat);
         } else {
             processChatRoomToDB(CreateDirectChatService.getNewDirectChat(primaryUser, counterPartUser));

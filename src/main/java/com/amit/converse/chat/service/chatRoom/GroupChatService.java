@@ -1,6 +1,5 @@
 package com.amit.converse.chat.service.chatRoom;
 
-import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.CreateGroupRequest;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
 import com.amit.converse.chat.model.ChatRooms.BlindPeriod;
@@ -30,9 +29,14 @@ public class GroupChatService extends ChatService<GroupChat> {
         groupChat.join(userIds);
     }
 
-    public void exitChatRoom(List<String> userIds) {
-        GroupChat groupChat = (GroupChat) ChatContext.getChatRoom();
+
+    public void markExited(GroupChat groupChat) {
+        groupChat.markExited();
+    }
+
+    public void exitChatRoom(List<String> userIds,GroupChat groupChat) {
         groupChat.exit(userIds);
+        processChatRoomToDB(groupChat);
     }
 
     @Override

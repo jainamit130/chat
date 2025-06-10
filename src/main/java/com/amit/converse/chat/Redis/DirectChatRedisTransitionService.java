@@ -4,6 +4,7 @@ import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.service.Redis.RedisChatRoomService;
 import com.amit.converse.chat.service.User.DirectChatUserService;
+import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -26,6 +26,6 @@ public abstract class ChatRoomRedisTransitionService implements ITransition {
         User user = UserService.getUserContext();
         ChatRoom chatRoom = (ChatRoom) ChatContext.getChatRoom();
         redisWriteService.addUserToChatRoom(chatRoom,user);
-        readProcessingService.read(user,new MarkingContext());
+        readProcessingService.read(chatRoom,user,new MarkingContext());
     }
 }

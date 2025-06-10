@@ -31,15 +31,15 @@ public class MessageProcessingService {
     @Autowired
     private ChatConnectService chatConnectService;
 
-    public final void process(ChatMessage message) {
+    public final void process(ChatRoom chatRoom,ChatMessage message) {
         MarkingContext markingContext = new MarkingContext();
-        deliveryProcessingService.deliver(message,markingContext);
-        readProcessingService.read(message,markingContext);
+        deliveryProcessingService.deliver(chatRoom,message,markingContext);
+        readProcessingService.read(chatRoom,message,markingContext);
     }
 
     public void processMessage(ChatRoom chatRoom, ChatMessage message) {
-        chatService.processSentMessage();
-        process(message);
+        chatService.processSentMessage(chatRoom);
+        process(chatRoom,message);
         chatConnectService.connectChatFromUserIds(new ArrayList<>(chatRoom.getDeletedForUsers()),chatRoom);
     }
 }

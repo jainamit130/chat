@@ -56,26 +56,26 @@ public class ChatService<T extends ChatRoom> {
         ChatContext.clearContext();
     }
 
-    public void readMessages(User user) {
-        getContextChatRoom().readMessages(user.getUserId());
+    public void readMessages(ChatRoom chatRoom,User user) {
+        chatRoom.readMessages(user.getUserId());
         processChatRoomToDB(getContextChatRoom());
     }
 
-    public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds, String userId) {
-        List<ChatRoom> chatRooms = new ArrayList<>(chatRoomRepository.getAllChatRoomsByIds(chatRoomIds, userId));
-        chatRooms.forEach(this::fulfillChatRoom);
+    public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds, User user) {
+        List<ChatRoom> chatRooms = new ArrayList<>(chatRoomRepository.getAllChatRoomsByIds(chatRoomIds, user.getUserId()));
+        chatRooms.forEach((chatRoom) -> fulfillChatRoom(chatRoom,user));
         return chatRooms;
     }
 
     public ChatRoom getChatRoomById(String chatRoomId) {
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ConverseChatRoomNotFoundException(chatRoomId));
-        return fulfillChatRoom(chatRoom);
+        return fulfillChatRoom(chatRoom,UserService.getUserContext());
     }
 
-    public ChatRoom fulfillChatRoom(ChatRoom chatRoom) {
+    public ChatRoom fulfillChatRoom(ChatRoom chatRoom, User user) {
         chatRoom.setChatRoomFulfilmentService(chatRoomFulfilmentServiceFactory.getFulfilmentService(chatRoom.getChatRoomType()));
-        chatRoom.fulfill();
+        chatRoom.fulfill(user);
         return chatRoom;
     }
 
@@ -89,7 +89,7 @@ public class ChatService<T extends ChatRoom> {
             chatRoomRepository.deleteById(chatRoom.getId());
             updateChatRoomContext(null);
         } else {
-            updateChatRoomContext((T) fulfillChatRoom(saveChat(chatRoom)));
+            updateChatRoomContext((T) fulfillChatRoom(saveChat(chatRoom),UserService.getUserContext()));
         }
     }
 
@@ -107,8 +107,7 @@ public class ChatService<T extends ChatRoom> {
         return messageFilterFactory.getBlindPeriodFilter(ChatContext.getChatRoom().getChatRoomType()).filterBlindSpots((ChatRoom) ChatContext.getChatRoom(), UserService.getUserContext(),chatMessageService.getMessagesOfChatRoom(ChatContext.getChatRoom()));
     }
 
-    public void processSentMessage() {
-        T chatRoom = getContextChatRoom();
+    public void processSentMessage(ChatRoom chatRoom) {
         chatRoom.totalMessageCountIncrement();
     }
 

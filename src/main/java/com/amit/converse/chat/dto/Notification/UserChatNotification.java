@@ -27,6 +27,6 @@ public abstract class UserChatNotification extends IUserNotification {
     }
 
     public void populateOnlineUsersDTOInTransactionNotification(IOnlineUsersDTO onlineUsersDTO) {
-        transactionNotification.setOnlineUsersDTO(onlineUsersDTO);
+        if(transactionNotification!=null) transactionNotification.setOnlineUsersDTO(onlineUsersDTO);
     }
 }

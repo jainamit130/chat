@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.MessageProcessor;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.chatRoom.ChatService;
@@ -19,17 +20,15 @@ public class ReadProcessingService implements IReadProcessor {
     private MarkReadService markReadService;
 
     @Override
-    public void read(User user,MarkingContext context) {
+    public void read(ChatRoom chatRoom,User user,MarkingContext context) {
         // all unread messages in the chatRoom must be marked read
-        IChatRoom chatRoom = chatService.getContextChatRoom();
         markReadService.mark(chatRoom,user,context);
         markReadService.saveAllMarkedMessages(context);
-        chatService.readMessages(user);
+        chatService.readMessages(chatRoom,user);
     }
 
     @Override
-    public void read(ChatMessage message, MarkingContext context) {
-        IChatRoom chatRoom = chatService.getChatRoomById(message.getChatRoomId());
+    public void read(ChatRoom chatRoom,ChatMessage message, MarkingContext context) {
         markReadService.mark(chatRoom,message,context);
         markReadService.saveAllMarkedMessages(context);
     }

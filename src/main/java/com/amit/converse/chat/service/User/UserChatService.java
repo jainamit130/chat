@@ -46,8 +46,7 @@ public class UserChatService<T extends ChatRoom> {
         return getOnlineUsersDTO(chatService.getOnlineUserIdsOfChat(ChatContext.getChatRoom()));
     }
 
-    public Integer getUnreadMessageCount(IChatRoom chatRoom) {
-        User user = UserService.getUserContext();
+    public Integer getUnreadMessageCount(IChatRoom chatRoom,User user) {
         if(user.isExited(chatRoom.getId())) return user.getUnreadMessageCountOfExitedChat(chatRoom.getId());
         return chatRoom.getUnreadMessageCount(user.getUserId());
     }
@@ -96,7 +95,7 @@ public class UserChatService<T extends ChatRoom> {
         allChatRoomIds.addAll(user.getChatRoomIds());
         allChatRoomIds.addAll(user.getExitedChatRoomIds().keySet());
 
-        List<ChatRoom> chatRooms = chatService.getChatRoomsByIds(allChatRoomIds, user.getUserId());
+        List<ChatRoom> chatRooms = chatService.getChatRoomsByIds(allChatRoomIds, user);
 
         chatRooms.sort((chatRoom1, chatRoom2) -> {
             return chatRoom2.getLatestMessage().getTimestamp()

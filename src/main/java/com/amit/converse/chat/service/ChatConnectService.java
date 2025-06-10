@@ -22,6 +22,7 @@ public class ChatConnectService extends ChatConnectionService {
     }
 
     protected void processChatConnection(User user, ChatRoom chatRoom) {
+        chatRoom.fulfill(user);
         chatRoom.connectChat(user.getUserId());
         user.connectChat(chatRoom.getId());
     }

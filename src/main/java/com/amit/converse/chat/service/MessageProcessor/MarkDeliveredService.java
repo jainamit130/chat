@@ -2,6 +2,7 @@ package com.amit.converse.chat.service.MessageProcessor;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.dto.Notification.MessageDeliveredNotification;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
@@ -27,7 +28,7 @@ public class MarkDeliveredService extends MarkService {
     }
 
     @Override
-    public Integer markMessage(ChatMessage message, Instant timestamp, String userId) {
+    public Integer markMessage(ChatRoom chatRoom, ChatMessage message, Instant timestamp, String userId) {
         return message.deliverMessage(timestamp,userId);
     }
 

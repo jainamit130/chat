@@ -29,7 +29,8 @@ public class ExitService {
         GroupChat groupChat = groupChatService.getContextChatRoom();
         List<User> users = groupChatUserService.getUsersFromRepo(userIds);
         chatDisconnectService.connectChatFromUserIds(new ArrayList<>(groupChat.getDeletedForUsers()),groupChat);
-        groupChatService.exitChatRoom(userIds);
+        groupChatService.markExited(groupChat);
         chatDisconnectService.processChatConnectionsAndNotify(users,groupChat);
+        groupChatService.exitChatRoom(userIds,groupChat);
     }
 }

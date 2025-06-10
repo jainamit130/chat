@@ -5,6 +5,7 @@ import com.amit.converse.chat.model.ChatRooms.SelfChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatRoom.ISelfChatRepository;
 import com.amit.converse.chat.service.MessageService.DirectChatMessageService;
+import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class SelfChatService extends ChatService<SelfChat>{
 
     public SelfChat saveSelfChatToDB(SelfChat selfChat) {
         SelfChat savedSelfChat = selfChatRepository.save(selfChat);
-        updateChatRoomContext((SelfChat) fulfillChatRoom(savedSelfChat));
+        updateChatRoomContext((SelfChat) fulfillChatRoom(savedSelfChat, UserService.getUserContext()));
         return savedSelfChat;
     }
 
@@ -28,7 +29,7 @@ public class SelfChatService extends ChatService<SelfChat>{
         Optional<SelfChat> optionalSelfChat = selfChatRepository.findSelfChat(user.getUserId());
         if(optionalSelfChat.isPresent()) {
             SelfChat selfChat = optionalSelfChat.get();
-            fulfillChatRoom(selfChat);
+            fulfillChatRoom(selfChat,user);
             updateChatRoomContext(selfChat);
             return selfChat;
         }
