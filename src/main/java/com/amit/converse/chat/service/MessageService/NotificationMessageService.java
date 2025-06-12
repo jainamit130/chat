@@ -18,11 +18,11 @@ public class NotificationMessageService {
     @Autowired
     private INotificationMessageRepository notificationMessageRepository;
 
-    public static NotificationMessage generateNotificationMessage(String chatRoomId,String content) {
+    public static NotificationMessage generateNotificationMessage(String chatRoomId,String content,Instant notificationTime) {
         NotificationMessage notificationMessage = new NotificationMessage();
         notificationMessage.setContent(content);
         notificationMessage.setChatRoomId(chatRoomId);
-        notificationMessage.setTimestamp(Instant.now());
+        notificationMessage.setTimestamp(notificationTime);
         return notificationMessage;
     }
 
@@ -31,7 +31,6 @@ public class NotificationMessageService {
     }
 
     public NotificationMessage fulfilMessage(NotificationMessage message) {
-        message.setTimestamp(Instant.now());
         message.setChatRoomId(ChatContext.getChatRoomId());
         return message;
     }

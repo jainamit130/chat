@@ -1,10 +1,9 @@
 package com.amit.converse.chat.service.MessageProcessor;
 
-import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.User;
-import com.amit.converse.chat.service.chatRoom.ChatService;
+import com.amit.converse.chat.service.User.UserChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,7 @@ public class ReadProcessingService implements IReadProcessor {
 
     @Autowired
     @Lazy
-    private ChatService chatService;
+    private UserChatService userChatService;
     @Autowired
     @Lazy
     private MarkReadService markReadService;
@@ -24,7 +23,7 @@ public class ReadProcessingService implements IReadProcessor {
         // all unread messages in the chatRoom must be marked read
         markReadService.mark(chatRoom,user,context);
         markReadService.saveAllMarkedMessages(context);
-        chatService.readMessages(chatRoom,user);
+        userChatService.readMessages(chatRoom,user);
     }
 
     @Override

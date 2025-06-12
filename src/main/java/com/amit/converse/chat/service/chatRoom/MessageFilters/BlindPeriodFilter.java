@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 public class BlindPeriodFilter extends IFilter {
-    public List<Message> filterBlindSpots(ChatRoom chatRoom, User user, List<Message> messages) {
+    public <T extends Message> List<T> filterBlindSpots(ChatRoom chatRoom, User user, List<T> messages) {
         // dummy no use
         return messages;
     }

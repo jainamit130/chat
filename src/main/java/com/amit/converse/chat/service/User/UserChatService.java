@@ -15,11 +15,13 @@ import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.amit.converse.chat.service.Notification.UserNotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@Primary
 public class UserChatService<T extends ChatRoom> {
     @Autowired
     private UserService userService;
@@ -118,5 +120,13 @@ public class UserChatService<T extends ChatRoom> {
             updatedMap.put(timestamp, userDetails);
         }
         return updatedMap;
+    }
+
+    public void readMessages(ChatRoom chatRoom,User user) {
+        chatRoom.readMessages(user.getUserId());
+        if(user.isExited(chatRoom.getId())) {
+            user.readExitedChat(chatRoom.getId());
+        }
+        processUsersAndChatRoomToDB(Collections.singletonList(user), (T) chatRoom);
     }
 }

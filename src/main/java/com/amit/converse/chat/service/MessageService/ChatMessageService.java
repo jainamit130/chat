@@ -20,6 +20,7 @@ import com.amit.converse.chat.service.MessageProcessor.MessageProcessingService;
 import com.amit.converse.chat.service.Notification.ChatNotificationService;
 import com.amit.converse.chat.service.Notification.UserNotificationService;
 import com.amit.converse.chat.service.User.UserChatService;
+import com.amit.converse.chat.service.chatRoom.MessageFilters.MessageFilterFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,9 @@ public class ChatMessageService<T extends IChatRoom> {
     @Autowired
     @Lazy
     protected UserChatService userChatService;
+    @Autowired
+    @Lazy
+    private MessageFilterFactory messageFilterFactory;
     @Autowired
     @Lazy
     protected ChatService chatService;
@@ -61,9 +65,10 @@ public class ChatMessageService<T extends IChatRoom> {
         message.setChatRoomId(ChatContext.getChatRoomId());
         message.setSenderId(UserService.getUserContext().getUserId());
         message.setStatus(MessageStatus.PENDING);
+        message.setMemberCount(ChatContext.getChatRoom().getMemberCount());
     }
 
-    public synchronized void saveMessages(List<ChatMessage> messages) {
+    public void saveMessages(List<ChatMessage> messages) {
         chatMessageRepository.saveAll(messages);
     }
 
@@ -73,8 +78,8 @@ public class ChatMessageService<T extends IChatRoom> {
         return messageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
     }
 
-    public List<ChatMessage> getMessagesOfChatRoom(IChatRoom chatRoom, User user, Instant fromInstant) {
-        return chatMessageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
+    public List<ChatMessage> getMessagesOfChatRoom(ChatRoom chatRoom, User user, Instant fromInstant) {
+        return messageFilterFactory.getBlindPeriodFilter(chatRoom.getChatRoomType()).filterBlindSpots(chatRoom,user,chatMessageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant));
     }
 
     protected void authoriseSender() throws ConverseException {

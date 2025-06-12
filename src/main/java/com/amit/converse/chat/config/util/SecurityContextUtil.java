@@ -9,6 +9,7 @@ import java.security.Principal;
 import java.util.Collections;
 
 public class SecurityContextUtil {
+
     public static void ensureContextFromPrincipal(Principal principal) {
         if (principal instanceof UsernamePasswordAuthenticationToken auth) {
             populateSecurityContext(auth);

@@ -13,6 +13,7 @@ import com.amit.converse.chat.service.User.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -37,10 +38,10 @@ public abstract class NotifyGroupTransactionService {
 
     protected abstract NotificationType getNotificationType();
 
-    public final TransactionNotification generateMessage(User joinedUser) {
+    public final TransactionNotification generateMessage(User joinedUser, Instant notificationTime) {
         String moderatorName = UserService.getUserContext().getDisplayName();
         String message = moderatorName + " " + getTransactionMessage() + " " + joinedUser.getDisplayName();
-        NotificationMessage notificationMessage = notificationMessageService.fulfilMessage(NotificationMessageService.generateNotificationMessage(chatContext.getChatRoomId(), message));
+        NotificationMessage notificationMessage = notificationMessageService.fulfilMessage(NotificationMessageService.generateNotificationMessage(chatContext.getChatRoomId(), message, notificationTime));
         return TransactionNotification.builder().message(notificationMessageService.saveMessage(notificationMessage)).moderatorName(moderatorName).username(joinedUser.getDisplayName()).onlineStatus(redisReadService.getConnectionStatus(joinedUser)).type(getNotificationType()).build();
     }
 

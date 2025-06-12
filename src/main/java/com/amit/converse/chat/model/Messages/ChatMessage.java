@@ -82,6 +82,14 @@ public class ChatMessage extends Message implements IDeletableMessage {
         messageMetaData.addUserToDeletedForUsers(userId);
     }
 
+    public Integer getMemberCount() {
+        return messageMetaData.getMemberCount();
+    }
+
+    public void setMemberCount(Integer count) {
+        messageMetaData.setMemberCount(count);
+    }
+
     @Override
     public Integer getDeletedForMembersCount() {
         return messageMetaData.getDeletedForUsersCount();

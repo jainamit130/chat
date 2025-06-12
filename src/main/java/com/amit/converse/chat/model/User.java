@@ -2,6 +2,7 @@ package com.amit.converse.chat.model;
 
 import com.amit.converse.chat.Redis.RedisSessionITransitionService;
 import com.amit.converse.chat.State.State;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Enums.ConnectionStatus;
 import com.amit.converse.chat.service.MessageProcessor.IDeliverableEntity;
 import lombok.*;
@@ -137,6 +138,12 @@ public class User implements IDeliverableEntity, UserDetails {
 
     public String getUserId() {
         return userId;
+    }
+
+    public void readExitedChat(String chatRoomId) {
+        if(exitedChatRoomIds.containsKey(chatRoomId)) {
+            exitedChatRoomIds.put(chatRoomId,0);
+        }
     }
 
 }

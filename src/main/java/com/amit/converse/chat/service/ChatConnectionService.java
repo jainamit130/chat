@@ -8,6 +8,7 @@ import com.amit.converse.chat.service.User.UserChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,10 +28,12 @@ public abstract class ChatConnectionService {
 
     protected abstract void processChatConnection(User user, ChatRoom chatRoom);
 
+    protected abstract Instant getShiftedInstant();
+
     public void processChatConnectionsAndNotify(List<User> users, ChatRoom chatRoom) {
         List<TransactionNotification> joinNotifications = new ArrayList<>();
         for(User user:users) {
-            joinNotifications.add(notifyGroupTransactionService.generateMessage(user));
+            joinNotifications.add(notifyGroupTransactionService.generateMessage(user,getShiftedInstant()));
             processChatConnectionAndNotify(user,chatRoom,joinNotifications.getLast());
         }
         notifyGroupTransactionService.notifyGroup(chatRoom,joinNotifications);

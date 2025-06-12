@@ -42,10 +42,10 @@ public abstract class MarkService {
     }
 
     private void markMessages(ChatRoom chatRoom, List<ChatMessage> messages, Instant markTimestamp, String userId,
-                              Integer memberCount, Map<String, List<String>> senderSpecificMessageIds) {
+                              Map<String, List<String>> senderSpecificMessageIds) {
         for (ChatMessage message : messages) {
             Integer markedUsersCount = markMessage(chatRoom,message, markTimestamp, userId);
-            if (memberCount.equals(markedUsersCount)) {
+            if (message.getMemberCount().equals(markedUsersCount)) {
                 collectToNotifyMessageToSender(message, senderSpecificMessageIds);
             }
         }
@@ -54,7 +54,7 @@ public abstract class MarkService {
     protected void mark(ChatRoom chatRoom, User user, MarkingContext context) {
         Instant lastVisitedTimestamp = getLastVisitedTimestamp(chatRoom,user);
         List<ChatMessage> toBeMarkedChatRoomMessages = chatMessageService.getMessagesOfChatRoom(chatRoom,user,lastVisitedTimestamp);
-        markMessages(chatRoom,toBeMarkedChatRoomMessages,Instant.now(),user.getUserId(),chatRoom.getMemberCount(),context.getSenderSpecificMessageIds());
+        markMessages(chatRoom,toBeMarkedChatRoomMessages,Instant.now(),user.getUserId(),context.getSenderSpecificMessageIds());
         context.getMarkedMessages().addAll(toBeMarkedChatRoomMessages);
         sendSenderSpecificMessageMarkedNotification(chatRoom,context.getSenderSpecificMessageIds());
     }
@@ -64,7 +64,7 @@ public abstract class MarkService {
         List<String> activeUserIds = getActiveUserIds(chatRoom, context);
         Instant markTimestamp = Instant.now();
         for(String onlineUserId:activeUserIds) {
-            markMessages(chatRoom,Collections.singletonList(message),markTimestamp,onlineUserId,chatRoom.getMemberCount(),context.getSenderSpecificMessageIds());
+            markMessages(chatRoom,Collections.singletonList(message),markTimestamp,onlineUserId,context.getSenderSpecificMessageIds());
         }
         context.getMarkedMessages().add(message);
         sendSenderSpecificMessageMarkedNotification(chatRoom,context.getSenderSpecificMessageIds());

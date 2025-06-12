@@ -30,7 +30,6 @@ public abstract class ChatRoomFulfilmentService {
 
     public abstract void fillName(ChatRoom chatRoom,User user);
 
-
     public final void fulfill(ChatRoom chatRoom, User user) {
         fillIsExited(chatRoom,user);
         fillTransitionService(chatRoom);

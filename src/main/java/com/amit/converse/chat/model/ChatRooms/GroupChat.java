@@ -54,6 +54,10 @@ public class GroupChat extends ChatRoom implements ITransactable {
         return exitedMembers.size();
     }
 
+    public List<BlindPeriod> getBlindPeriodsOfUser(String userId) {
+        return new ArrayList<>(blindPeriods.getOrDefault(userId, new ArrayList<>()));
+    }
+
     @Override
     public Boolean isExited(String userId) {
         return exitedMembers.containsKey(userId);
@@ -88,16 +92,13 @@ public class GroupChat extends ChatRoom implements ITransactable {
         userIds.addAll(userIdsSet);
     }
 
-    public void markExited() {
-        isExited = true;
-    }
-
     @Override
     public void exit(List<String> userIds) {
         userIds.forEach((userId) -> {
                 if(!exitedMembers.containsKey(userId))
                     exitedMembers.put(userId,Instant.now());
         });
+        isExited = true;
     }
 
     private void unExit(List<String> userIds) {
@@ -108,6 +109,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
                 exitedMembers.remove(userId);
             }
         });
+        this.isExited=false;
     }
 
     @Override
@@ -116,12 +118,6 @@ public class GroupChat extends ChatRoom implements ITransactable {
         if(exitedMembers.containsKey(userId)) {
             exitedMembers.put(userId,Instant.now());
         }
-    }
-
-    @Override
-    public IOnlineUsersDTO transit() {
-        if(isExited) return new GroupChatOnlineUsersDTO();
-        return super.transit();
     }
 
     public Instant getExitInstant(String userId) {

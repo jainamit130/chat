@@ -29,14 +29,8 @@ public class GroupChatService extends ChatService<GroupChat> {
         groupChat.join(userIds);
     }
 
-
-    public void markExited(GroupChat groupChat) {
-        groupChat.markExited();
-    }
-
     public void exitChatRoom(List<String> userIds,GroupChat groupChat) {
         groupChat.exit(userIds);
-        processChatRoomToDB(groupChat);
     }
 
     @Override

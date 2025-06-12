@@ -25,6 +25,7 @@ public class ChatMessageMetaData extends MessageMetaData implements IChatMessage
     private Set<String> readRecipients;
     private Map<String, Set<String>> deliveryReceiptsByTime;
     private Map<String, Set<String>> readReceiptsByTime;
+    private Integer memberCount;
 
     public void clearMessageMetadata() {
         this.deliveredRecipients = new HashSet<>();

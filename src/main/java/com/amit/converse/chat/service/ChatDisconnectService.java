@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+
 @Service
 public class ChatDisconnectService extends ChatConnectionService {
 
@@ -22,8 +24,14 @@ public class ChatDisconnectService extends ChatConnectionService {
     }
 
     protected void processChatConnection(User user, ChatRoom chatRoom) {
-        chatRoom.disconnectChat(user.getUserId());
         user.disconnectChat(chatRoom.getId(),chatRoom.getUnreadMessageCount(user.getUserId()));
+        chatRoom.fulfill(user);
+        chatRoom.disconnectChat(user.getUserId());
+    }
+
+    @Override
+    protected Instant getShiftedInstant() {
+        return Instant.now().minusMillis(1);
     }
 
 }

@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+
 @Service
 public class ChatConnectService extends ChatConnectionService {
 
@@ -22,9 +24,14 @@ public class ChatConnectService extends ChatConnectionService {
     }
 
     protected void processChatConnection(User user, ChatRoom chatRoom) {
+        chatRoom.updateReadMessageCountOfUser(user.getUserId(),user.getUnreadMessageCountOfExitedChat(chatRoom.getId()));
+        user.connectChat(chatRoom.getId());
         chatRoom.fulfill(user);
         chatRoom.connectChat(user.getUserId());
-        user.connectChat(chatRoom.getId());
     }
 
+    @Override
+    protected Instant getShiftedInstant() {
+        return Instant.now().plusMillis(1);
+    }
 }

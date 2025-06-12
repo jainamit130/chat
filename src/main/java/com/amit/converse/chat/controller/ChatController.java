@@ -3,6 +3,8 @@ package com.amit.converse.chat.controller;
 import com.amit.converse.chat.config.util.SecurityContextUtil;
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.model.Messages.ChatMessage;
+import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.User.UserService;
 import com.amit.converse.chat.service.chatRoom.ChatService;
 import com.amit.converse.chat.service.MessageService.ChatMessageServiceFactory;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.ClearChatService;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,6 +33,7 @@ public class ChatController {
     private final DeleteChatService deleteChatService;
     private final DeleteChatMessageForMeService deleteMessageForMeService;
     private final DeleteChatMessageForEveryoneService deleteMessageForEveryoneService;
+    private final UserService userService;
     private final ChatService chatService;
     private final ChatMessageServiceFactory chatMessageServiceFactory;
 
@@ -45,7 +49,10 @@ public class ChatController {
     @MessageMapping("/chat/send/message/{chatRoomId}")
     public void sendMessage(@DestinationVariable String chatRoomId, ChatMessage message, Principal principal) {
         try {
-            SecurityContextUtil.ensureContextFromPrincipal(principal);
+            UsernamePasswordAuthenticationToken auth = (UsernamePasswordAuthenticationToken) principal;
+            User user = (User) auth.getPrincipal();
+
+            SecurityContextUtil.populateUserContext(userService.getUserById(user.getUserId()));
             message.setChatRoomId(chatRoomId);
             chatMessageServiceFactory.getMessageServiceFactory(chatRoomId).sendMessage(message);
         } catch (IllegalArgumentException | InterruptedException e) {

@@ -8,15 +8,14 @@ import com.amit.converse.chat.model.User;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class GroupChatBlindPeriodFilter extends BlindPeriodFilter {
     @Override
-    public List<Message> filterBlindSpots(ChatRoom chatRoom, User user, List<Message> messages) {
+    public <T extends Message> List<T> filterBlindSpots(ChatRoom chatRoom, User user, List<T> messages) {
         GroupChat groupChat = (GroupChat) chatRoom;
-        List<BlindPeriod> blindPeriods = groupChat.getBlindPeriods().getOrDefault(user.getUserId(), new ArrayList<>());
+        List<BlindPeriod> blindPeriods = groupChat.getBlindPeriodsOfUser(user.getUserId());
         if(user.isExited(chatRoom.getId())) blindPeriods.add(new BlindPeriod(groupChat.getExitInstant(user.getUserId()), Instant.now()));
         return messages.stream()
                 .filter(msg -> blindPeriods.stream().noneMatch(

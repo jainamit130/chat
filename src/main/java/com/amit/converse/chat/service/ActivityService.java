@@ -1,6 +1,5 @@
 package com.amit.converse.chat.service;
 
-import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.Notification.TypingNotification;
 import com.amit.converse.chat.service.Notification.ChatNotificationService;
 import lombok.AllArgsConstructor;
