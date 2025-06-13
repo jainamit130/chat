@@ -93,6 +93,16 @@ public class GroupChat extends ChatRoom implements ITransactable {
     }
 
     @Override
+    public void deleteChat(String userId) {
+        userIds.remove(userId);
+        if(exitedMembers.containsKey(userId)) {
+            exitedMembers.remove(userId);
+        } else {
+            deletedForUsers.add(userId);
+        }
+    }
+
+    @Override
     public void exit(List<String> userIds) {
         userIds.forEach((userId) -> {
                 if(!exitedMembers.containsKey(userId))

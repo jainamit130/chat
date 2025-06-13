@@ -9,6 +9,7 @@ import java.util.List;
 @Data
 public class TypingNotification extends IChatNotification {
     List<String> typingUsernames;
+    String chatRoomId;
 
     @Override
     public NotificationType getNotificationType() {

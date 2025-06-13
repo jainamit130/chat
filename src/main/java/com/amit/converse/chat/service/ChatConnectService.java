@@ -24,7 +24,7 @@ public class ChatConnectService extends ChatConnectionService {
     }
 
     protected void processChatConnection(User user, ChatRoom chatRoom) {
-        chatRoom.updateReadMessageCountOfUser(user.getUserId(),user.getUnreadMessageCountOfExitedChat(chatRoom.getId()));
+        if(user.isExited(chatRoom.getId())) chatRoom.updateReadMessageCountOfExitedUser(user.getUserId(),user.getUnreadMessageCountOfExitedChat(chatRoom.getId()));
         user.connectChat(chatRoom.getId());
         chatRoom.fulfill(user);
         chatRoom.connectChat(user.getUserId());

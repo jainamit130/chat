@@ -174,7 +174,7 @@ public abstract class ChatRoom implements IChatRoom {
         return deletedForUsers.contains(userId);
     }
 
-    public void updateReadMessageCountOfUser(String userId,Integer unreadMessageCount) {
+    public void updateReadMessageCountOfExitedUser(String userId,Integer unreadMessageCount) {
         readMessageCount.put(userId,getTotalMessageCount() - unreadMessageCount);
     }
 }

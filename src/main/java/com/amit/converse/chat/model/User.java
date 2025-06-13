@@ -79,7 +79,7 @@ public class User implements IDeliverableEntity, UserDetails {
 
     public void deleteChat(String chatRoomId) {
         chatRoomIds.remove(chatRoomId);
-        deletedChatRoomIds.add(chatRoomId);
+        if(!isExited(chatRoomId)) deletedChatRoomIds.add(chatRoomId);
     }
 
     public void disconnectChat(String chatRoomId, Integer unreadMessageCount) {
@@ -96,7 +96,7 @@ public class User implements IDeliverableEntity, UserDetails {
     public boolean isExited(String chatRoomId) { return exitedChatRoomIds.containsKey(chatRoomId); }
 
     public Integer getUnreadMessageCountOfExitedChat(String chatRoomId) {
-        return exitedChatRoomIds.get(chatRoomId);
+        return exitedChatRoomIds.getOrDefault(chatRoomId,0);
     }
 
     public void updateLastSeenToNow() {

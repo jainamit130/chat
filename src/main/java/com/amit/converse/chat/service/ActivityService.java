@@ -13,7 +13,7 @@ public class ActivityService {
     private final ChatNotificationService chatNotificationService;
 
     public void sendTypingNotification(String chatRoomId,List<String> typingUsernames) {
-        TypingNotification typingNotification = TypingNotification.builder().typingUsernames(typingUsernames).build();
+        TypingNotification typingNotification = TypingNotification.builder().typingUsernames(typingUsernames).chatRoomId(chatRoomId).build();
         chatNotificationService.sendNotification(chatRoomId,typingNotification);
     }
 }
