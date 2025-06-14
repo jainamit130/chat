@@ -22,6 +22,7 @@ public class StateFactoryService {
     private RedisSessionTransitionFactory redisSessionTransitionFactory;
 
     public State getState(User user) {
+        if(user.getState()!=null) return user.getState();
         if(redisReadService.isUserOnline(user)) return getOnlineState(user);
         return getOfflineState(user);
     }

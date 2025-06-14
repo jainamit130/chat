@@ -4,6 +4,7 @@ type ChatRoom {
     userIds: [String!]!
     chatRoomType: ChatRoomType!
     unreadMessageCount: Int!
+    counterPartUserId: String
     latestMessage: Message!
     isExited: Boolean
 }

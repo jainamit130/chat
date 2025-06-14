@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ChatContext {
 
-    private static IChatRoom chatContext;
+    private static ThreadLocal<IChatRoom> chatContext = new ThreadLocal<>();
 
     public static void setChatRoom(IChatRoom chatRoom) {
         updateChatRoom(chatRoom);
@@ -15,20 +15,20 @@ public class ChatContext {
     }
 
     public static void updateChatRoom(IChatRoom chatRoom) {
-        chatContext=chatRoom;
+        chatContext.set(chatRoom);
     }
 
     public static IChatRoom getChatRoom() {
-        return chatContext;
+        return chatContext.get();
     }
 
     public static String getChatRoomId() {
-        IChatRoom chatRoom = chatContext;
+        IChatRoom chatRoom = chatContext.get();
         return chatRoom != null ? chatRoom.getId() : null;
     }
 
     public static void clearContext() {
-        chatContext=null;
+        chatContext.remove();
     }
 }
 

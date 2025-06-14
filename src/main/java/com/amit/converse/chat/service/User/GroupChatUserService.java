@@ -23,7 +23,7 @@ public class GroupChatUserService extends UserChatService<GroupChat> {
     private GroupChatService groupChatService;
 
     public GroupDetails getGroupDetails() {
-        GroupChat chatRoom = chatService.getContextChatRoom();
+        ChatRoom chatRoom = chatService.getContextChatRoom();
         List<User> users = getUsersFromRepo(chatRoom.getUserIds());
         List<UserDTO> userDTOList = new ArrayList<>();
         for(User user: users) {

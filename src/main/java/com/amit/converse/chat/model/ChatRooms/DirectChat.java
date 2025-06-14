@@ -16,6 +16,9 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = false)
 public class DirectChat extends ChatRoom {
 
+    @Transient
+    private String counterPartUserId;
+
     public DirectChat(String counterPartUsername) {
         super(ChatRoomType.DIRECT, new ArrayList<>());
         this.chatRoomName = counterPartUsername;

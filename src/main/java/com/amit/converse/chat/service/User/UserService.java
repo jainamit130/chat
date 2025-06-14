@@ -60,7 +60,7 @@ public class UserService {
     }
 
     public void processUsersToDB(List<User> users) {
-        String contextUserId = getUserContext().getId();
+        String contextUserId = getUserContext().getUserId();
         userRepository.saveAll(users).stream().forEach((user) -> {
             if(user.getUserId().equals(contextUserId)) {
                 SecurityContextUtil.populateUserContext(user);

@@ -7,6 +7,7 @@ import com.amit.converse.chat.repository.ChatRoom.IDirectChatRepository;
 import com.amit.converse.chat.service.MessageService.DirectChatMessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ public class DirectChatService extends ChatService<DirectChat> {
     @Autowired
     private DirectChatMessageService directChatMessageService;
 
+    @Transactional
     private void processDirectChatCreation(User primaryUser, User counterPartUser) {
         Optional<DirectChat> alreadyExistingDirectChat = getChatIfAlreadyExisting(primaryUser.getUserId(),counterPartUser.getUserId());
         if(alreadyExistingDirectChat.isPresent()) {

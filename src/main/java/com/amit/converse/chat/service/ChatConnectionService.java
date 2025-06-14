@@ -7,6 +7,7 @@ import com.amit.converse.chat.service.Notification.NotifyGroupTransactionService
 import com.amit.converse.chat.service.User.UserChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -40,6 +41,7 @@ public abstract class ChatConnectionService {
         userChatService.processUsersAndChatRoomToDB(users,chatRoom);
     }
 
+    @Transactional
     public void processChatConnections(List<User> users, ChatRoom chatRoom) {
         for(User user:users) {
             processChatConnectionAndNotify(user,chatRoom,null);

@@ -74,6 +74,7 @@ public class User implements IDeliverableEntity, UserDetails {
     }
 
     public ConnectionStatus getConnectionStatus() {
+        if(getState()==null) return null;
         return getState().getConnectionStatus();
     }
 

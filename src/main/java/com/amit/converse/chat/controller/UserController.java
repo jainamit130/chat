@@ -37,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/get/profile/{userId}")
-    public ResponseEntity<UserDetails> getProfileDetails(@RequestParam String userId) {
+    public ResponseEntity<UserDetails> getProfileDetails(@PathVariable String userId) {
         return new ResponseEntity<UserDetails>(userService.getProfileDetails(userId), HttpStatus.OK);
     }
 

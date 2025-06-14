@@ -2,6 +2,7 @@ package com.amit.converse.chat.service.chatRoom.filfillmentService;
 
 import com.amit.converse.chat.Redis.DirectChatRedisTransitionService;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
+import com.amit.converse.chat.model.ChatRooms.DirectChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.DirectChatUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,9 @@ public class DirectChatFulfilmentService extends ChatRoomFulfilmentService {
 
     @Override
     public void fillName(ChatRoom chatRoom,User user) {
-        User counterPartUser = directChatUserService.getCounterPartUser(chatRoom.getAllUserIds(),user);
-        chatRoom.setName(counterPartUser.getDisplayName());
+        DirectChat directChat = (DirectChat) chatRoom;
+        User counterPartUser = directChatUserService.getCounterPartUser(directChat.getAllUserIds(),user);
+        directChat.setName(counterPartUser.getDisplayName());
+        directChat.setCounterPartUserId(counterPartUser.getUserId());
     }
 }

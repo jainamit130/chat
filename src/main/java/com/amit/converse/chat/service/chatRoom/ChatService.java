@@ -58,7 +58,7 @@ public class ChatService<T extends ChatRoom> {
 
     public void readMessages(ChatRoom chatRoom,User user) {
         chatRoom.readMessages(user.getUserId());
-        processChatRoomToDB(getContextChatRoom());
+        processChatRoomToDB((T) chatRoom);
     }
 
     public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds, User user) {
@@ -98,8 +98,7 @@ public class ChatService<T extends ChatRoom> {
         return onlineUserIds;
     }
 
-    public void clearChat(String userId) {
-        T chatRoom = (T) ChatContext.getChatRoom();
+    public void clearChat(IChatRoom chatRoom,String userId) {
         chatRoom.clearChat(userId);
     }
 

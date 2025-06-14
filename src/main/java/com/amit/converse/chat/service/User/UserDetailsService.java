@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service.User;
 
+import com.amit.converse.chat.State.StateFactoryService;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,14 @@ public class UserDetailsService {
 
     @Autowired
     @Lazy
+    private StateFactoryService stateFactoryService;
+
+    @Autowired
+    @Lazy
     private SelfChatUserService selfChatUserService;
 
     private UserDetails getInitializedUserDetails(User user) {
+        user.setState(stateFactoryService.getState(user));
         UserDetails userDetails = UserDetails.builder()
                 .userId(user.getUserId())
                 .username(user.getDisplayName())
