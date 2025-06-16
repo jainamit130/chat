@@ -9,6 +9,7 @@ import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.repository.ChatRoom.IChatRoomRepository;
+import com.amit.converse.chat.service.User.UserChatService;
 import com.amit.converse.chat.service.User.UserService;
 import com.amit.converse.chat.service.chatRoom.MessageFilters.MessageFilterFactory;
 import com.amit.converse.chat.service.chatRoom.filfillmentService.factory.ChatRoomFulfilmentServiceFactory;
@@ -31,6 +32,9 @@ public class ChatService<T extends ChatRoom> {
     @Autowired
     @Lazy
     private ClearChatService clearChatService;
+    @Autowired
+    @Lazy
+    private UserChatService userChatService;
     @Autowired
     private ChatRoomFulfilmentServiceFactory chatRoomFulfilmentServiceFactory;
     @Autowired
@@ -79,14 +83,19 @@ public class ChatService<T extends ChatRoom> {
         return chatRoom;
     }
 
+    private void deleteChatFromDB(ChatRoom chatRoom) {
+        clearChatService.clearChat(chatRoom);
+        userChatService.deleteChat(chatRoom);
+        chatRoomRepository.deleteById(chatRoom.getId());
+    }
+
     protected T saveChat(T chat) {
         return chatRoomRepository.save(chat);
     }
 
     public void processChatRoomToDB(T chatRoom) {
         if (chatRoom.isDeletable()) {
-            clearChatService.clearChat(chatRoom);
-            chatRoomRepository.deleteById(chatRoom.getId());
+            deleteChatFromDB(chatRoom);
             updateChatRoomContext(null);
         } else {
             updateChatRoomContext((T) fulfillChatRoom(saveChat(chatRoom),UserService.getUserContext()));

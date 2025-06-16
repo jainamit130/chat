@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
+import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageService.DeleteMessageService.ClearChatService;
 import com.amit.converse.chat.service.User.UserService;
 import com.amit.converse.chat.service.chatRoom.ChatService;
@@ -19,8 +20,9 @@ public class DeleteChatService {
 
     public void deleteChat() {
         ChatRoom chatRoom = chatService.getContextChatRoom();
+        User user = UserService.getUserContext();
         clearChatService.clearChat(chatRoom);
-        userChatService.deleteChat(chatRoom);
-        redisWriteService.removeUserFromChatRoom(chatRoom, UserService.getUserContext());
+        userChatService.deleteChat(chatRoom, user);
+        redisWriteService.removeUserFromChatRoom(chatRoom, user);
     }
 }

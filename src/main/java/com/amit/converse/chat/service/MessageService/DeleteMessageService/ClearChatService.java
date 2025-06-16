@@ -24,8 +24,8 @@ public class ClearChatService {
     }
 
     public void clearChatAndSave() {
-        IChatRoom chatRoom = chatService.getContextChatRoom();
+        ChatRoom chatRoom = chatService.getContextChatRoom();
         clearChat(chatRoom);
-        chatService.processChatRoomToDB((ChatRoom) chatRoom);
+        chatService.processChatRoomToDB(chatRoom);
     }
 }

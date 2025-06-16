@@ -74,11 +74,18 @@ public class UserChatService<T extends ChatRoom> {
         return userService.getUsersFromRepo(userIds);
     }
 
-    public void deleteChat(T chatRoom) {
-        User contextUser = userService.getUserContext();
-        chatRoom.deleteChat(userService.getUserContext().getUserId());
-        contextUser.deleteChat(chatRoom.getId());
-        processUsersAndChatRoomToDB(Collections.singletonList(contextUser),chatRoom);
+    public void deleteChat(ChatRoom chatRoom, User user) {
+        chatRoom.deleteChat(user.getUserId());
+        user.deleteChat(chatRoom);
+        processUsersAndChatRoomToDB(Collections.singletonList(user), (T) chatRoom);
+    }
+
+    public void deleteChat(ChatRoom chatRoom) {
+        List<String> allUserIds = new ArrayList<>(chatRoom.getUserIds());
+        allUserIds.addAll(chatRoom.getDeletedForUsers());
+        List<User> users = getUsersFromRepo(allUserIds);
+        users.stream().forEach((user)->user.deleteChat(chatRoom));
+        processUsersToDB(users);
     }
 
     // Notify All ChatRooms of a user about status: went online or went offline

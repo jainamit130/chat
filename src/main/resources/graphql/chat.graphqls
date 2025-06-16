@@ -16,7 +16,7 @@ type ChatMessage {
     name: String
     content: String!
     timestamp: String!
-    status: MessageStatus
+    readOnlyStatus: MessageStatus
 }
 
 type NotificationMessage {

@@ -31,7 +31,6 @@ public abstract class RedisSessionITransitionService implements ITransition {
 
     public abstract void alterUser();
 
-    @Async
     public void notifyStatusToChatRooms() {
         userChatService.notifyStatus(status);
     }

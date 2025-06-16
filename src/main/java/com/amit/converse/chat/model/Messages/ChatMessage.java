@@ -3,6 +3,7 @@ package com.amit.converse.chat.model.Messages;
 import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.MetaData.ChatMessageMetaData;
 import lombok.*;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -20,6 +21,8 @@ import java.util.Set;
 public class ChatMessage extends Message implements IDeletableMessage {
     private String senderId;
     private MessageStatus status;
+    @Transient
+    private MessageStatus readOnlyStatus;
     private String name;
     private Boolean deletedForEveryone;
     private ChatMessageMetaData messageMetaData;

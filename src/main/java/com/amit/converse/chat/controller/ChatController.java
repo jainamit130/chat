@@ -40,6 +40,7 @@ public class ChatController {
     @QueryMapping
     public ChatRoomData getChatRoomData(@Argument String chatRoomId){
         try {
+            SecurityContextUtil.populateUserContext(userService.getLoggedInUser());
             return chatService.getChatRoomData(chatRoomId);
         } catch (IllegalArgumentException e) {
             return null;
