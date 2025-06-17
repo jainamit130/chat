@@ -1,8 +1,11 @@
 package com.amit.converse.chat.service.MessageService.DeleteMessageService;
 
 import com.amit.converse.chat.Interface.IChatRoom;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.repository.Message.IMessageRepository;
+import com.amit.converse.chat.service.MessageService.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class DeleteMessageService {
+public class DeleteMessageService extends MessageService {
 
     @Autowired
     protected IMessageRepository messageRepository;
@@ -31,10 +34,11 @@ public class DeleteMessageService {
         }
     }
 
-    public void deleteMessagesForUserFromTillNow(IChatRoom chatRoom, Instant from, String userId) {
+    public void deleteMessagesForUserFromTillNow(ChatRoom chatRoom, Instant from, String userId) {
         List<Message> messages = messageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(), userId, from);
         List<Message> messagesToSave = new ArrayList<>();
         for (Message message : messages) deleteMessageForUser(chatRoom,userId,message,messagesToSave);
+        updateLatestMessageOfUser(new ChatMessage(chatRoom.getUserFetchStartTime(userId)),chatRoom,userId);
         saveDeletedMessages(messagesToSave);
     }
 }

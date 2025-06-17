@@ -72,6 +72,12 @@ public class ChatMessage extends Message implements IDeletableMessage {
         messageMetaData.clearMessageMetadata();
     }
 
+    @Override
+    public void processStatus(String userId) {
+        if(senderId==null || !senderId.equals(userId)) {
+            status = null;
+        }
+    }
 
     public Map<String, Set<String>> getDeliveryReceiptsByTime() {
         return messageMetaData.getDeliveryReceiptsByTime();

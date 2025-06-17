@@ -34,7 +34,7 @@ public abstract class ChatConnectionService {
     public void processChatConnectionsAndNotify(List<User> users, ChatRoom chatRoom) {
         List<TransactionNotification> joinNotifications = new ArrayList<>();
         for(User user:users) {
-            joinNotifications.add(notifyGroupTransactionService.generateMessage(user,getShiftedInstant()));
+            joinNotifications.add(notifyGroupTransactionService.generateMessage(chatRoom,user,getShiftedInstant()));
             processChatConnectionAndNotify(user,chatRoom,joinNotifications.getLast());
         }
         notifyGroupTransactionService.notifyGroup(chatRoom,joinNotifications);

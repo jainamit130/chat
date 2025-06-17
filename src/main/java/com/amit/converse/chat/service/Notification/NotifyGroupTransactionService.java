@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,11 +39,13 @@ public abstract class NotifyGroupTransactionService {
 
     protected abstract NotificationType getNotificationType();
 
-    public final TransactionNotification generateMessage(User joinedUser, Instant notificationTime) {
+    public final TransactionNotification generateMessage(ChatRoom chatRoom,User transactedUser, Instant notificationTime) {
         String moderatorName = UserService.getUserContext().getDisplayName();
-        String message = moderatorName + " " + getTransactionMessage() + " " + joinedUser.getDisplayName();
+        String message = moderatorName + " " + getTransactionMessage() + " " + transactedUser.getDisplayName();
         NotificationMessage notificationMessage = notificationMessageService.fulfilMessage(NotificationMessageService.generateNotificationMessage(chatContext.getChatRoomId(), message, notificationTime));
-        return TransactionNotification.builder().message(notificationMessageService.saveMessage(notificationMessage)).moderatorName(moderatorName).username(joinedUser.getDisplayName()).onlineStatus(redisReadService.getConnectionStatus(joinedUser)).type(getNotificationType()).build();
+        List<String> userIds = new ArrayList<>(chatRoom.getUserIds());
+        userIds.add(transactedUser.getUserId());
+        return TransactionNotification.builder().message(notificationMessageService.saveMessage(chatRoom,notificationMessage,userIds)).moderatorName(moderatorName).username(transactedUser.getDisplayName()).onlineStatus(redisReadService.getConnectionStatus(transactedUser)).type(getNotificationType()).build();
     }
 
     public final void notifyGroup(ChatRoom chatRoom, List<TransactionNotification> transactionNotifications) {

@@ -4,6 +4,7 @@ import com.amit.converse.chat.Interface.ITransactable;
 import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDTO;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
+import com.amit.converse.chat.model.Messages.Message;
 import lombok.*;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
@@ -40,6 +41,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
     }
 
     private final String name;
+
     private String createdBy;
     // Admin UserIds for Group only
     private List<String> adminUserIds;
@@ -48,7 +50,6 @@ public class GroupChat extends ChatRoom implements ITransactable {
     private Boolean isExited;
     private Map<String,Instant> exitedMembers;
     private Map<String,List<BlindPeriod>> blindPeriods;
-
     @Override
     public Integer getExitedMemberCount() {
         return exitedMembers.size();
@@ -128,6 +129,11 @@ public class GroupChat extends ChatRoom implements ITransactable {
         if(exitedMembers.containsKey(userId)) {
             exitedMembers.put(userId,Instant.now());
         }
+    }
+
+    @Override
+    public void updateLatestMessageOfMember(String userId, Message message) {
+        if(!exitedMembers.containsKey(userId)) super.updateLatestMessageOfMember(userId, message);
     }
 
     public Instant getExitInstant(String userId) {

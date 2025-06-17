@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.MessageService;
 
 import com.amit.converse.chat.context.ChatRoom.ChatContext;
+import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Messages.Message;
@@ -11,9 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
-public class NotificationMessageService {
+public class NotificationMessageService extends MessageService {
 
     @Autowired
     private INotificationMessageRepository notificationMessageRepository;
@@ -26,7 +28,8 @@ public class NotificationMessageService {
         return notificationMessage;
     }
 
-    public NotificationMessage saveMessage(NotificationMessage message) {
+    public NotificationMessage saveMessage(ChatRoom chatRoom,NotificationMessage message, List<String> userIds) {
+        updateLatestMessagesOfMembers(message,chatRoom, userIds);
         return notificationMessageRepository.save(message);
     }
 

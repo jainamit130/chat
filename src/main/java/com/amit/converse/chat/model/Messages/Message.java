@@ -36,4 +36,8 @@ public abstract class Message {
     public abstract void deleteMessage(String userId);
 
     public abstract Integer getDeletedForMembersCount();
+
+    public void processStatus(String userId) {
+
+    }
 }

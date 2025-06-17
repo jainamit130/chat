@@ -59,6 +59,7 @@ public abstract class ChatRoom implements IChatRoom {
     protected Map<String, Instant> userFetchStartTimeMap;
     protected Set<String> deletedForUsers;
     protected Integer totalMessageCount;
+    protected Map<String, Message> memberLatestMessage;
     protected Map<String, Integer> readMessageCount;
     protected Map<String, Instant> lastVisitedTimestamp;
     @Transient
@@ -83,6 +84,15 @@ public abstract class ChatRoom implements IChatRoom {
     public void setUserIds(List<String> userIds) {
         Set<String> userIdsSet = Set.copyOf(userIds);
         this.userIds = new ArrayList<>(userIdsSet);
+    }
+
+    public Optional<Message> getLatestMessage(String userId) {
+        if(memberLatestMessage==null) memberLatestMessage = new HashMap<>();
+        return Optional.ofNullable(memberLatestMessage.get(userId));
+    }
+
+    public void updateLatestMessageOfMember(String userId,Message message) {
+        memberLatestMessage.put(userId,message);
     }
 
     public void setName(String name) {

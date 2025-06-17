@@ -32,7 +32,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class ChatMessageService<T extends IChatRoom> {
+public class ChatMessageService<T extends IChatRoom> extends MessageService {
 
     @Autowired
     @Lazy
@@ -54,7 +54,8 @@ public class ChatMessageService<T extends IChatRoom> {
     @Autowired
     private IMessageRepository messageRepository;
 
-    public ChatMessage saveMessage(ChatMessage message) {
+    public ChatMessage saveMessage(ChatRoom chatRoom,ChatMessage message) {
+        updateLatestMessagesOfMembers(message,chatRoom, chatRoom.getUserIds());
         return chatMessageRepository.save(message);
     }
 
@@ -99,14 +100,18 @@ public class ChatMessageService<T extends IChatRoom> {
         fulfilMessage(message);
         ChatRoom chatRoom = chatService.getContextChatRoom();
         authoriseSender();
-        ChatMessage savedMessage = saveMessage(message);
+        ChatMessage savedMessage = saveMessage(chatRoom,message);
         sendMessageNotification(chatRoom.getId(),savedMessage);
         messageProcessingService.processMessage(chatRoom,savedMessage);
     }
 
-    public Message getLatestMessage(IChatRoom chatRoom,User user) {
-        Optional<Message> latestMessage = messageRepository.findLatestMessage(chatRoom.getId(),user.getUserId());
-        if(latestMessage.isPresent()) return latestMessage.get();
+    public Message getLatestMessage(ChatRoom chatRoom,User user) {
+        Optional<Message> optionalLatestMessage = chatRoom.getLatestMessage(user.getUserId());
+        if(optionalLatestMessage.isPresent()) {
+            Message latestMessage = optionalLatestMessage.get();
+            latestMessage.processStatus(user.getUserId());
+            return latestMessage;
+        }
         return new ChatMessage(chatRoom.getUserFetchStartTime(user.getUserId()));
     }
 
