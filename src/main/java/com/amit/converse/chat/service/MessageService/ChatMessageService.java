@@ -75,7 +75,7 @@ public class ChatMessageService<T extends IChatRoom> {
     public List<Message> getMessagesOfChatRoom(IChatRoom chatRoom) {
         User user = UserService.getUserContext();
         Instant fromInstant = chatRoom.getUserFetchStartTime(user.getUserId());
-        return messageRepository.findMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
+        return messageRepository.findReadOnlyMessagesOfChatForUserFrom(chatRoom.getId(),user.getUserId(),fromInstant);
     }
 
     public List<ChatMessage> getMessagesOfChatRoom(ChatRoom chatRoom, User user, Instant fromInstant) {

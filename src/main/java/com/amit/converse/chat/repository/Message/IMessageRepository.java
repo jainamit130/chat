@@ -10,16 +10,23 @@ import java.util.Optional;
 
 public interface IMessageRepository extends MongoRepository<Message,String> {
 
+    // Do not save messages if using this function
     @Aggregation(pipeline = {
             "{ $match: { 'chatRoomId': ?0, 'messageMetaData.deletedForUsers': { $nin: [?1] }, 'timestamp': { $gt: ?2 } } }",
-            "{ $addFields: { readOnlyStatus: { $cond: { if: { $eq: [ '$senderId', ?1 ] }, then: '$status', else: null } } } }",
+            "{ $addFields: { status: { $cond: { if: { $eq: [ '$senderId', ?1 ] }, then: '$status', else: null } } } }",
+            "{ $sort: { 'timestamp': 1 } }"
+    })
+    List<Message> findReadOnlyMessagesOfChatForUserFrom(String chatRoomId, String userId, Instant from);
+
+    @Aggregation(pipeline = {
+            "{ $match: { 'chatRoomId': ?0, 'messageMetaData.deletedForUsers': { $nin: [?1] }, 'timestamp': { $gt: ?2 } } }",
             "{ $sort: { 'timestamp': 1 } }"
     })
     List<Message> findMessagesOfChatForUserFrom(String chatRoomId, String userId, Instant from);
 
     @Aggregation(pipeline = {
             "{ $match: { 'chatRoomId': ?0, 'messageMetaData.deletedForUsers': { $nin: [?1] } }}",
-            "{ $addFields: { readOnlyStatus: { $cond: { if: { $eq: [ '$senderId', ?1 ] }, then: '$status', else: null } } } }",
+            "{ $addFields: { status: { $cond: { if: { $eq: [ '$senderId', ?1 ] }, then: '$status', else: null } } } }",
             "{ $sort: { 'timestamp': -1 } }",
             "{ $limit: 1 }"
     })

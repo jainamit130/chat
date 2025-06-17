@@ -28,6 +28,7 @@ public class UserNotificationService extends NotificationService<IUserNotificati
 
     public void sendNotificationToUserChats(User user, UserStatusNotification userStatusNotification) {
         for(String chatId:user.getAllChatRoomIds()) {
+            userStatusNotification.setChatRoomId(chatId);
             chatNotificationService.sendNotification(chatId, userStatusNotification);
         }
     }

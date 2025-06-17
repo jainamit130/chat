@@ -67,7 +67,9 @@ public class ChatService<T extends ChatRoom> {
 
     public List<ChatRoom> getChatRoomsByIds(List<String> chatRoomIds, User user) {
         List<ChatRoom> chatRooms = new ArrayList<>(chatRoomRepository.getAllChatRoomsByIds(chatRoomIds, user.getUserId()));
-        chatRooms.forEach((chatRoom) -> fulfillChatRoom(chatRoom,user));
+        chatRooms.forEach((chatRoom) -> {
+            fulfillChatRoom(chatRoom, user);
+        });
         return chatRooms;
     }
 

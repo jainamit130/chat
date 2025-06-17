@@ -1,6 +1,7 @@
 package com.amit.converse.chat.service.chatRoom.filfillmentService;
 
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
+import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
 import com.amit.converse.chat.service.User.UserChatService;
@@ -19,7 +20,8 @@ public abstract class ChatRoomFulfilmentService {
 
     // Latest Message
     public void fillLatestMessage(ChatRoom chatRoom,User user) {
-        chatRoom.setLatestMessage(chatMessageService.getLatestMessage(chatRoom,user));
+        Message latestMessage = chatMessageService.getLatestMessage(chatRoom, user);
+        chatRoom.setLatestMessage(latestMessage);
     }
 
     protected void fillUnreadMessageCount(ChatRoom chatRoom,User user) {

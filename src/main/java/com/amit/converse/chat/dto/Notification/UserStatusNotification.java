@@ -9,11 +9,7 @@ import lombok.Data;
 public class UserStatusNotification extends IChatNotification {
     private String username;
     private ConnectionStatus status;
-
-    public UserStatusNotification(String username, ConnectionStatus status) {
-        this.username = username;
-        this.status = status;
-    }
+    private String chatRoomId;
 
     @Override
     public NotificationType getNotificationType() {

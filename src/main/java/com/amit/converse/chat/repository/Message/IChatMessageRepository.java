@@ -20,7 +20,6 @@ public interface IChatMessageRepository extends MongoRepository<ChatMessage,Stri
     @Aggregation(pipeline = {
             "{ $match: { '_class': 'ChatMessage', '_id': ?0, 'senderId': ?1, 'messageMetaData.deletedForUsers': { $nin: [?1] } } }",
             "{ $addFields: { " +
-                    "status: '$status', " +
                     "deliveryReceiptsByTime: '$messageMetaData.deliveryReceiptsByTime', " +
                     "readReceiptsByTime: '$messageMetaData.readReceiptsByTime' " +
                     "} }"
