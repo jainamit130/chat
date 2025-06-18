@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ChatConnectService extends ChatConnectionService {
@@ -34,4 +36,12 @@ public class ChatConnectService extends ChatConnectionService {
     protected Instant getShiftedInstant() {
         return Instant.now().plusMillis(1);
     }
+
+    @Override
+    public List<String> notificationReceiverIds(ChatRoom chatRoom, User transactedUser) {
+        List<String> userIds = new ArrayList<>(chatRoom.getUserIds());
+        userIds.add(transactedUser.getUserId());
+        return userIds;
+    }
+
 }

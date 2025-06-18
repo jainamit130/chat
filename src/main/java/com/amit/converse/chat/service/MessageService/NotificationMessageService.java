@@ -28,8 +28,8 @@ public class NotificationMessageService extends MessageService {
         return notificationMessage;
     }
 
-    public NotificationMessage saveMessage(ChatRoom chatRoom,NotificationMessage message, List<String> userIds) {
-        updateLatestMessagesOfMembers(message,chatRoom, userIds);
+    public NotificationMessage saveMessage(ChatRoom chatRoom,NotificationMessage message,List<String> userIds) {
+        updateLatestMessagesOfMembers(message,chatRoom,userIds);
         return notificationMessageRepository.save(message);
     }
 

@@ -98,6 +98,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
         userIds.remove(userId);
         if(exitedMembers.containsKey(userId)) {
             exitedMembers.remove(userId);
+            memberLatestMessage.remove(userId);
         } else {
             deletedForUsers.add(userId);
         }

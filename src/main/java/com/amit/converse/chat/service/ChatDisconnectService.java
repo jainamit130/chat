@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 public class ChatDisconnectService extends ChatConnectionService {
@@ -32,6 +33,12 @@ public class ChatDisconnectService extends ChatConnectionService {
     @Override
     protected Instant getShiftedInstant() {
         return Instant.now().minusMillis(1);
+    }
+
+    @Override
+    public List<String> notificationReceiverIds(ChatRoom chatRoom, User transactedUser) {
+        // for exit service the user is not yet disconnected
+        return chatRoom.getUserIds();
     }
 
 }

@@ -31,10 +31,12 @@ public abstract class ChatConnectionService {
 
     protected abstract Instant getShiftedInstant();
 
+    public abstract List<String> notificationReceiverIds(ChatRoom chatRoom, User transactedUser);
+
     public void processChatConnectionsAndNotify(List<User> users, ChatRoom chatRoom) {
         List<TransactionNotification> joinNotifications = new ArrayList<>();
         for(User user:users) {
-            joinNotifications.add(notifyGroupTransactionService.generateMessage(chatRoom,user,getShiftedInstant()));
+            joinNotifications.add(notifyGroupTransactionService.generateMessage(chatRoom,user,getShiftedInstant(),notificationReceiverIds(chatRoom,user)));
             processChatConnectionAndNotify(user,chatRoom,joinNotifications.getLast());
         }
         notifyGroupTransactionService.notifyGroup(chatRoom,joinNotifications);

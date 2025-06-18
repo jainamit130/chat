@@ -10,7 +10,7 @@ import java.util.List;
 public class MessageService {
 
     public void updateLatestMessagesOfMembers(Message message, ChatRoom chatRoom, List<String> userIds) {
-        for(String userId : userIds) {
+        for(String userId : chatRoom.getUserIds()) {
             updateLatestMessageOfUser(message,chatRoom,userId);
         }
     }
