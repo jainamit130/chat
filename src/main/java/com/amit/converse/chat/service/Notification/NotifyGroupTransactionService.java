@@ -43,7 +43,7 @@ public abstract class NotifyGroupTransactionService {
         String moderatorName = UserService.getUserContext().getDisplayName();
         String message = moderatorName + " " + getTransactionMessage() + " " + transactedUser.getDisplayName();
         NotificationMessage notificationMessage = notificationMessageService.fulfilMessage(NotificationMessageService.generateNotificationMessage(chatContext.getChatRoomId(), message, notificationTime));
-        return TransactionNotification.builder().message(notificationMessageService.saveMessage(chatRoom,notificationMessage,userIdsToReceiveNotification)).moderatorName(moderatorName).username(transactedUser.getDisplayName()).onlineStatus(redisReadService.getConnectionStatus(transactedUser)).type(getNotificationType()).build();
+        return TransactionNotification.builder().message(notificationMessageService.saveMessage(chatRoom,notificationMessage,userIdsToReceiveNotification)).chatRoomId(chatRoom.getId()).moderatorName(moderatorName).username(transactedUser.getDisplayName()).onlineStatus(redisReadService.getConnectionStatus(transactedUser)).type(getNotificationType()).build();
     }
 
     public final void notifyGroup(ChatRoom chatRoom, List<TransactionNotification> transactionNotifications) {

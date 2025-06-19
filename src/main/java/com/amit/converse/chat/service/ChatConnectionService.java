@@ -2,6 +2,7 @@ package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.dto.Notification.TransactionNotification;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
+import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Notification.NotifyGroupTransactionService;
 import com.amit.converse.chat.service.User.UserChatService;
@@ -29,30 +30,27 @@ public abstract class ChatConnectionService {
 
     protected abstract void processChatConnection(User user, ChatRoom chatRoom);
 
-    protected abstract Instant getShiftedInstant();
+    protected abstract Instant getShiftedInstant(GroupChat chatRoom, User user);
 
     public abstract List<String> notificationReceiverIds(ChatRoom chatRoom, User transactedUser);
 
-    public void processChatConnectionsAndNotify(List<User> users, ChatRoom chatRoom) {
+    public void processChatConnectionsAndNotify(List<User> users, GroupChat chatRoom) {
         List<TransactionNotification> joinNotifications = new ArrayList<>();
         for(User user:users) {
-            joinNotifications.add(notifyGroupTransactionService.generateMessage(chatRoom,user,getShiftedInstant(),notificationReceiverIds(chatRoom,user)));
+            joinNotifications.add(notifyGroupTransactionService.generateMessage(chatRoom,user,getShiftedInstant(chatRoom,user),notificationReceiverIds(chatRoom,user)));
             processChatConnectionAndNotify(user,chatRoom,joinNotifications.getLast());
         }
         notifyGroupTransactionService.notifyGroup(chatRoom,joinNotifications);
         userChatService.processUsersAndChatRoomToDB(users,chatRoom);
     }
 
-    @Transactional
     public void processChatConnections(List<User> users, ChatRoom chatRoom) {
         for(User user:users) {
             processChatConnectionAndNotify(user,chatRoom,null);
         }
-        userChatService.processUsersAndChatRoomToDB(users,chatRoom);
     }
 
-    public void connectChatFromUserIds(List<String> userIds,ChatRoom chatRoom) {
-        List<User> users = userChatService.getUsersFromRepo(userIds);
+    public void connectChatFromUsers(List<User> users,ChatRoom chatRoom) {
         processChatConnections(users,chatRoom);
     }
 }

@@ -3,6 +3,7 @@ package com.amit.converse.chat.service;
 import com.amit.converse.chat.dto.Notification.ExitedChatNotification;
 import com.amit.converse.chat.dto.Notification.TransactionNotification;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
+import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Notification.NotifyGroupTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +32,8 @@ public class ChatDisconnectService extends ChatConnectionService {
     }
 
     @Override
-    protected Instant getShiftedInstant() {
-        return Instant.now().minusMillis(1);
+    protected Instant getShiftedInstant(GroupChat chatRoom, User user) {
+        return chatRoom.getLastAvailableInstant(user).minusMillis(1);
     }
 
     @Override

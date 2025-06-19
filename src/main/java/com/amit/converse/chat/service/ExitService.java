@@ -27,9 +27,18 @@ public class ExitService {
     // Users removed from group
     public void leave(List<String> userIds) {
         GroupChat groupChat = groupChatService.getContextChatRoom();
-        List<User> users = groupChatUserService.getUsersFromRepo(userIds);
-        chatDisconnectService.connectChatFromUserIds(new ArrayList<>(groupChat.getDeletedForUsers()),groupChat);
-        groupChatService.exitChatRoom(userIds,groupChat);
-        chatDisconnectService.processChatConnectionsAndNotify(users,groupChat);
+        List<User> usersWhoDeletedChat = groupChatUserService.getUsersFromRepo(new ArrayList<>(groupChat.getDeletedForUsers()));
+        chatDisconnectService.connectChatFromUsers(usersWhoDeletedChat,groupChat);
+
+        List<String> userIdsToBeRemoved = new ArrayList<>();
+        for (String userId : userIds) {
+            if (groupChat.getUserIds().contains(userId)) {
+                userIdsToBeRemoved.add(userId);
+            }
+        }
+
+        groupChatService.exitChatRoom(userIdsToBeRemoved,groupChat);
+        List<User> usersToRemove = groupChatUserService.getUsersFromRepo(userIdsToBeRemoved);
+        chatDisconnectService.processChatConnectionsAndNotify(usersToRemove,groupChat);
     }
 }

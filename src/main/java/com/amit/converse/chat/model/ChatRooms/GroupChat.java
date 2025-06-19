@@ -1,10 +1,9 @@
 package com.amit.converse.chat.model.ChatRooms;
 
 import com.amit.converse.chat.Interface.ITransactable;
-import com.amit.converse.chat.dto.OnlineUsers.GroupChatOnlineUsersDTO;
-import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.model.Enums.ChatRoomType;
 import com.amit.converse.chat.model.Messages.Message;
+import com.amit.converse.chat.model.User;
 import lombok.*;
 import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.data.annotation.Transient;
@@ -31,13 +30,13 @@ public class GroupChat extends ChatRoom implements ITransactable {
     }
 
     @PersistenceCreator
-    public GroupChat(String name, List<String> userIds, String createdBy, List<String> adminUserIds) {
+    public GroupChat(String name, List<String> userIds, String createdBy, Map<String,Instant> exitedMembers, Map<String,List<BlindPeriod>> blindPeriods, List<String> adminUserIds) {
         super(name,ChatRoomType.GROUP,userIds);
         this.name = name;
         this.adminUserIds = adminUserIds;
-        this.createdBy=createdBy;
-        this.exitedMembers = new HashMap<>();
-        this.blindPeriods = new HashMap<>();
+        this.createdBy = createdBy;
+        this.exitedMembers = exitedMembers;
+        this.blindPeriods = blindPeriods;
     }
 
     private final String name;
@@ -48,8 +47,10 @@ public class GroupChat extends ChatRoom implements ITransactable {
     // Exit Group Feature Only For Groups
     @Transient
     private Boolean isExited;
-    private Map<String,Instant> exitedMembers;
-    private Map<String,List<BlindPeriod>> blindPeriods;
+    @Builder.Default
+    private Map<String,Instant> exitedMembers = new HashMap<>();
+    @Builder.Default
+    private Map<String,List<BlindPeriod>> blindPeriods = new HashMap<>();
     @Override
     public Integer getExitedMemberCount() {
         return exitedMembers.size();
@@ -87,8 +88,8 @@ public class GroupChat extends ChatRoom implements ITransactable {
     }
 
     @Override
-    public void join(List<String> userIds) {
-        unExit(userIds);
+    public void join(List<String> userIds, boolean shareChatHistory) {
+        unExit(userIds,shareChatHistory);
         HashSet<String> userIdsSet = new HashSet(this.userIds);
         userIds.addAll(userIdsSet);
     }
@@ -113,12 +114,14 @@ public class GroupChat extends ChatRoom implements ITransactable {
         isExited = true;
     }
 
-    private void unExit(List<String> userIds) {
+    private void unExit(List<String> userIds,boolean shareChatHistory) {
         userIds.forEach(userId -> {
             if (exitedMembers.containsKey(userId)) {
                 List<BlindPeriod> blindPeriods = this.blindPeriods.computeIfAbsent(userId, k -> new ArrayList<>());
                 blindPeriods.add(new BlindPeriod(exitedMembers.get(userId), Instant.now()));
                 exitedMembers.remove(userId);
+            } else if(!shareChatHistory && !userFetchStartTimeMap.containsKey(userId)) {
+                userFetchStartTimeMap.put(userId,Instant.now());
             }
         });
         this.isExited=false;
@@ -137,7 +140,15 @@ public class GroupChat extends ChatRoom implements ITransactable {
         if(!exitedMembers.containsKey(userId)) super.updateLatestMessageOfMember(userId, message);
     }
 
-    public Instant getExitInstant(String userId) {
-        return exitedMembers.get(userId);
+    public Instant getLastAvailableInstant(User user) {
+        if (exitedMembers.containsKey(user.getUserId())) {
+            return exitedMembers.get(user.getUserId());
+        } else {
+            List<BlindPeriod> blindPeriods = this.blindPeriods.get(user.getUserId());
+            if (blindPeriods == null) {
+                blindPeriods = Collections.singletonList(new BlindPeriod(getCreatedAt(), getCreatedAt()));
+            }
+            return blindPeriods.getLast().getEnd();
+        }
     }
 }

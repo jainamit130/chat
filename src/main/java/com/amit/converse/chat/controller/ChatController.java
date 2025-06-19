@@ -56,6 +56,7 @@ public class ChatController {
             SecurityContextUtil.populateUserContext(userService.getUserById(user.getUserId()));
             message.setChatRoomId(chatRoomId);
             chatMessageServiceFactory.getMessageServiceFactory(chatRoomId).sendMessage(message);
+            ChatService.clearContext();
         } catch (IllegalArgumentException | InterruptedException e) {
             System.err.println("Error sending message: " + e.getMessage());
         }

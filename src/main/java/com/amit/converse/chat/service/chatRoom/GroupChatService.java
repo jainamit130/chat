@@ -26,7 +26,7 @@ public class GroupChatService extends ChatService<GroupChat> {
     }
 
     public void joinChatRoom(List<String> userIds, GroupChat groupChat) {
-        groupChat.join(userIds);
+        groupChat.join(userIds, false);
     }
 
     public void exitChatRoom(List<String> userIds,GroupChat groupChat) {

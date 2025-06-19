@@ -19,10 +19,18 @@ public class JoinService {
 
     public void join(List<String> userIds) {
         GroupChat groupChat = groupChatService.getContextChatRoom();
-        List<User> users = groupChatUserService.getUsersFromRepo(userIds);
-        groupChatService.joinChatRoom(userIds,groupChat);
-        chatConnectService.processChatConnectionsAndNotify(users,groupChat);
-        chatConnectService.connectChatFromUserIds(new ArrayList<>(groupChat.getDeletedForUsers()),groupChat);
+        List<User> usersWhoDeletedChat = groupChatUserService.getUsersFromRepo(new ArrayList<>(groupChat.getDeletedForUsers()));
+        chatConnectService.connectChatFromUsers(usersWhoDeletedChat,groupChat);
+
+        List<String> newUserIds = new ArrayList<>();
+        for (String userId : userIds) {
+            if (!groupChat.getUserIds().contains(userId)) {
+                newUserIds.add(userId);
+            }
+        }
+        List<User> usersToBeAdded = groupChatUserService.getUsersFromRepo(newUserIds);
+        groupChatService.joinChatRoom(newUserIds,groupChat);
+        chatConnectService.processChatConnectionsAndNotify(usersToBeAdded,groupChat);
     }
 
 }

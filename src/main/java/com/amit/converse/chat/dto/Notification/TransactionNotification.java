@@ -20,4 +20,5 @@ public class TransactionNotification {
     ConnectionStatus onlineStatus;
     IOnlineUsersDTO onlineUsersDTO;
     NotificationType type;
+    String chatRoomId;
 }

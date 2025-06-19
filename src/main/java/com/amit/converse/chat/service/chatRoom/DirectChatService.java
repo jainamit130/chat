@@ -19,7 +19,6 @@ public class DirectChatService extends ChatService<DirectChat> {
     @Autowired
     private DirectChatMessageService directChatMessageService;
 
-    @Transactional
     private void processDirectChatCreation(User primaryUser, User counterPartUser) {
         Optional<DirectChat> alreadyExistingDirectChat = getChatIfAlreadyExisting(primaryUser.getUserId(),counterPartUser.getUserId());
         if(alreadyExistingDirectChat.isPresent()) {
