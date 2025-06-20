@@ -28,8 +28,8 @@ public class JoinService {
                 newUserIds.add(userId);
             }
         }
+        groupChatService.joinChatRoom(new ArrayList<>(newUserIds),groupChat);
         List<User> usersToBeAdded = groupChatUserService.getUsersFromRepo(newUserIds);
-        groupChatService.joinChatRoom(newUserIds,groupChat);
         chatConnectService.processChatConnectionsAndNotify(usersToBeAdded,groupChat);
     }
 

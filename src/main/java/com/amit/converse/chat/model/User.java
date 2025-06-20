@@ -84,6 +84,7 @@ public class User implements IDeliverableEntity, UserDetails {
             deletedChatRoomIds.remove(chatRoom.getId());
         }
         else if(!isExited(chatRoom.getId())) deletedChatRoomIds.add(chatRoom.getId());
+        else if(isExited(chatRoom.getId())) exitedChatRoomIds.remove(chatRoom.getId());
     }
 
     public void disconnectChat(String chatRoomId, Integer unreadMessageCount) {

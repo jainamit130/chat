@@ -55,7 +55,7 @@ public class ChatMessageService<T extends IChatRoom> extends MessageService {
     private IMessageRepository messageRepository;
 
     public ChatMessage saveMessage(ChatRoom chatRoom,ChatMessage message) {
-        updateLatestMessagesOfMembers(message,chatRoom,chatRoom.getUserIds());
+        updateLatestMessagesOfMembers(message,chatRoom,chatRoom.getAllUserIds());
         return chatMessageRepository.save(message);
     }
 

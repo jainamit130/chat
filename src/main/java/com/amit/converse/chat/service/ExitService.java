@@ -37,7 +37,7 @@ public class ExitService {
             }
         }
 
-        groupChatService.exitChatRoom(userIdsToBeRemoved,groupChat);
+        groupChatService.exitChatRoom(new ArrayList<>(userIdsToBeRemoved),groupChat);
         List<User> usersToRemove = groupChatUserService.getUsersFromRepo(userIdsToBeRemoved);
         chatDisconnectService.processChatConnectionsAndNotify(usersToRemove,groupChat);
     }

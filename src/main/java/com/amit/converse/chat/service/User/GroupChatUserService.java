@@ -24,7 +24,7 @@ public class GroupChatUserService extends UserChatService<GroupChat> {
 
     public GroupDetails getGroupDetails() {
         ChatRoom chatRoom = chatService.getContextChatRoom();
-        List<User> users = getUsersFromRepo(chatRoom.getUserIds());
+        List<User> users = getUsersFromRepo(chatRoom.getAllUserIds());
         List<UserDTO> userDTOList = new ArrayList<>();
         for(User user: users) {
             UserDTO userDTO = UserDTO.builder().userId(user.getUserId()).username(user.getDisplayName()).build();

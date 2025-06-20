@@ -100,6 +100,8 @@ public class GroupChat extends ChatRoom implements ITransactable {
         if(exitedMembers.containsKey(userId)) {
             exitedMembers.remove(userId);
             memberLatestMessage.remove(userId);
+            userFetchStartTimeMap.remove(userId);
+            readMessageCount.remove(userId);
         } else {
             deletedForUsers.add(userId);
         }
@@ -109,7 +111,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
     public void exit(List<String> userIds) {
         userIds.forEach((userId) -> {
                 if(!exitedMembers.containsKey(userId))
-                    exitedMembers.put(userId,Instant.now());
+                    exitedMembers.put(userId,Instant.now().minusMillis(5));
         });
         isExited = true;
     }
@@ -118,10 +120,12 @@ public class GroupChat extends ChatRoom implements ITransactable {
         userIds.forEach(userId -> {
             if (exitedMembers.containsKey(userId)) {
                 List<BlindPeriod> blindPeriods = this.blindPeriods.computeIfAbsent(userId, k -> new ArrayList<>());
-                blindPeriods.add(new BlindPeriod(exitedMembers.get(userId), Instant.now()));
+                blindPeriods.add(new BlindPeriod(exitedMembers.get(userId), Instant.now().plusMillis(5)));
                 exitedMembers.remove(userId);
             } else if(!shareChatHistory && !userFetchStartTimeMap.containsKey(userId)) {
-                userFetchStartTimeMap.put(userId,Instant.now());
+                userFetchStartTimeMap.put(userId,Instant.now().plusMillis(5));
+                List<BlindPeriod> blindPeriods = this.blindPeriods.computeIfAbsent(userId, k -> new ArrayList<>());
+                blindPeriods.add(new BlindPeriod(createdAt,userFetchStartTimeMap.get(userId)));
             }
         });
         this.isExited=false;
@@ -135,19 +139,11 @@ public class GroupChat extends ChatRoom implements ITransactable {
         }
     }
 
-    @Override
-    public void updateLatestMessageOfMember(String userId, Message message) {
-        if(!exitedMembers.containsKey(userId)) super.updateLatestMessageOfMember(userId, message);
-    }
-
     public Instant getLastAvailableInstant(User user) {
         if (exitedMembers.containsKey(user.getUserId())) {
             return exitedMembers.get(user.getUserId());
         } else {
             List<BlindPeriod> blindPeriods = this.blindPeriods.get(user.getUserId());
-            if (blindPeriods == null) {
-                blindPeriods = Collections.singletonList(new BlindPeriod(getCreatedAt(), getCreatedAt()));
-            }
             return blindPeriods.getLast().getEnd();
         }
     }

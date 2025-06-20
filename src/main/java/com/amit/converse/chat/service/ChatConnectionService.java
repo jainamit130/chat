@@ -35,12 +35,12 @@ public abstract class ChatConnectionService {
     public abstract List<String> notificationReceiverIds(ChatRoom chatRoom, User transactedUser);
 
     public void processChatConnectionsAndNotify(List<User> users, GroupChat chatRoom) {
-        List<TransactionNotification> joinNotifications = new ArrayList<>();
+        List<TransactionNotification> transactionNotifications = new ArrayList<>();
         for(User user:users) {
-            joinNotifications.add(notifyGroupTransactionService.generateMessage(chatRoom,user,getShiftedInstant(chatRoom,user),notificationReceiverIds(chatRoom,user)));
-            processChatConnectionAndNotify(user,chatRoom,joinNotifications.getLast());
+            transactionNotifications.add(notifyGroupTransactionService.generateMessage(chatRoom,user,getShiftedInstant(chatRoom,user),notificationReceiverIds(chatRoom,user)));
+            processChatConnectionAndNotify(user,chatRoom,transactionNotifications.getLast());
         }
-        notifyGroupTransactionService.notifyGroup(chatRoom,joinNotifications);
+        notifyGroupTransactionService.notifyGroup(chatRoom,transactionNotifications);
         userChatService.processUsersAndChatRoomToDB(users,chatRoom);
     }
 
