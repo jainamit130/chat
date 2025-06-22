@@ -40,9 +40,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final JwtService jwtService;
     private final UserDetailsServiceImpl userDetailsService;
     private ChatService chatService;
-    private static final Map<String, String> userIdToSessionId = new ConcurrentHashMap<>();
-    private static final Map<String, WebSocketSession> sessionIdToSession = new ConcurrentHashMap<>();
-
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -95,7 +92,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                         }
                     }
                 }
-
 
                 if (StompCommand.UNSUBSCRIBE.equals(accessor.getCommand())) {
                     System.out.println("Client unsubscribed. userId: " + user.getUserId());

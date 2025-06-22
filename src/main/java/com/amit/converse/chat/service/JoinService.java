@@ -2,6 +2,9 @@ package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.User;
+import com.amit.converse.chat.service.MessageService.ChatMessageService;
+import com.amit.converse.chat.service.MessageService.MessageMemberCountProcessingService;
+import com.amit.converse.chat.service.User.UserService;
 import com.amit.converse.chat.service.chatRoom.GroupChatService;
 import com.amit.converse.chat.service.User.GroupChatUserService;
 import lombok.AllArgsConstructor;
@@ -16,9 +19,11 @@ public class JoinService {
     private final GroupChatService groupChatService;
     private final GroupChatUserService groupChatUserService;
     private final ChatConnectService chatConnectService;
+    private final ChatMessageService chatMessageService;
 
-    public void join(List<String> userIds) {
+    public void join(List<String> userIds, boolean shareHistory) {
         GroupChat groupChat = groupChatService.getContextChatRoom();
+        if(!groupChat.isPartOfGroup(UserService.getUserContext().getUserId())) return;
         List<User> usersWhoDeletedChat = groupChatUserService.getUsersFromRepo(new ArrayList<>(groupChat.getDeletedForUsers()));
         chatConnectService.connectChatFromUsers(usersWhoDeletedChat,groupChat);
 
@@ -28,7 +33,7 @@ public class JoinService {
                 newUserIds.add(userId);
             }
         }
-        groupChatService.joinChatRoom(new ArrayList<>(newUserIds),groupChat);
+        groupChatService.joinChatRoom(new ArrayList<>(newUserIds),groupChat,shareHistory);
         List<User> usersToBeAdded = groupChatUserService.getUsersFromRepo(newUserIds);
         chatConnectService.processChatConnectionsAndNotify(usersToBeAdded,groupChat);
     }

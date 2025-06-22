@@ -2,8 +2,10 @@ package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.Notification.TransactionNotification;
+import com.amit.converse.chat.dto.Notification.UserChatNotification;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
+import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Notification.NotifyGroupTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +24,6 @@ public class ChatConnectService extends ChatConnectionService {
         this.notifyGroupTransactionService = notifyService;
     }
 
-    protected void sendNotificationToUser(User user, ChatRoom newChatRoom, TransactionNotification transactionNotification) {
-        userChatService.sendNotificationToUser(user,newChatRoom,new NewChatNotification(newChatRoom,transactionNotification));
-    }
-
     protected void processChatConnection(User user, ChatRoom chatRoom) {
         if(user.isExited(chatRoom.getId())) chatRoom.updateReadMessageCountOfExitedUser(user.getUserId(),user.getUnreadMessageCountOfExitedChat(chatRoom.getId()));
         user.connectChat(chatRoom.getId());
@@ -35,7 +33,13 @@ public class ChatConnectService extends ChatConnectionService {
 
     @Override
     protected Instant getShiftedInstant(GroupChat chatRoom, User user) {
-        return chatRoom.getLastAvailableInstant(user).plusMillis(1);
+        return chatRoom.getLastAvailableInstant(user.getUserId()).plusMillis(1);
+    }
+
+    @Override
+    protected void processChatConnectionAndNotify(User user, ChatRoom chatRoom, List<Message> messagesHistory, TransactionNotification notification) {
+        processChatConnection(user,chatRoom);
+        userChatService.sendNotificationToUser(user,chatRoom,new NewChatNotification(chatRoom,notification,messagesHistory));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.amit.converse.chat.repository.Message;
 
+import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Messages.Message;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -31,4 +32,14 @@ public interface IMessageRepository extends MongoRepository<Message,String> {
             "{ $limit: 1 }"
     })
     Optional<Message> findLatestMessage(String chatRoomId, String userId);
+
+    @Aggregation(pipeline = {
+            "{ $match: { " +
+                    "'_class': 'ChatMessage', " +
+                    "'chatRoomId': ?0, " +
+                    "'timestamp': { $gte: ?1, $lt: ?2 } " +
+                    "} }",
+            "{ $sort: { 'timestamp': 1 } }"
+    })
+    List<Message> findMessagesOfChatBetween(String chatRoomId, Instant from, Instant to);
 }

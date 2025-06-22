@@ -22,9 +22,9 @@ public class GroupChatController {
     private final ExitService exitService;
 
     @PostMapping("/add/users/{chatRoomId}")
-    public ResponseEntity joinChat(@RequestBody List<String> userIds) {
+    public ResponseEntity joinChat(@RequestBody List<String> userIds,@RequestParam(required = false,defaultValue = "false") boolean shareHistory) {
         try {
-            joinService.join(userIds);
+            joinService.join(userIds,shareHistory);
             return new ResponseEntity(HttpStatus.NO_CONTENT);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);

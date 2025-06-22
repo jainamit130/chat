@@ -41,8 +41,10 @@ public class RedisUserService extends RedisService implements IRedisKeyService, 
     // To already existing userKey remove chatRoom as value => from userId:{userId}:{chatRoomId} to userId:{userId}:
     @Override
     public void setUserKey(User user) {
+        String chatRoomId = getActiveChatRoom(user);
         removeUserKey(user);
-        setKeyValue(getKey(user.getUserId()));
+        if(chatRoomId!="") setKeyValue(redisChatRoomService.getKeyValue(chatRoomId, user.getUserId()));
+        setKeyValue(getKeyValue(user.getUserId(),chatRoomId));
     }
 
     @Override

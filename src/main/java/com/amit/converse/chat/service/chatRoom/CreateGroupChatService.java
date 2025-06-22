@@ -31,7 +31,7 @@ public class CreateGroupChatService {
     public String create(CreateGroupRequest createGroupRequest) {
         createGroupRequest.addUserId(UserService.getUserContext().getUserId());
         groupChatService.processCreation(createGroupRequest,UserService.getUserContext().getUserId());
-        joinService.join(createGroupRequest.getUserIds());
+        joinService.join(createGroupRequest.getUserIds(),false);
         return chatContext.getChatRoom().getId();
     }
 }

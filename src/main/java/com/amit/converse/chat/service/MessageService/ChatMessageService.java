@@ -8,6 +8,7 @@ import com.amit.converse.chat.dto.Notification.MessageNotification;
 import com.amit.converse.chat.dto.UserDetails;
 import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
+import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.Enums.MessageStatus;
 import com.amit.converse.chat.model.Messages.ChatMessage;
 import com.amit.converse.chat.model.Messages.Message;
@@ -45,6 +46,8 @@ public class ChatMessageService<T extends IChatRoom> extends MessageService {
     protected ChatService chatService;
     @Autowired
     protected MessageProcessingService messageProcessingService;
+    @Autowired
+    private MessageMemberCountProcessingService messageMemberCountProcessingService;
     @Autowired
     protected ChatNotificationService chatNotificationService;
     @Autowired
@@ -103,6 +106,10 @@ public class ChatMessageService<T extends IChatRoom> extends MessageService {
         ChatMessage savedMessage = saveMessage(chatRoom,message);
         sendMessageNotification(chatRoom.getId(),savedMessage);
         messageProcessingService.processMessage(chatRoom,savedMessage);
+    }
+
+    public Map<String,List<Message>> processMemberCountOfMessages(GroupChat groupChat, List<User> users) {
+        return messageMemberCountProcessingService.processMemberCountOfMessages(groupChat,users);
     }
 
     public Message getLatestMessage(ChatRoom chatRoom,User user) {

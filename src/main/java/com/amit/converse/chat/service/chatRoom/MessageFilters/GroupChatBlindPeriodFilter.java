@@ -16,7 +16,7 @@ public class GroupChatBlindPeriodFilter extends BlindPeriodFilter {
     public <T extends Message> List<T> filterBlindSpots(ChatRoom chatRoom, User user, List<T> messages) {
         GroupChat groupChat = (GroupChat) chatRoom;
         List<BlindPeriod> blindPeriods = groupChat.getBlindPeriodsOfUser(user.getUserId());
-        if(user.isExited(chatRoom.getId())) blindPeriods.add(new BlindPeriod(groupChat.getLastAvailableInstant(user), Instant.now()));
+        if(user.isExited(chatRoom.getId())) blindPeriods.add(new BlindPeriod(groupChat.getLastAvailableInstant(user.getUserId()), Instant.now()));
         return messages.stream()
                 .filter(msg -> blindPeriods.stream().noneMatch(
                         period -> !msg.getTimestamp().isBefore(period.getStart()) &&

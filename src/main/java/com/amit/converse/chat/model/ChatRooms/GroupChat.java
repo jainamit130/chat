@@ -65,6 +65,10 @@ public class GroupChat extends ChatRoom implements ITransactable {
         return exitedMembers.containsKey(userId);
     }
 
+    public Boolean isPartOfGroup(String userId) {
+        return userIds.contains(userId);
+    }
+
     public void clearBlindPeriod(String userId) {
         Map<String,List<BlindPeriod>> blindPeriod = this.getBlindPeriods();
         blindPeriod.remove(userId);
@@ -100,8 +104,6 @@ public class GroupChat extends ChatRoom implements ITransactable {
         if(exitedMembers.containsKey(userId)) {
             exitedMembers.remove(userId);
             memberLatestMessage.remove(userId);
-            userFetchStartTimeMap.remove(userId);
-            readMessageCount.remove(userId);
         } else {
             deletedForUsers.add(userId);
         }
@@ -119,13 +121,19 @@ public class GroupChat extends ChatRoom implements ITransactable {
     private void unExit(List<String> userIds,boolean shareChatHistory) {
         userIds.forEach(userId -> {
             if (exitedMembers.containsKey(userId)) {
-                List<BlindPeriod> blindPeriods = this.blindPeriods.computeIfAbsent(userId, k -> new ArrayList<>());
-                blindPeriods.add(new BlindPeriod(exitedMembers.get(userId), Instant.now().plusMillis(5)));
+                if(!shareChatHistory) {
+                    List<BlindPeriod> blindPeriods = this.blindPeriods.computeIfAbsent(userId, k -> new ArrayList<>());
+                    blindPeriods.add(new BlindPeriod(exitedMembers.get(userId), Instant.now().plusMillis(5)));
+                }
                 exitedMembers.remove(userId);
-            } else if(!shareChatHistory && !userFetchStartTimeMap.containsKey(userId)) {
-                userFetchStartTimeMap.put(userId,Instant.now().plusMillis(5));
-                List<BlindPeriod> blindPeriods = this.blindPeriods.computeIfAbsent(userId, k -> new ArrayList<>());
-                blindPeriods.add(new BlindPeriod(createdAt,userFetchStartTimeMap.get(userId)));
+            } else {
+                if(!shareChatHistory) {
+                    userFetchStartTimeMap.put(userId,Instant.now().plusMillis(5));
+                    List<BlindPeriod> blindPeriods = this.blindPeriods.computeIfAbsent(userId, k -> new ArrayList<>());
+                    blindPeriods.add(new BlindPeriod(createdAt,userFetchStartTimeMap.get(userId)));
+                } else {
+                    userFetchStartTimeMap.put(userId,createdAt);
+                }
             }
         });
         this.isExited=false;
@@ -139,11 +147,11 @@ public class GroupChat extends ChatRoom implements ITransactable {
         }
     }
 
-    public Instant getLastAvailableInstant(User user) {
-        if (exitedMembers.containsKey(user.getUserId())) {
-            return exitedMembers.get(user.getUserId());
+    public Instant getLastAvailableInstant(String userId) {
+        if (exitedMembers.containsKey(userId)) {
+            return exitedMembers.get(userId);
         } else {
-            List<BlindPeriod> blindPeriods = this.blindPeriods.get(user.getUserId());
+            List<BlindPeriod> blindPeriods = this.blindPeriods.get(userId);
             return blindPeriods.getLast().getEnd();
         }
     }

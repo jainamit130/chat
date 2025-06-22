@@ -79,6 +79,11 @@ public class ChatMessage extends Message implements IDeletableMessage {
         }
     }
 
+    @Override
+    public void incrementMemberCount(int incrementCount) {
+        messageMetaData.incrementMemberCount(incrementCount);
+    }
+
     public Map<String, Set<String>> getDeliveryReceiptsByTime() {
         return messageMetaData.getDeliveryReceiptsByTime();
     }

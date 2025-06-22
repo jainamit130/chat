@@ -1,9 +1,11 @@
 package com.amit.converse.chat.service;
 
 import com.amit.converse.chat.dto.Notification.ExitedChatNotification;
+import com.amit.converse.chat.dto.Notification.NewChatNotification;
 import com.amit.converse.chat.dto.Notification.TransactionNotification;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
+import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.Notification.NotifyGroupTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,10 @@ public class ChatDisconnectService extends ChatConnectionService {
         this.notifyGroupTransactionService = notifyService;
     }
 
-    protected void sendNotificationToUser(User user, ChatRoom exitedChatRoom, TransactionNotification transactionNotification) {
-        userChatService.sendNotificationToUser(user,exitedChatRoom,new ExitedChatNotification(exitedChatRoom,transactionNotification));
+    @Override
+    protected void processChatConnectionAndNotify(User user, ChatRoom chatRoom, List<Message> messagesHistory, TransactionNotification notification) {
+        processChatConnection(user,chatRoom);
+        userChatService.sendNotificationToUser(user,chatRoom,new ExitedChatNotification(chatRoom,notification,messagesHistory));
     }
 
     protected void processChatConnection(User user, ChatRoom chatRoom) {
@@ -33,7 +37,7 @@ public class ChatDisconnectService extends ChatConnectionService {
 
     @Override
     protected Instant getShiftedInstant(GroupChat chatRoom, User user) {
-        return chatRoom.getLastAvailableInstant(user).minusMillis(1);
+        return chatRoom.getLastAvailableInstant(user.getUserId()).minusMillis(1);
     }
 
     @Override

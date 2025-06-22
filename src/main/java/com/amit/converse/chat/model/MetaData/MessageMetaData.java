@@ -33,5 +33,4 @@ public abstract class MessageMetaData {
     public Integer getDeletedForUsersCount() {
         return deletedForUsers.size();
     }
-
 }

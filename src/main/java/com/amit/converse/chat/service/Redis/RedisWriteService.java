@@ -37,7 +37,7 @@ public class RedisWriteService implements IRedisWriteService {
 
     @Override
     public void removeUserFromChatRoom(ChatRoom chatRoom, User user) {
-        redisUserService.setUserKey(user);
+        redisUserService.removeUserFromAllChatRoom(user);
         redisChatRoomService.removeUserFromChatRoom(chatRoom,user);
     }
 

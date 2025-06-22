@@ -25,8 +25,8 @@ public class GroupChatService extends ChatService<GroupChat> {
                 .orElseThrow(() -> new ConverseChatRoomNotFoundException(chatRoomId));
     }
 
-    public void joinChatRoom(List<String> userIds, GroupChat groupChat) {
-        groupChat.join(userIds, false);
+    public void joinChatRoom(List<String> userIds, GroupChat groupChat, boolean shareChatHistory) {
+        groupChat.join(userIds, shareChatHistory);
     }
 
     public void exitChatRoom(List<String> userIds,GroupChat groupChat) {

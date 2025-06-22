@@ -145,6 +145,7 @@ public abstract class ChatRoom implements IChatRoom {
         Map<String,Instant> userFetchStartTimeMap = getUserFetchStartTimeMap();
         userFetchStartTimeMap.put(userId,Instant.now());
         setUserFetchStartTimeMap(userFetchStartTimeMap);
+        readMessages(userId);
     }
 
     public void updateLastVisitedTimestamp(String userId) {

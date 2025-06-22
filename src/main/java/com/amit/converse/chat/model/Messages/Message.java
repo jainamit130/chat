@@ -40,4 +40,6 @@ public abstract class Message {
     public void processStatus(String userId) {
 
     }
+
+    public abstract void incrementMemberCount(int incrementCount);
 }

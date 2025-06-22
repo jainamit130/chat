@@ -44,4 +44,9 @@ public class NotificationMessage extends Message {
     public Integer getDeletedForMembersCount() {
         return messageMetaData.getDeletedForUsersCount();
     }
+
+    @Override
+    public void incrementMemberCount(int incrementCount) {
+
+    }
 }

@@ -22,6 +22,7 @@ public class ChatMessageMetaData extends MessageMetaData implements IChatMessage
     }
 
     private Set<String> deliveredRecipients;
+
     private Set<String> readRecipients;
     private Map<String, Set<String>> deliveryReceiptsByTime;
     private Map<String, Set<String>> readReceiptsByTime;
@@ -32,6 +33,10 @@ public class ChatMessageMetaData extends MessageMetaData implements IChatMessage
         this.readRecipients = new HashSet<>();
         this.deliveryReceiptsByTime = new HashMap<>();
         this.readReceiptsByTime = new HashMap<>();
+    }
+
+    public void incrementMemberCount(int incrementCount) {
+        memberCount += incrementCount;
     }
 
     @Override

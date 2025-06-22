@@ -2,11 +2,14 @@ package com.amit.converse.chat.dto.Notification;
 
 import com.amit.converse.chat.Interface.IChatRoom;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
+import com.amit.converse.chat.model.Messages.Message;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -17,6 +20,8 @@ public abstract class UserChatNotification extends IUserNotification {
     protected IChatRoom chatRoom;
 
     protected TransactionNotification transactionNotification;
+
+    protected List<Message> messageHistory;
 
     public IChatRoom getChatRoom() {
         return chatRoom;
