@@ -20,11 +20,12 @@ public class NotificationMessageService extends MessageService {
     @Autowired
     private INotificationMessageRepository notificationMessageRepository;
 
-    public static NotificationMessage generateNotificationMessage(String chatRoomId,String content,Instant notificationTime) {
+    public static NotificationMessage generateNotificationMessage(String chatRoomId,String content,Instant notificationTime,Boolean isChatHistoryShared) {
         NotificationMessage notificationMessage = new NotificationMessage();
         notificationMessage.setContent(content);
         notificationMessage.setChatRoomId(chatRoomId);
         notificationMessage.setTimestamp(notificationTime);
+        notificationMessage.setIsChatHistoryShared(isChatHistoryShared);
         return notificationMessage;
     }
 

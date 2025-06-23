@@ -151,7 +151,7 @@ public class GroupChat extends ChatRoom implements ITransactable {
         if (exitedMembers.containsKey(userId)) {
             return exitedMembers.get(userId);
         } else {
-            List<BlindPeriod> blindPeriods = this.blindPeriods.get(userId);
+            List<BlindPeriod> blindPeriods = this.blindPeriods.getOrDefault(userId,Collections.singletonList(new BlindPeriod(createdAt,getUserFetchStartTime(userId))));
             return blindPeriods.getLast().getEnd();
         }
     }

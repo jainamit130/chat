@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -39,6 +40,6 @@ public class ExitService {
 
         groupChatService.exitChatRoom(new ArrayList<>(userIdsToBeRemoved),groupChat);
         List<User> usersToRemove = groupChatUserService.getUsersFromRepo(userIdsToBeRemoved);
-        chatDisconnectService.processChatConnectionsAndNotify(usersToRemove,groupChat);
+        chatDisconnectService.processChatConnectionsAndNotify(usersToRemove,groupChat,new HashMap<>(),false);
     }
 }

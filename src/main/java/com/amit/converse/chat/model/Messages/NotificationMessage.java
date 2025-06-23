@@ -15,7 +15,7 @@ import java.time.Instant;
 @TypeAlias("NotificationMessage")
 @CompoundIndex(def = "{'chatRoomId': 1, 'timestamp': 1}")
 public class NotificationMessage extends Message {
-
+    private Boolean isChatHistoryShared;
     private NotificationMessageMetaData messageMetaData;
 
     @Transient

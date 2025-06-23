@@ -39,11 +39,11 @@ public abstract class NotifyGroupTransactionService {
 
     protected abstract NotificationType getNotificationType();
 
-    public final TransactionNotification generateMessage(ChatRoom chatRoom,User transactedUser, Instant notificationTime, List<String> userIdsToReceiveNotification) {
+    public final TransactionNotification generateMessage(ChatRoom chatRoom,User transactedUser, Instant notificationTime, List<String> userIdsToReceiveNotification,Boolean isChatHistoryShared) {
         String moderatorName = UserService.getUserContext().getDisplayName();
         String message = moderatorName + " " + getTransactionMessage() + " " + transactedUser.getDisplayName();
-        NotificationMessage notificationMessage = notificationMessageService.fulfilMessage(NotificationMessageService.generateNotificationMessage(chatContext.getChatRoomId(), message, notificationTime));
-        return TransactionNotification.builder().message(notificationMessageService.saveMessage(chatRoom,notificationMessage,userIdsToReceiveNotification)).chatRoomId(chatRoom.getId()).moderatorName(moderatorName).username(transactedUser.getDisplayName()).onlineStatus(redisReadService.getConnectionStatus(transactedUser)).type(getNotificationType()).build();
+        NotificationMessage notificationMessage = notificationMessageService.fulfilMessage(NotificationMessageService.generateNotificationMessage(chatContext.getChatRoomId(), message, notificationTime,isChatHistoryShared));
+        return TransactionNotification.builder().message(notificationMessageService.saveMessage(chatRoom,notificationMessage,userIdsToReceiveNotification)).chatRoomId(chatRoom.getId()).moderatorName(moderatorName).username(transactedUser.getDisplayName()).userId(transactedUser.getUserId()).onlineStatus(redisReadService.getConnectionStatus(transactedUser)).type(getNotificationType()).build();
     }
 
     public final void notifyGroup(ChatRoom chatRoom, List<TransactionNotification> transactionNotifications) {

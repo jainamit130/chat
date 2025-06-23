@@ -32,7 +32,8 @@ public class ChatConnectService extends ChatConnectionService {
     }
 
     @Override
-    protected Instant getShiftedInstant(GroupChat chatRoom, User user) {
+    protected Instant getShiftedInstant(GroupChat chatRoom, User user,List<Message> messageHistory) {
+        if(!messageHistory.isEmpty()) return messageHistory.getLast().getTimestamp().plusMillis(1);
         return chatRoom.getLastAvailableInstant(user.getUserId()).plusMillis(1);
     }
 

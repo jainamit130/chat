@@ -36,7 +36,7 @@ public class ChatDisconnectService extends ChatConnectionService {
     }
 
     @Override
-    protected Instant getShiftedInstant(GroupChat chatRoom, User user) {
+    protected Instant getShiftedInstant(GroupChat chatRoom, User user, List<Message> messageHistory) {
         return chatRoom.getLastAvailableInstant(user.getUserId()).minusMillis(1);
     }
 

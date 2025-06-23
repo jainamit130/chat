@@ -128,7 +128,7 @@ public class ChatMessageService<T extends IChatRoom> extends MessageService {
 
     public MessageInfoDto getMessageInfo(String messageId) {
         ChatMessage message = chatMessageRepository.findMessageById(messageId,UserService.getUserContext().getUserId())
-                .orElseThrow(() -> new ConverseException("No messageInfo to share for message id: "+messageId));
+                .orElseThrow(() -> new ConverseException("No messageInfo to share for message userId: "+messageId));
 
         Map<String, Set<UserDetails>> deliveryReceiptsByTime = userChatService.convertMapIdsToMapUserDetails(message.getDeliveryReceiptsByTime());
         Map<String, Set<UserDetails>> readReceiptsByTime = userChatService.convertMapIdsToMapUserDetails(message.getReadReceiptsByTime());

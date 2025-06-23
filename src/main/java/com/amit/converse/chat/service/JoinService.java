@@ -35,7 +35,7 @@ public class JoinService {
         }
         groupChatService.joinChatRoom(new ArrayList<>(newUserIds),groupChat,shareHistory);
         List<User> usersToBeAdded = groupChatUserService.getUsersFromRepo(newUserIds);
-        chatConnectService.processChatConnectionsAndNotify(usersToBeAdded,groupChat);
+        chatConnectService.processChatConnectionsAndNotify(usersToBeAdded,groupChat,chatMessageService.processMemberCountOfMessages(groupChat,usersToBeAdded),shareHistory);
     }
 
 }

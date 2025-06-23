@@ -23,6 +23,7 @@ type NotificationMessage {
     id: String
     content: String!
     timestamp: String!
+    isChatHistoryShared: Boolean
 }
 
 union Message = ChatMessage | NotificationMessage

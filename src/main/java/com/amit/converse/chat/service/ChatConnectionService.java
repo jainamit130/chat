@@ -29,18 +29,18 @@ public abstract class ChatConnectionService {
 
     protected NotifyGroupTransactionService notifyGroupTransactionService;
 
-    protected abstract Instant getShiftedInstant(GroupChat chatRoom, User user);
+    protected abstract Instant getShiftedInstant(GroupChat chatRoom, User user, List<Message> messageHistory);
 
     protected abstract void processChatConnectionAndNotify(User user,ChatRoom chatRoom,List<Message> messagesHistory,TransactionNotification notification);
 
     public abstract List<String> notificationReceiverIds(ChatRoom chatRoom, User transactedUser);
 
-    public void processChatConnectionsAndNotify(List<User> users, GroupChat chatRoom) {
+    public void processChatConnectionsAndNotify(List<User> users, GroupChat chatRoom,Map<String,List<Message>> messagesHistoryMap, Boolean isChatHistoryShared) {
         List<TransactionNotification> transactionNotifications = new ArrayList<>();
-        Map<String,List<Message>> messagesHistoryMap = chatMessageService.processMemberCountOfMessages(chatRoom,users);
         for(User user:users) {
-            transactionNotifications.add(notifyGroupTransactionService.generateMessage(chatRoom,user,getShiftedInstant(chatRoom,user),notificationReceiverIds(chatRoom,user)));
-            processChatConnectionAndNotify(user,chatRoom,messagesHistoryMap.get(user.getUserId()),transactionNotifications.getLast());
+            List<Message> messagesHistory = messagesHistoryMap.getOrDefault(user.getUserId(), new ArrayList<>());
+            transactionNotifications.add(notifyGroupTransactionService.generateMessage(chatRoom,user,getShiftedInstant(chatRoom,user,messagesHistory),notificationReceiverIds(chatRoom,user),isChatHistoryShared));
+            processChatConnectionAndNotify(user,chatRoom, messagesHistory,transactionNotifications.getLast());
         }
         notifyGroupTransactionService.notifyGroup(chatRoom,transactionNotifications);
         userChatService.processUsersAndChatRoomToDB(users,chatRoom);

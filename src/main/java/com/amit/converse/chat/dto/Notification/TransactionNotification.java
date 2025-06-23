@@ -16,7 +16,7 @@ public class TransactionNotification {
     NotificationMessage message;
     String username;
     String moderatorName;
-    String id;
+    String userId;
     ConnectionStatus onlineStatus;
     IOnlineUsersDTO onlineUsersDTO;
     NotificationType type;
