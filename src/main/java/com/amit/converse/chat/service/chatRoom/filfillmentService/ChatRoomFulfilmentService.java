@@ -31,7 +31,14 @@ public abstract class ChatRoomFulfilmentService {
 
     public abstract void fillName(ChatRoom chatRoom,User user);
 
+    public void fillIsNewlyFormed(ChatRoom chatRoom, User user) {
+        if(chatRoom.getUserIds().size()==0) {
+            chatRoom.setIsNewlyFormed(false);
+        }
+    }
+
     public final void fulfill(ChatRoom chatRoom, User user) {
+        fillIsNewlyFormed(chatRoom,user);
         fillIsExited(chatRoom,user);
         fillTransitionService(chatRoom);
         fillLatestMessage(chatRoom,user);

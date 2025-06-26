@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.MessageService.ChatMessageService;
@@ -21,9 +22,9 @@ public class JoinService {
     private final ChatConnectService chatConnectService;
     private final ChatMessageService chatMessageService;
 
-    public void join(List<String> userIds, boolean shareHistory) {
+    public void join(List<String> userIds, boolean shareHistory) throws ConverseException {
         GroupChat groupChat = groupChatService.getContextChatRoom();
-        if(!groupChat.isPartOfGroup(UserService.getUserContext().getUserId())) return;
+        if(!groupChat.getIsNewlyFormed() && !groupChat.isPartOfGroup(UserService.getUserContext().getUserId())) throw new ConverseException("Unable to join group");
         List<User> usersWhoDeletedChat = groupChatUserService.getUsersFromRepo(new ArrayList<>(groupChat.getDeletedForUsers()));
         chatConnectService.connectChatFromUsers(usersWhoDeletedChat,groupChat);
 

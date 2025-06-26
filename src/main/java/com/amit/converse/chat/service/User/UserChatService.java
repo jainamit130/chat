@@ -19,6 +19,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Primary
@@ -136,4 +137,20 @@ public class UserChatService<T extends ChatRoom> {
         }
         processUsersAndChatRoomToDB(Collections.singletonList(user), (T) chatRoom);
     }
+
+    public List<UserDetails> getAllUserDetails(String chatRoomId) {
+        List<UserDetails> usersDetails = userService.getAllUserDetails();
+
+        if (chatRoomId != null) {
+            ChatRoom chatRoom = chatService.getChatRoomById(chatRoomId);
+            List<String> groupMembers = chatRoom.getUserIds();
+
+            return usersDetails.stream()
+                    .filter(userDetail -> !groupMembers.contains(userDetail.getUserId()))
+                    .collect(Collectors.toList());
+        }
+
+        return usersDetails;
+    }
+
 }

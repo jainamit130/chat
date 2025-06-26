@@ -33,7 +33,7 @@ public class DirectChat extends ChatRoom {
     public Boolean isDeletable() {
         return !isNewlyFormed && super.getTotalMemberCount()==super.getDeletedForUsersCount();
     }
-    }
+}
 
 
 /*

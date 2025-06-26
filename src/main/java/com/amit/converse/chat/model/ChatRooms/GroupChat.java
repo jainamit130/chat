@@ -81,9 +81,13 @@ public class GroupChat extends ChatRoom implements ITransactable {
         super.clearChat(userId);
     }
 
+    public boolean isGroupEmpty() {
+        return super.getDeletedForUsersCount()==getTotalMemberCount();
+    }
+
     @Override
     public Boolean isDeletable() {
-        return !isNewlyFormed && (super.getDeletedForUsersCount()==getTotalMemberCount());
+        return !isNewlyFormed && isGroupEmpty();
     }
 
     @Override

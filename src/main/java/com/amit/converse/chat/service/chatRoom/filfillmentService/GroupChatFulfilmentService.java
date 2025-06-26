@@ -30,4 +30,12 @@ public class GroupChatFulfilmentService extends ChatRoomFulfilmentService {
         if(user==null) return;
         groupChat.setIsExited(user.isExited(groupChat.getId()));
     }
+
+    @Override
+    public void fillIsNewlyFormed(ChatRoom chatRoom, User user) {
+        GroupChat groupChat = (GroupChat) chatRoom;
+        if(groupChat.isGroupEmpty()) {
+            chatRoom.setIsNewlyFormed(true);
+        }
+    }
 }

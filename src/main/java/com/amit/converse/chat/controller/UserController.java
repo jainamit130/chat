@@ -43,8 +43,8 @@ public class UserController {
 
     // For now All users are shown to everyone. Meaning Everyone is open to chat with anyone.
     @GetMapping("/getUsers")
-    public ResponseEntity<List<UserDetails>> getUsers(){
-        return new ResponseEntity(userService.getAllUserDetails(), HttpStatus.OK);
+    public ResponseEntity<List<UserDetails>> getUsers(@RequestParam(required = false) String chatRoomId){
+        return new ResponseEntity(userChatService.getAllUserDetails(chatRoomId), HttpStatus.OK);
     }
 
     @PostMapping("/newUser")
