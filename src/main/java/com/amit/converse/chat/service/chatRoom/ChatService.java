@@ -5,6 +5,7 @@ import com.amit.converse.chat.context.ChatRoom.ChatContext;
 import com.amit.converse.chat.dto.ChatRoomData;
 import com.amit.converse.chat.dto.OnlineUsers.IOnlineUsersDTO;
 import com.amit.converse.chat.exceptions.ConverseChatRoomNotFoundException;
+import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRooms.ChatRoom;
 import com.amit.converse.chat.model.Messages.Message;
 import com.amit.converse.chat.model.User;
@@ -74,9 +75,11 @@ public class ChatService<T extends ChatRoom> {
     }
 
     public ChatRoom getChatRoomById(String chatRoomId) {
+        User user = UserService.getUserContext();
+        if(!user.hasGroup(chatRoomId)) throw new ConverseException("User has no group access");
         ChatRoom chatRoom = chatRoomRepository.findById(chatRoomId)
                 .orElseThrow(() -> new ConverseChatRoomNotFoundException(chatRoomId));
-        return fulfillChatRoom(chatRoom,UserService.getUserContext());
+        return fulfillChatRoom(chatRoom,user);
     }
 
     public ChatRoom fulfillChatRoom(ChatRoom chatRoom, User user) {

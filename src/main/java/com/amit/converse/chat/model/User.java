@@ -56,6 +56,10 @@ public class User implements IDeliverableEntity, UserDetails {
         return allChatRoomIds;
     }
 
+    public boolean hasGroup(String chatRoomId) {
+        return chatRoomIds.contains(chatRoomId) || exitedChatRoomIds.containsKey(chatRoomId);
+    }
+
     public String getStatus() {
         return status;
     }
