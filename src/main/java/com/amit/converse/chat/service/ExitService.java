@@ -1,5 +1,6 @@
 package com.amit.converse.chat.service;
 
+import com.amit.converse.chat.exceptions.ConverseException;
 import com.amit.converse.chat.model.ChatRooms.GroupChat;
 import com.amit.converse.chat.model.User;
 import com.amit.converse.chat.service.User.UserService;
@@ -28,6 +29,7 @@ public class ExitService {
     // Users removed from group
     public void leave(List<String> userIds) {
         GroupChat groupChat = groupChatService.getContextChatRoom();
+        if(!groupChat.isPartOfGroup(UserService.getUserContext().getUserId())) throw new ConverseException("User should be part of group");
         List<User> usersWhoDeletedChat = groupChatUserService.getUsersFromRepo(new ArrayList<>(groupChat.getDeletedForUsers()));
         chatDisconnectService.connectChatFromUsers(usersWhoDeletedChat,groupChat);
 
